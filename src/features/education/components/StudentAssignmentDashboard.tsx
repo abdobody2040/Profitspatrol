@@ -1,0 +1,377 @@
+
+import React, { useState, useMemo } from 'react';
+import { useAppStore } from '../../../store';
+import { Assignment, Submission } from '../../../types';
+import { ClipboardList, CheckCircle, Clock, FileText, ChevronRight, Upload, Link as LinkIcon, Send, UserCog } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { useEducationStore } from "../../../store/educationStore";
+
+const StudentAssignmentDashboard: React.FC = () => {
+    const { user } = useAppStore();
+    const { assignments, submissions, addSubmission, classrooms, lessons } = useEducationStore();
+    const [activeTab, setActiveTab] = useState<'TODO' | 'SUBMITTED' | 'GRADED'>('TODO');
+    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+    const [submissionContent, setSubmissionContent] = useState('');
+    const [previewClassId, setPreviewClassId] = useState<string>('');
+    const { t } = useTranslation();
+
+    // Effect to set initial preview class if admin/teacher
+    React.useEffect(() => {
+        if (user && (user.role === 'ADMIN' || user.role === 'TEACHER') && !user.classId && classrooms.length > 0 && !previewClassId) {
+            setPreviewClassId(classrooms[0].id);
+        }
+    }, [user, classrooms, previewClassId]);
+
+    const effectiveClassId = user?.classId || previewClassId;
+
+    // Filter Logic
+    const myAssignments = useMemo(() => {
+        if (!user || !effectiveClassId) return [];
+
+        return assignments.filter(a => {
+            if (a.classId !== effectiveClassId) return false;
+            if (a.status !== 'PUBLISHED') return false;
+
+            // Specific student check - only if not admin/teacher previewing
+            if (user.role === 'KID' && a.specificStudentIds && a.specificStudentIds.length > 0) {
+                return a.specificStudentIds.includes(user.id);
+            }
+
+            return true;
+        });
+    }, [assignments, user, effectiveClassId]);
+
+    const { todo, submitted, graded } = useMemo(() => {
+        const todo: Assignment[] = [];
+        const submittedList: { assignment: Assignment, submission: Submission }[] = [];
+        const gradedList: { assignment: Assignment, submission: Submission }[] = [];
+
+        if (!user) return { todo, submitted: submittedList, graded: gradedList };
+
+        myAssignments.forEach(assign => {
+            const sub = submissions.find(s => s.assignmentId === assign.id && s.studentId === user.id);
+            if (!sub) {
+                todo.push(assign);
+            } else if (sub.status === 'GRADED') {
+                gradedList.push({ assignment: assign, submission: sub });
+            } else {
+                submittedList.push({ assignment: assign, submission: sub });
+            }
+        });
+
+        return { todo, submitted: submittedList, graded: gradedList };
+    }, [myAssignments, submissions, user]);
+
+    const handleSubmitWork = () => {
+        if (!selectedAssignment || !user) return;
+        if (!submissionContent.trim()) {
+            alert(t('assignments.please_type_answer', "Please type your answer or paste a link."));
+            return;
+        }
+
+        const newSubmission: Submission = {
+            id: `sub_${Date.now()}`,
+            assignmentId: selectedAssignment.id,
+            studentId: user.id,
+            submittedAt: new Date().toISOString(),
+            status: 'PENDING',
+            content: submissionContent
+        };
+
+        addSubmission(newSubmission);
+        setSubmissionContent('');
+        setSelectedAssignment(null);
+        // Optional: Play success sound
+    };
+
+    const getGradeStyle = (score: number, max: number) => {
+        if (score === max) return { bg: 'bg-blue-50 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', border: 'border-blue-200 dark:border-blue-800' };
+        if (score >= max * 0.8) return { bg: 'bg-green-50 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-300', border: 'border-green-200 dark:border-green-800' };
+        if (score >= max * 0.5) return { bg: 'bg-yellow-50 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-300', border: 'border-yellow-200 dark:border-yellow-800' };
+        return { bg: 'bg-red-50 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', border: 'border-red-200 dark:border-red-800' };
+    };
+
+    if (!user) return null;
+
+    // Show empty state IF:
+    // 1. User is a student (KID) AND has no class
+    // 2. User is Admin/Teacher AND there are no classes to preview
+    if (!effectiveClassId) {
+        if (user.role === 'KID' || classrooms.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center h-96 text-center">
+                    <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                        <ClipboardList size={32} className="text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <h2 className="text-xl font-black text-gray-800 dark:text-white">{t('assignments.no_class_title')}</h2>
+                    <p className="text-gray-500 dark:text-gray-400 font-bold max-w-xs mt-2">{t('assignments.no_class_msg')}</p>
+                </div>
+            );
+        }
+    }
+
+    // Admin/Teacher Class Selector
+    const renderClassSelector = () => {
+        if (user.role === 'KID' || user.classId) return null;
+
+        return (
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="bg-yellow-100 dark:bg-yellow-800 p-2 rounded-lg">
+                        <UserCog size={20} className="text-yellow-700 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100">{t('assignments.preview_mode', 'Teacher/Admin Preview Mode')}</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{t('assignments.viewing_as_student', 'Viewing as a student in:')}</p>
+                    </div>
+                </div>
+                <select
+                    value={previewClassId}
+                    onChange={(e) => setPreviewClassId(e.target.value)}
+                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                >
+                    {classrooms.length === 0 && <option value="">{t('assignments.no_classes_found', 'No Classes Found')}</option>}
+                    {classrooms.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                </select>
+            </div>
+        );
+    };
+
+    return (
+        <div className="pb-20 max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <ClipboardList size={32} />
+                </div>
+                <div>
+                    <h2 className="text-3xl font-black text-gray-800 dark:text-white">{t('assignments.title')}</h2>
+                    <p className="text-gray-500 dark:text-gray-400 font-bold">{t('assignments.subtitle')}</p>
+                </div>
+            </div>
+
+            {renderClassSelector()}
+
+            {/* Tabs */}
+            <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-700 pb-1 overflow-x-auto">
+                <TabButton active={activeTab === 'TODO'} onClick={() => setActiveTab('TODO')} label={`${t('assignments.tab_todo')} (${todo.length})`} />
+                <TabButton active={activeTab === 'SUBMITTED'} onClick={() => setActiveTab('SUBMITTED')} label={t('assignments.tab_submitted')} />
+                <TabButton active={activeTab === 'GRADED'} onClick={() => setActiveTab('GRADED')} label={t('assignments.tab_graded')} />
+            </div>
+
+            {/* Content */}
+            <div className="space-y-4">
+                {activeTab === 'TODO' && (
+                    todo.length === 0 ? (
+                        <EmptyState message={t('assignments.empty_todo')} />
+                    ) : (
+                        todo.map(assign => (
+                            <AssignmentCard
+                                key={assign.id}
+                                assignment={assign}
+                                onClick={() => setSelectedAssignment(assign)}
+                                ctaLabel="Start"
+                            />
+                        ))
+                    )
+                )}
+
+                {activeTab === 'SUBMITTED' && (
+                    submitted.length === 0 ? (
+                        <EmptyState message={t('assignments.empty_submitted')} />
+                    ) : (
+                        submitted.map(({ assignment, submission }) => (
+                            <div key={assignment.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl border-2 border-yellow-100 dark:border-yellow-900/30 shadow-sm opacity-80">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="font-black text-lg text-gray-800 dark:text-white">{assignment.title}</h3>
+                                    <span className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">{t('assignments.status_pending')}</span>
+                                </div>
+                                <p className="text-xs text-gray-400 font-bold">Submitted: {new Date(submission.submittedAt).toLocaleDateString()}</p>
+                            </div>
+                        ))
+                    )
+                )}
+
+                {activeTab === 'GRADED' && (
+                    graded.length === 0 ? (
+                        <EmptyState message={t('assignments.empty_graded')} />
+                    ) : (
+                        graded.map(({ assignment, submission }) => {
+                            const style = getGradeStyle(submission.grade || 0, assignment.maxPoints);
+                            return (
+                                <div key={assignment.id} className={`p-6 rounded-2xl border-2 shadow-sm flex justify-between items-center ${style.border} bg-white dark:bg-gray-800`}>
+                                    <div>
+                                        <h3 className="font-black text-lg text-gray-800 dark:text-white">{assignment.title}</h3>
+                                        <p className={`${style.text} font-bold text-sm mt-1`}>{submission.feedback}</p>
+                                    </div>
+                                    <div className={`text-center p-3 rounded-xl min-w-[80px] ${style.bg}`}>
+                                        <div className={`text-2xl font-black ${style.text}`}>{submission.grade}</div>
+                                        <div className={`text-xs font-bold uppercase opacity-80 ${style.text}`}>{t('assignments.score')}</div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )
+                )}
+            </div>
+
+            {/* SUBMISSION MODAL */}
+            <AnimatePresence>
+                {selectedAssignment && (
+                    <div className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+                        >
+                            {/* Header */}
+                            <div className="p-6 bg-blue-50 dark:bg-gray-900 border-b border-blue-100 dark:border-gray-700 flex justify-between items-start">
+                                <div>
+                                    <div className="text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                        {selectedAssignment.isHomework && <span className="bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 px-2 py-0.5 rounded text-xs font-black">📚 Homework</span>}
+                                        {t('assignments.new_assignment')}
+                                    </div>
+                                    <h3 className="text-2xl font-black text-gray-800 dark:text-white">{selectedAssignment.title}</h3>
+                                    {selectedAssignment.homeworkDeadline && (
+                                        <p className="text-xs text-red-500 dark:text-red-400 font-bold mt-1">
+                                            ⏰ Homework deadline: {new Date(selectedAssignment.homeworkDeadline).toLocaleString()}
+                                        </p>
+                                    )}
+                                </div>
+                                <button onClick={() => setSelectedAssignment(null)} className="p-2 bg-white dark:bg-gray-700 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-400 font-bold transition-colors">{t('common.close')}</button>
+                            </div>
+
+                            {/* Body */}
+                            <div className="p-8 overflow-y-auto flex-1 bg-white dark:bg-gray-800">
+                                {/* Description */}
+                                <div className="mb-8">
+                                    <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">{t('assignments.instructions')}</h4>
+                                    <div className="text-gray-700 dark:text-gray-300 font-medium whitespace-pre-wrap leading-relaxed">
+                                        {selectedAssignment.description || "No instructions provided."}
+                                    </div>
+                                </div>
+
+                                {/* Resource Link */}
+                                {selectedAssignment.resourceUrl && (
+                                    <div className="mb-8 bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 flex items-center gap-3">
+                                        <div className="bg-white dark:bg-gray-600 p-2 rounded-lg text-blue-500 dark:text-blue-400 border border-gray-100 dark:border-gray-500"><LinkIcon size={20} /></div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <div className="text-xs font-bold text-gray-400 uppercase">{t('assignments.resource')}</div>
+                                            <a href={selectedAssignment.resourceUrl} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 font-bold truncate block hover:underline">
+                                                {selectedAssignment.resourceUrl}
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Submission Area */}
+                                <div className="border-t border-gray-100 dark:border-gray-700 pt-6">
+                                    <h4 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
+                                        <Upload size={16} /> {t('assignments.submit_work')}
+                                    </h4>
+                                    <textarea
+                                        className="w-full p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white font-medium focus:border-kid-accent outline-none h-32 resize-none"
+                                        placeholder={t('assignments.placeholder')}
+                                        value={submissionContent}
+                                        onChange={(e) => setSubmissionContent(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end">
+                                <button
+                                    onClick={handleSubmitWork}
+                                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-black text-lg shadow-[0_4px_0_0_rgba(21,128,61,1)] btn-juicy flex items-center gap-2"
+                                >
+                                    <Send size={20} /> {t('assignments.btn_submit')}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+const TabButton = ({ active, onClick, label }: any) => (
+    <button
+        onClick={onClick}
+        className={`px-6 py-2 font-black text-sm uppercase tracking-wide transition-all border-b-4 whitespace-nowrap
+            ${active ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' : 'text-gray-400 border-transparent hover:text-gray-600 dark:hover:text-gray-300'}
+        `}
+    >
+        {label}
+    </button>
+);
+
+const AssignmentCard = ({ assignment, onClick, ctaLabel }: any) => {
+    const now = Date.now();
+    const isDueSoon = assignment.dueDate ? new Date(assignment.dueDate).getTime() - now < 86400000 * 3 : false;
+    const effectiveDeadline = assignment.homeworkDeadline || assignment.dueDate;
+    const isOverdue = effectiveDeadline ? new Date(effectiveDeadline).getTime() < now : false;
+    const { t } = useTranslation();
+
+    return (
+        <div
+            onClick={onClick}
+            className={`group bg-white dark:bg-gray-800 p-6 rounded-2xl border-2 shadow-sm transition-all cursor-pointer flex items-center gap-6 ${isOverdue
+                ? 'border-red-200 dark:border-red-800 hover:border-red-400'
+                : 'border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600'
+                }`}
+        >
+            <div className="flex-1">
+                <div className="flex justify-between items-start mb-2 gap-2 flex-wrap">
+                    <h3 className="font-black text-xl text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{assignment.title}</h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {assignment.isHomework && (
+                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-black px-2 py-1 rounded flex items-center gap-1">
+                                📚 HOMEWORK
+                            </span>
+                        )}
+                        {isOverdue && (
+                            <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-black px-2 py-1 rounded animate-pulse">
+                                🔴 OVERDUE
+                            </span>
+                        )}
+                        {!isOverdue && isDueSoon && (
+                            <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs font-black px-2 py-1 rounded">
+                                {t('assignments.due_soon')}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 font-bold flex-wrap">
+                    <span className="flex items-center gap-1">
+                        <Clock size={14} />
+                        {t('assignments.due')}: {effectiveDeadline ? new Date(effectiveDeadline).toLocaleDateString() : 'No Date'}
+                    </span>
+                    <span className="flex items-center gap-1 text-gray-300 dark:text-gray-600">|</span>
+                    <span className="text-gray-400 dark:text-gray-500">{assignment.maxPoints} {t('assignments.pts')}</span>
+                    {assignment.maxXP && (
+                        <>
+                            <span className="text-gray-300 dark:text-gray-600">|</span>
+                            <span className="text-purple-500 dark:text-purple-400 font-black">+{assignment.maxXP} XP</span>
+                        </>
+                    )}
+                </div>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 group-hover:bg-blue-600 group-hover:text-white p-3 rounded-full transition-colors text-gray-300 dark:text-gray-500">
+                <ChevronRight size={24} strokeWidth={3} />
+            </div>
+        </div>
+    );
+};
+
+const EmptyState = ({ message }: { message: string }) => (
+    <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+        <div className="text-4xl mb-2 opacity-50">🎉</div>
+        <p className="font-bold text-gray-400 dark:text-gray-500">{message}</p>
+    </div>
+);
+
+export default StudentAssignmentDashboard;

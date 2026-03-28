@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Profits Patrol: The gamified business education platform for kids. Learn entrepreneurship, earn rewards, and build your empire!" />
+  <meta name="theme-color" content="#FFC800" />
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Profits Patrol - Future CEO Academy" />
+  <meta property="og:description"
+    content="The gamified business education platform for kids. Learn entrepreneurship, earn rewards, and build your empire!" />
+  <meta property="og:image" content="/pwa-512x512.png" />
+
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' chrome-extension: https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net chrome-extension:; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net chrome-extension:; img-src 'self' data: https: http: chrome-extension:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com https://cdn.jsdelivr.net chrome-extension: https://api.stripe.com; font-src 'self' data: https://fonts.gstatic.com chrome-extension:; media-src 'self' https://assets.mixkit.co; frame-src 'self' https://js.stripe.com https://hooks.stripe.com;" />
+
+  <title>Profits Patrol - Future CEO Academy</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Profits Patrol" />
+  <link rel="manifest" href="/favicon/site.webmanifest" />
+
+  <!-- DNS + TLS preconnect to critical origins — eliminates cold handshake latency -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://js.stripe.com" />
+
+  <!-- Google Fonts: non-blocking load (preload trick) -->
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap" />
+  </noscript>
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f0fdf4;
+      /* Light green bg */
+      overflow-x: hidden;
+    }
+
+    .dark body {
+      background-color: #111827;
+      /* gray-900 */
+    }
+
+    /* RTL Font Override */
+    html[lang="ar"] body {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    /* Juicy Button Effect */
+    .btn-juicy {
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-juicy:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/app/main.tsx"></script>
+</body>
+
+</html>
