@@ -1,7 +1,7 @@
 
-# KidCap HQ - Future CEO Academy 🚀
+# Profits Patrol - Future CEO Academy 🚀
 
-**KidCap HQ** is the world's #1 gamified business academy for kids. We turn screen time into real-world skills like entrepreneurship, financial literacy, and leadership through addictive mini-games, an RPG-style progression system, and AI-powered tutoring.
+**Profits Patrol** is the world's #1 gamified business academy for kids. We turn screen time into real-world skills like entrepreneurship, financial literacy, and leadership through addictive mini-games, an RPG-style progression system, and AI-powered tutoring.
 
 ![KidCap HQ Banner](https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80)
 
