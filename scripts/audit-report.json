@@ -1,0 +1,2534 @@
+﻿{
+  "missing_keys": [
+    {
+      "file": "features\\dashboard\\components\\ParentDashboard.tsx",
+      "key": "parent.no_child_desc"
+    },
+    {
+      "file": "features\\education\\components\\AchievementCard.tsx",
+      "key": "common.subscriber_only"
+    },
+    {
+      "file": "features\\education\\components\\CurriculumPage.tsx",
+      "key": "curriculum.page_desc"
+    },
+    {
+      "file": "features\\education\\components\\DailyMissions.tsx",
+      "key": "dailyMissions.allMissionsComplete"
+    },
+    {
+      "file": "features\\education\\components\\ModuleRecap.tsx",
+      "key": "engine.upgrade_prompt"
+    },
+    {
+      "file": "features\\education\\components\\ModuleRecap.tsx",
+      "key": "engine.play_simulation"
+    },
+    {
+      "file": "features\\education\\components\\ProjectResultCard.tsx",
+      "key": "project.close"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.error_too_short"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.needs_work"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.try_again"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.feedback_title"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.feedback_msg"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.xp_earned_value"
+    },
+    {
+      "file": "features\\education\\components\\ProjectSubmitter.tsx",
+      "key": "project.continue_boss"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_action.title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_action.desc"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_action.btn"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_risk.title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_risk.safe"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_schedule.title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.widget_schedule.empty"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.roster_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.manage_groups"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.controls_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.controls_desc"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.assign_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.new_assign"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.subs_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.demo_sub"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.groups_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.add_group"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.rubrics_title"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.new_rubric"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.rubrics_empty"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.edit_student"
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "key": "teacher.remove_student"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.ent_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.mb_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.mb_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.realism"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.realism_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.planning"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.planning_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.math"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.math_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.mb_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.inv_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.inv_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.research"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.research_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.diversity"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.diversity_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.reasoning"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.reasoning_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.inv_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.ldr_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.ldr_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.empathy"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.empathy_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.strategy"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.strategy_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.communication"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.communication_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.ldr_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.eco_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.eco_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.supply_demand"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.supply_demand_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.scarcity"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.scarcity_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.profit"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.profit_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.eco_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.tech_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.tech_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.innovation"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.innovation_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.ux"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.ux_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.tech_use"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.tech_use_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.tech_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.soc_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.soc_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.passion"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.passion_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.action"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.action_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.kindness"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.kindness_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.soc_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.glo_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.glo_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.culture"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.culture_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.logistics"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.logistics_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.opportunity"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.opportunity_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.glo_exp"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.fin_title"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.fin_obj"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.security"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.security_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.privacy"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.privacy_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.scam_check"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "kpi.scam_check_desc"
+    },
+    {
+      "file": "features\\education\\data\\project_prompts.ts",
+      "key": "project.fin_exp"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.invalid_code"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.title"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.invite_label"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.linked_kids"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.link_parent"
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "key": "family.linked_success"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.forecast"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.tip_rain"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.item_beans"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.buy"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.item_milk"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.item_cups"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.price"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.roast"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.start_brewing"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.serving"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.day_complete"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.sold"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.unit_cups"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.revenue"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.tips"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.total"
+    },
+    {
+      "file": "features\\game\\components\\CoffeeCart.tsx",
+      "key": "games.coffee.next_day"
+    },
+    {
+      "file": "features\\game\\components\\GameMenu.tsx",
+      "key": "games.brand_builder.title"
+    },
+    {
+      "file": "features\\game\\components\\GameMenu.tsx",
+      "key": "games.brand_builder.desc"
+    },
+    {
+      "file": "features\\game\\components\\Leaderboard.tsx",
+      "key": "leaderboard.empty_state"
+    },
+    {
+      "file": "features\\game\\components\\OllieChat.tsx",
+      "key": "chat.initial_greeting"
+    },
+    {
+      "file": "features\\game\\components\\OllieChat.tsx",
+      "key": "chat.free_limit_reply"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.rookie.label"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.rookie.desc"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.founder.label"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.founder.desc"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.tycoon.label"
+    },
+    {
+      "file": "features\\hq\\components\\DifficultySelectModal.tsx",
+      "key": "difficulty_modal.tycoon.desc"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.reachLevelToOpen"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.youAreLevel"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.openTitle"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.openDesc"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.openBtn"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.perHour"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.collectBtn"
+    },
+    {
+      "file": "features\\hq\\components\\FranchisePanel.tsx",
+      "key": "enterprise.upgradeBtn"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.daysLeft"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.done"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.pts"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.claim"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.join"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.top10Prizes"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.hide"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.leaderboardLabel"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.leaderboardTitle"
+    },
+    {
+      "file": "features\\hq\\components\\SeasonalEventBanner.tsx",
+      "key": "seasonalEvent.you"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.milestoneUnlocked"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.milestoneDesc"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.bonusTomorrow"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.days"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.shieldUsed"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.shieldActive"
+    },
+    {
+      "file": "features\\hq\\components\\StreakBanner.tsx",
+      "key": "hqStats.shieldNone"
+    },
+    {
+      "file": "features\\library\\components\\BookTaskModal.tsx",
+      "key": "library.tasks.shared_desc"
+    },
+    {
+      "file": "features\\library\\components\\BookTaskModal.tsx",
+      "key": "library.tasks.application_prompt"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.tankDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.learningDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.libraryDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.debateDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.investDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.arcadeDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.progressionDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\FeaturesPage.tsx",
+      "key": "features.safetyDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.heroSubtitle"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.arcadeDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.tankDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.cards.offer_quote"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.dojoDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.libraryDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.dashboardDesc"
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "key": "landing.footer_copyright"
+    },
+    {
+      "file": "features\\profile\\components\\YearEndReport.tsx",
+      "key": "yearEndReport.pdfIntro"
+    },
+    {
+      "file": "features\\profile\\components\\YearEndReport.tsx",
+      "key": "yearEndReport.pdfExecutiveSummary"
+    },
+    {
+      "file": "features\\profile\\components\\YearEndReport.tsx",
+      "key": "yearEndReport.pdfInstructorNotes"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_create_wait"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.partner_joined"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_join"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.team_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.team_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.host_role"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.partner_role"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.bonus_active"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.bonus_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_lets_pitch"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_1_badge"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_1_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_1_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_1_subtitle"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.placeholder_pitch1"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.char_count"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_done_turn1"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_2_badge"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_2_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_2_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.turn_2_subtitle"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.what_said"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.placeholder_pitch2"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_submit_tank"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.thinking_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.offers_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.offers_subtitle"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.judge"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.for_equity"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.negotiation_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_accept_deal"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.btn_back_offers"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.deal_title"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.deal_subtitle"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.pitch_again"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.pitch_rejected"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.pitch_rejected_desc"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.tip_financials"
+    },
+    {
+      "file": "features\\tank\\components\\CoopPitchMode.tsx",
+      "key": "coop_pitch.try_again_together"
+    },
+    {
+      "file": "components\\feedback\\SettingsModal.tsx",
+      "key": "settings.title"
+    },
+    {
+      "file": "components\\feedback\\SettingsModal.tsx",
+      "key": "settings.preferences"
+    },
+    {
+      "file": "components\\feedback\\SettingsModal.tsx",
+      "key": "settings.sound"
+    },
+    {
+      "file": "components\\feedback\\SettingsModal.tsx",
+      "key": "settings.music"
+    },
+    {
+      "file": "components\\feedback\\SettingsModal.tsx",
+      "key": "settings.privacy_zone"
+    }
+  ],
+  "no_translation": [
+    "features\\admin\\components\\AdminBookManager.tsx",
+    "features\\admin\\components\\AdminLiveSessionManager.tsx",
+    "features\\admin\\components\\AdminVideoManager.tsx",
+    "features\\admin\\components\\SecurityMonitoring.tsx",
+    "features\\auth\\components\\AuthProvider.tsx",
+    "features\\dashboard\\components\\AnalyticsDashboard.tsx",
+    "features\\dashboard\\components\\BountyList.tsx",
+    "features\\dashboard\\components\\ContentModeration.tsx",
+    "features\\dashboard\\components\\CreateBountyModal.tsx",
+    "features\\dashboard\\components\\reports\\EconomyHealth.tsx",
+    "features\\dashboard\\components\\reports\\LearningInsights.tsx",
+    "features\\dashboard\\components\\reports\\ReportsDashboard.tsx",
+    "features\\dashboard\\components\\reports\\UserGrowthChart.tsx",
+    "features\\dashboard\\components\\reports\\__tests__\\ReportsDashboard.test.tsx",
+    "features\\dashboard\\components\\WhitelistBlacklistManager.tsx",
+    "features\\education\\components\\BusinessPlanModal.tsx",
+    "features\\education\\components\\LiveNowWidget.tsx",
+    "features\\education\\components\\RubricEditor.tsx",
+    "features\\education\\components\\TournamentPage.tsx",
+    "features\\empire\\components\\PortfolioAnalysis.tsx",
+    "features\\game\\components\\EnergyBar.tsx",
+    "features\\game\\components\\game-templates\\ClickerTemplate.tsx",
+    "features\\game\\components\\game-templates\\DrivingTemplate.tsx",
+    "features\\game\\components\\game-templates\\MatchingTemplate.tsx",
+    "features\\game\\components\\game-templates\\SimulationTemplate.tsx",
+    "features\\game\\components\\game-templates\\SortingTemplate.tsx",
+    "features\\game\\components\\LevelUpModal.tsx",
+    "features\\game\\components\\NewsTicker.tsx",
+    "features\\game\\components\\PizzaDelivery.tsx",
+    "features\\game\\components\\UniversalBusinessGame.tsx",
+    "features\\hq\\components\\BusinessCard.tsx",
+    "features\\hq\\components\\CharacterAvatar.tsx",
+    "features\\hq\\components\\IsometricGrid.tsx",
+    "features\\hq\\components\\RoomCustomizer.tsx",
+    "features\\library\\components\\ExclusiveBookCard.tsx",
+    "features\\marketing\\components\\CheckoutPage.tsx",
+    "features\\marketing\\components\\CheckoutSuccess.tsx",
+    "features\\marketing\\components\\DynamicPage.tsx",
+    "features\\marketing\\components\\PrivacyPolicyPage.tsx",
+    "features\\marketing\\components\\RefundPolicyPage.tsx",
+    "features\\marketing\\components\\TermsOfServicePage.tsx",
+    "features\\settings\\components\\PrivacySettings.tsx",
+    "features\\social\\components\\BusinessCard.tsx",
+    "features\\social\\components\\FriendRequestList.tsx",
+    "features\\social\\components\\FriendSearch.tsx",
+    "features\\social\\components\\UserProfile.tsx",
+    "features\\tank\\components\\NegotiationBattle.tsx",
+    "features\\venture\\components\\minigames\\QuizMinigame.tsx",
+    "features\\venture\\components\\minigames\\RhythmMinigame.tsx",
+    "features\\venture\\components\\minigames\\SwipeMinigame.tsx",
+    "features\\venture\\components\\minigames\\TapMinigame.tsx",
+    "components\\ErrorBoundary.tsx",
+    "components\\feedback\\ErrorBoundary.tsx",
+    "components\\feedback\\ReloadPrompt.tsx",
+    "components\\layout\\BottomNavigation.tsx",
+    "components\\modals\\GlobalModalManager.tsx",
+    "components\\ui\\PlayHubFAB.tsx",
+    "components\\ui\\SkeletonPageLoader.tsx",
+    "components\\ui\\SmartImage.tsx",
+    "components\\ui\\ThemeToggle.tsx",
+    "app\\main_debug.tsx"
+  ],
+  "hardcoded_text": [
+    {
+      "file": "features\\admin\\components\\AdminBookManager.tsx",
+      "issues": [
+        {
+          "line": 91,
+          "text": "Secret Library Manager"
+        },
+        {
+          "line": 101,
+          "text": "Title"
+        },
+        {
+          "line": 110,
+          "text": "Author"
+        },
+        {
+          "line": 131,
+          "text": "Cover Image URL"
+        },
+        {
+          "line": 142,
+          "text": "Category"
+        },
+        {
+          "line": 148,
+          "text": "Finance"
+        },
+        {
+          "line": 149,
+          "text": "Mindset"
+        },
+        {
+          "line": 150,
+          "text": "Strategy"
+        },
+        {
+          "line": 151,
+          "text": "Biography"
+        },
+        {
+          "line": 152,
+          "text": "Fiction"
+        },
+        {
+          "line": 156,
+          "text": "Age Rating"
+        },
+        {
+          "line": 166,
+          "text": "Summary"
+        }
+      ]
+    },
+    {
+      "file": "features\\admin\\components\\AdminDashboard.tsx",
+      "issues": [
+        {
+          "line": 664,
+          "text": "Active Intelligence"
+        },
+        {
+          "line": 665,
+          "text": "Select which brain powers Ollie"
+        },
+        {
+          "line": 728,
+          "text": "Email"
+        },
+        {
+          "line": 740,
+          "text": "Refresh from Supabase"
+        },
+        {
+          "line": 909,
+          "text": "Profits Patrol Exclusives"
+        },
+        {
+          "line": 951,
+          "text": "Cover"
+        },
+        {
+          "line": 953,
+          "text": "Category"
+        },
+        {
+          "line": 955,
+          "text": "Summary"
+        },
+        {
+          "line": 956,
+          "text": "Actions"
+        },
+        {
+          "line": 1033,
+          "text": "Age Rating"
+        },
+        {
+          "line": 1048,
+          "text": "Cover Image URL"
+        },
+        {
+          "line": 1052,
+          "text": "Category"
+        },
+        {
+          "line": 1079,
+          "text": "Cancel"
+        },
+        {
+          "line": 1494,
+          "text": "Hero Banner"
+        },
+        {
+          "line": 1496,
+          "text": "Call to Action"
+        },
+        {
+          "line": 1584,
+          "text": "Email"
+        },
+        {
+          "line": 1592,
+          "text": "Teacher"
+        },
+        {
+          "line": 1602,
+          "text": "Intern"
+        },
+        {
+          "line": 1603,
+          "text": "Founder"
+        },
+        {
+          "line": 1604,
+          "text": "Board"
+        },
+        {
+          "line": 1605,
+          "text": "Tycoon"
+        },
+        {
+          "line": 1725,
+          "text": "Finance"
+        },
+        {
+          "line": 1726,
+          "text": "Mindset"
+        },
+        {
+          "line": 1727,
+          "text": "Strategy"
+        },
+        {
+          "line": 1728,
+          "text": "Biography"
+        },
+        {
+          "line": 1729,
+          "text": "Fiction"
+        },
+        {
+          "line": 1965,
+          "text": "Label"
+        },
+        {
+          "line": 1969,
+          "text": "Value"
+        },
+        {
+          "line": 2013,
+          "text": "User"
+        },
+        {
+          "line": 2043,
+          "text": "Award Badge"
+        },
+        {
+          "line": 2105,
+          "text": "Easy"
+        },
+        {
+          "line": 2107,
+          "text": "Done"
+        },
+        {
+          "line": 2127,
+          "text": "Add New Topic"
+        },
+        {
+          "line": 2132,
+          "text": "Easy"
+        },
+        {
+          "line": 2162,
+          "text": "Enable or disable the HQ builder for all users"
+        },
+        {
+          "line": 2178,
+          "text": "Item"
+        },
+        {
+          "line": 2241,
+          "text": "Enable All"
+        }
+      ]
+    },
+    {
+      "file": "features\\admin\\components\\AdminLiveSessionManager.tsx",
+      "issues": [
+        {
+          "line": 93,
+          "text": "Title"
+        },
+        {
+          "line": 101,
+          "text": "Description"
+        },
+        {
+          "line": 140,
+          "text": "Host"
+        },
+        {
+          "line": 152,
+          "text": "Audience"
+        },
+        {
+          "line": 159,
+          "text": "All Students"
+        },
+        {
+          "line": 160,
+          "text": "Specific Class"
+        },
+        {
+          "line": 168,
+          "text": "Select Class"
+        },
+        {
+          "line": 216,
+          "text": "LIVE"
+        }
+      ]
+    },
+    {
+      "file": "features\\admin\\components\\AdminVideoManager.tsx",
+      "issues": [
+        {
+          "line": 73,
+          "text": "Title"
+        },
+        {
+          "line": 81,
+          "text": "YouTube ID"
+        },
+        {
+          "line": 90,
+          "text": "Description"
+        },
+        {
+          "line": 98,
+          "text": "Duration"
+        },
+        {
+          "line": 107,
+          "text": "Category"
+        },
+        {
+          "line": 113,
+          "text": "Finance"
+        },
+        {
+          "line": 114,
+          "text": "Mindset"
+        },
+        {
+          "line": 115,
+          "text": "Strategy"
+        },
+        {
+          "line": 116,
+          "text": "CaseStudy"
+        },
+        {
+          "line": 117,
+          "text": "Tutorial"
+        }
+      ]
+    },
+    {
+      "file": "features\\admin\\components\\SecurityMonitoring.tsx",
+      "issues": [
+        {
+          "line": 162,
+          "text": "Security Monitoring"
+        },
+        {
+          "line": 189,
+          "text": "Total Events"
+        },
+        {
+          "line": 198,
+          "text": "Critical"
+        },
+        {
+          "line": 207,
+          "text": "High"
+        },
+        {
+          "line": 216,
+          "text": "Medium"
+        },
+        {
+          "line": 237,
+          "text": "Filters"
+        },
+        {
+          "line": 241,
+          "text": "Severity"
+        },
+        {
+          "line": 247,
+          "text": "All Severities"
+        },
+        {
+          "line": 248,
+          "text": "Critical"
+        },
+        {
+          "line": 249,
+          "text": "High"
+        },
+        {
+          "line": 250,
+          "text": "Medium"
+        },
+        {
+          "line": 255,
+          "text": "Event Type"
+        },
+        {
+          "line": 261,
+          "text": "All Types"
+        },
+        {
+          "line": 262,
+          "text": "Prompt Injection"
+        },
+        {
+          "line": 263,
+          "text": "Profanity"
+        },
+        {
+          "line": 264,
+          "text": "PII Leak"
+        },
+        {
+          "line": 265,
+          "text": "Rate Limit"
+        },
+        {
+          "line": 266,
+          "text": "Content Violation"
+        },
+        {
+          "line": 267,
+          "text": "Unauthorized Access"
+        },
+        {
+          "line": 268,
+          "text": "Suspicious Activity"
+        },
+        {
+          "line": 272,
+          "text": "Time Range"
+        },
+        {
+          "line": 278,
+          "text": "Last Hour"
+        },
+        {
+          "line": 290,
+          "text": "Recent Security Events"
+        },
+        {
+          "line": 301,
+          "text": "No security events found"
+        },
+        {
+          "line": 302,
+          "text": "Try adjusting your filters"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\AnalyticsDashboard.tsx",
+      "issues": [
+        {
+          "line": 147,
+          "text": "Total Users"
+        },
+        {
+          "line": 162,
+          "text": "Assignments"
+        },
+        {
+          "line": 192,
+          "text": "Certificates"
+        },
+        {
+          "line": 275,
+          "text": "User Roles"
+        },
+        {
+          "line": 302,
+          "text": "Subscription Tiers"
+        },
+        {
+          "line": 330,
+          "text": "Student Retention"
+        },
+        {
+          "line": 335,
+          "text": "Teacher NPS"
+        },
+        {
+          "line": 337,
+          "text": "Not enough data"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\ContentModeration.tsx",
+      "issues": [
+        {
+          "line": 477,
+          "text": "Content Moderation"
+        },
+        {
+          "line": 478,
+          "text": "Monitor and manage flagged content"
+        },
+        {
+          "line": 486,
+          "text": "Total Flagged"
+        },
+        {
+          "line": 496,
+          "text": "Critical"
+        },
+        {
+          "line": 506,
+          "text": "High"
+        },
+        {
+          "line": 516,
+          "text": "Pending Review"
+        },
+        {
+          "line": 527,
+          "text": "Violation Type Breakdown"
+        },
+        {
+          "line": 574,
+          "text": "No data available for trend analysis"
+        },
+        {
+          "line": 584,
+          "text": "Filters"
+        },
+        {
+          "line": 588,
+          "text": "Severity"
+        },
+        {
+          "line": 595,
+          "text": "Critical"
+        },
+        {
+          "line": 596,
+          "text": "High"
+        },
+        {
+          "line": 597,
+          "text": "Medium"
+        },
+        {
+          "line": 603,
+          "text": "Violation Type"
+        },
+        {
+          "line": 610,
+          "text": "Profanity"
+        },
+        {
+          "line": 612,
+          "text": "Violence"
+        },
+        {
+          "line": 613,
+          "text": "Adult Content"
+        },
+        {
+          "line": 614,
+          "text": "Hate Speech"
+        },
+        {
+          "line": 615,
+          "text": "Self Harm"
+        },
+        {
+          "line": 620,
+          "text": "Review Status"
+        },
+        {
+          "line": 627,
+          "text": "Pending"
+        },
+        {
+          "line": 628,
+          "text": "Reviewed"
+        },
+        {
+          "line": 629,
+          "text": "Approved"
+        },
+        {
+          "line": 630,
+          "text": "Rejected"
+        },
+        {
+          "line": 631,
+          "text": "False Positive"
+        },
+        {
+          "line": 636,
+          "text": "Search"
+        },
+        {
+          "line": 725,
+          "text": "Flagged Content"
+        },
+        {
+          "line": 741,
+          "text": "No flagged content found"
+        },
+        {
+          "line": 869,
+          "text": "Review Flagged Content"
+        },
+        {
+          "line": 913,
+          "text": "Mark as False Positive"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\CreateBountyModal.tsx",
+      "issues": [
+        {
+          "line": 60,
+          "text": "Job Title"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\reports\\ReportsDashboard.tsx",
+      "issues": [
+        {
+          "line": 71,
+          "text": "Platform Analytics"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\reports\\UserGrowthChart.tsx",
+      "issues": [
+        {
+          "line": 46,
+          "text": "User Growth"
+        },
+        {
+          "line": 47,
+          "text": "New user registrations over time"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\reports\\__tests__\\ReportsDashboard.test.tsx",
+      "issues": [
+        {
+          "line": 21,
+          "text": "AreaChart"
+        },
+        {
+          "line": 22,
+          "text": "BarChart"
+        }
+      ]
+    },
+    {
+      "file": "features\\dashboard\\components\\WhitelistBlacklistManager.tsx",
+      "issues": [
+        {
+          "line": 266,
+          "text": "Manage approved and banned content patterns"
+        },
+        {
+          "line": 313,
+          "text": "No whitelist entries yet"
+        },
+        {
+          "line": 314,
+          "text": "Add patterns that should bypass moderation"
+        },
+        {
+          "line": 354,
+          "text": "No blacklist entries yet"
+        },
+        {
+          "line": 355,
+          "text": "Add patterns that should always be blocked"
+        },
+        {
+          "line": 409,
+          "text": "Pattern"
+        },
+        {
+          "line": 429,
+          "text": "Pattern Type"
+        },
+        {
+          "line": 436,
+          "text": "Exact Match"
+        },
+        {
+          "line": 437,
+          "text": "Regular Expression"
+        },
+        {
+          "line": 448,
+          "text": "Severity"
+        },
+        {
+          "line": 455,
+          "text": "Medium"
+        },
+        {
+          "line": 456,
+          "text": "High"
+        },
+        {
+          "line": 457,
+          "text": "Critical"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\BusinessPlanModal.tsx",
+      "issues": [
+        {
+          "line": 259,
+          "text": "Next"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\CurriculumPage.tsx",
+      "issues": [
+        {
+          "line": 43,
+          "text": "The Ultimate Learning Journey"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\GradeReview.tsx",
+      "issues": [
+        {
+          "line": 133,
+          "text": "Project Submission"
+        },
+        {
+          "line": 146,
+          "text": "Student Work"
+        },
+        {
+          "line": 181,
+          "text": "Letter Grade"
+        },
+        {
+          "line": 189,
+          "text": "Feedback"
+        },
+        {
+          "line": 227,
+          "text": "Select a submission to review"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\LiveNowWidget.tsx",
+      "issues": [
+        {
+          "line": 119,
+          "text": "Tycoon"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\PrincipalDashboard.tsx",
+      "issues": [
+        {
+          "line": 136,
+          "text": "Total Students"
+        },
+        {
+          "line": 145,
+          "text": "Active Teachers"
+        },
+        {
+          "line": 154,
+          "text": "Total Classrooms"
+        },
+        {
+          "line": 172,
+          "text": "Classroom Leaderboard"
+        },
+        {
+          "line": 173,
+          "text": "Ranked by total XP earned"
+        },
+        {
+          "line": 179,
+          "text": "Rank"
+        },
+        {
+          "line": 180,
+          "text": "Classroom Name"
+        },
+        {
+          "line": 181,
+          "text": "Teacher"
+        },
+        {
+          "line": 182,
+          "text": "Students"
+        },
+        {
+          "line": 183,
+          "text": "Total XP"
+        },
+        {
+          "line": 224,
+          "text": "License Utilization"
+        },
+        {
+          "line": 225,
+          "text": "Manage your active school seats"
+        },
+        {
+          "line": 232,
+          "text": "Current Plan"
+        },
+        {
+          "line": 241,
+          "text": "Seats Used"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\ProjectResultCard.tsx",
+      "issues": [
+        {
+          "line": 70,
+          "text": "Earned"
+        },
+        {
+          "line": 85,
+          "text": "XP Gained"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\RubricEditor.tsx",
+      "issues": [
+        {
+          "line": 40,
+          "text": "Create Grading Rubric"
+        },
+        {
+          "line": 43,
+          "text": "Rubric Title"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\TeacherDashboard.tsx",
+      "issues": [
+        {
+          "line": 70,
+          "text": "No Classroom Found"
+        },
+        {
+          "line": 331,
+          "text": "Teacher Solo"
+        },
+        {
+          "line": 448,
+          "text": "Name"
+        },
+        {
+          "line": 449,
+          "text": "Level"
+        },
+        {
+          "line": 450,
+          "text": "Progress"
+        },
+        {
+          "line": 451,
+          "text": "Action"
+        },
+        {
+          "line": 502,
+          "text": "School Hours Only"
+        },
+        {
+          "line": 557,
+          "text": "Assignment Title"
+        },
+        {
+          "line": 581,
+          "text": "Linked Lesson"
+        },
+        {
+          "line": 598,
+          "text": "Due Date"
+        },
+        {
+          "line": 611,
+          "text": "Grading Criteria"
+        },
+        {
+          "line": 626,
+          "text": "Max Points"
+        },
+        {
+          "line": 654,
+          "text": "Assign To"
+        },
+        {
+          "line": 743,
+          "text": "Rubric"
+        },
+        {
+          "line": 963,
+          "text": "Student Name"
+        },
+        {
+          "line": 972,
+          "text": "Save Changes"
+        },
+        {
+          "line": 1047,
+          "text": "Cancel"
+        },
+        {
+          "line": 1069,
+          "text": "Title"
+        },
+        {
+          "line": 1079,
+          "text": "Points"
+        },
+        {
+          "line": 1089,
+          "text": "Description"
+        },
+        {
+          "line": 1170,
+          "text": "Final Grade"
+        },
+        {
+          "line": 1176,
+          "text": "Student Submission"
+        },
+        {
+          "line": 1224,
+          "text": "Teacher Feedback"
+        },
+        {
+          "line": 1235,
+          "text": "Cancel"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\TournamentPage.tsx",
+      "issues": [
+        {
+          "line": 75,
+          "text": "JOIN CODE"
+        },
+        {
+          "line": 78,
+          "text": "Copy Code"
+        },
+        {
+          "line": 102,
+          "text": "Cancel"
+        },
+        {
+          "line": 111,
+          "text": "Tournament Mode"
+        },
+        {
+          "line": 126,
+          "text": "OR JOIN WITH A CODE"
+        }
+      ]
+    },
+    {
+      "file": "features\\education\\components\\UniversalLessonEngine.tsx",
+      "issues": [
+        {
+          "line": 328,
+          "text": "No Lessons Found"
+        },
+        {
+          "line": 331,
+          "text": "Show All"
+        },
+        {
+          "line": 332,
+          "text": "Exit"
+        }
+      ]
+    },
+    {
+      "file": "features\\empire\\components\\PortfolioAnalysis.tsx",
+      "issues": [
+        {
+          "line": 62,
+          "text": "Empire Valuation"
+        },
+        {
+          "line": 63,
+          "text": "Net Worth Analysis"
+        },
+        {
+          "line": 66,
+          "text": "Total Net Worth"
+        }
+      ]
+    },
+    {
+      "file": "features\\family\\components\\FamilyManager.tsx",
+      "issues": [
+        {
+          "line": 198,
+          "text": "PREMIUM"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\AvatarCustomizer.tsx",
+      "issues": [
+        {
+          "line": 213,
+          "text": "Equip"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\CEOChallengeWidget.tsx",
+      "issues": [
+        {
+          "line": 103,
+          "text": "Progress"
+        },
+        {
+          "line": 130,
+          "text": "BizCoins"
+        },
+        {
+          "line": 135,
+          "text": "Badge"
+        },
+        {
+          "line": 181,
+          "text": "CEO Level"
+        },
+        {
+          "line": 185,
+          "text": "Streak"
+        },
+        {
+          "line": 189,
+          "text": "Done"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\EnergyBar.tsx",
+      "issues": [
+        {
+          "line": 19,
+          "text": "Unlimited"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\ClickerTemplate.tsx",
+      "issues": [
+        {
+          "line": 101,
+          "text": "Available Upgrades"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\DrivingTemplate.tsx",
+      "issues": [
+        {
+          "line": 144,
+          "text": "Collect Rewards"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\GridTemplate.tsx",
+      "issues": [
+        {
+          "line": 101,
+          "text": "Mow the Lawn"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\PricingTemplate.tsx",
+      "issues": [
+        {
+          "line": 79,
+          "text": "Selling Price"
+        },
+        {
+          "line": 97,
+          "text": "Customers"
+        },
+        {
+          "line": 129,
+          "text": "Profit Curve"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\QualityControlTemplate.tsx",
+      "issues": [
+        {
+          "line": 275,
+          "text": "SHIPPING"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\SimulationTemplate.tsx",
+      "issues": [
+        {
+          "line": 367,
+          "text": "Results"
+        },
+        {
+          "line": 373,
+          "text": "Customers"
+        },
+        {
+          "line": 377,
+          "text": "Revenue"
+        },
+        {
+          "line": 381,
+          "text": "Expenses"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\SortingTemplate.tsx",
+      "issues": [
+        {
+          "line": 60,
+          "text": "Exit"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\TimelineTemplate.tsx",
+      "issues": [
+        {
+          "line": 118,
+          "text": "Available Events"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\game-templates\\TradingTemplate.tsx",
+      "issues": [
+        {
+          "line": 219,
+          "text": "SOLDOUT"
+        },
+        {
+          "line": 220,
+          "text": "Sold to Bot"
+        },
+        {
+          "line": 227,
+          "text": "Current Bid"
+        },
+        {
+          "line": 250,
+          "text": "Auction Closed"
+        },
+        {
+          "line": 264,
+          "text": "Your won items appear here"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\GameEngine.tsx",
+      "issues": [
+        {
+          "line": 60,
+          "text": "Game Not Found"
+        },
+        {
+          "line": 61,
+          "text": "Exit"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\GraduationModal.tsx",
+      "issues": [
+        {
+          "line": 92,
+          "text": "Alumni Gold Badge"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\ParentReport.tsx",
+      "issues": [
+        {
+          "line": 107,
+          "text": "Top Achievement"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\RealEstateTycoon.tsx",
+      "issues": [
+        {
+          "line": 110,
+          "text": "Daily Income"
+        },
+        {
+          "line": 215,
+          "text": "Build your property empire"
+        },
+        {
+          "line": 225,
+          "text": "Properties"
+        },
+        {
+          "line": 229,
+          "text": "Daily Income"
+        },
+        {
+          "line": 233,
+          "text": "Ready"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\SeasonalEvent.tsx",
+      "issues": [
+        {
+          "line": 197,
+          "text": "Season Challenges"
+        },
+        {
+          "line": 219,
+          "text": "LIVE"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\StockMarket.tsx",
+      "issues": [
+        {
+          "line": 172,
+          "text": "Wallet"
+        },
+        {
+          "line": 176,
+          "text": "Portfolio"
+        }
+      ]
+    },
+    {
+      "file": "features\\game\\components\\UniversalBusinessGame.tsx",
+      "issues": [
+        {
+          "line": 142,
+          "text": "Game not found"
+        },
+        {
+          "line": 263,
+          "text": "Daily Strategy"
+        },
+        {
+          "line": 279,
+          "text": "Grow Your Biz"
+        },
+        {
+          "line": 323,
+          "text": "Objective"
+        },
+        {
+          "line": 380,
+          "text": "Owned"
+        },
+        {
+          "line": 445,
+          "text": "Net Profit"
+        },
+        {
+          "line": 467,
+          "text": "Revenue"
+        },
+        {
+          "line": 474,
+          "text": "Expenses"
+        },
+        {
+          "line": 481,
+          "text": "Customers"
+        }
+      ]
+    },
+    {
+      "file": "features\\hq\\components\\BusinessCard.tsx",
+      "issues": [
+        {
+          "line": 141,
+          "text": "Verified CEO Identity"
+        }
+      ]
+    },
+    {
+      "file": "features\\hq\\components\\WeeklyChallengeWidget.tsx",
+      "issues": [
+        {
+          "line": 98,
+          "text": "BizCoins"
+        }
+      ]
+    },
+    {
+      "file": "features\\marketing\\components\\CheckoutPage.tsx",
+      "issues": [
+        {
+          "line": 124,
+          "text": "Payment Error"
+        },
+        {
+          "line": 154,
+          "text": "Secured by Stripe"
+        }
+      ]
+    },
+    {
+      "file": "features\\marketing\\components\\LandingPage.tsx",
+      "issues": [
+        {
+          "line": 453,
+          "text": "Privacy Policy"
+        },
+        {
+          "line": 454,
+          "text": "Terms of Service"
+        },
+        {
+          "line": 455,
+          "text": "Refund Policy"
+        }
+      ]
+    },
+    {
+      "file": "features\\marketing\\components\\PrivacyPolicyPage.tsx",
+      "issues": [
+        {
+          "line": 24,
+          "text": "Privacy Policy"
+        }
+      ]
+    },
+    {
+      "file": "features\\marketing\\components\\RefundPolicyPage.tsx",
+      "issues": [
+        {
+          "line": 24,
+          "text": "Refund Policy"
+        }
+      ]
+    },
+    {
+      "file": "features\\marketing\\components\\TermsOfServicePage.tsx",
+      "issues": [
+        {
+          "line": 24,
+          "text": "Terms of Service"
+        }
+      ]
+    },
+    {
+      "file": "features\\scenarios\\components\\ScenarioEngine.tsx",
+      "issues": [
+        {
+          "line": 216,
+          "text": "Reward"
+        },
+        {
+          "line": 244,
+          "text": "Mission Failed"
+        },
+        {
+          "line": 298,
+          "text": "Cash Available"
+        },
+        {
+          "line": 305,
+          "text": "Daily Burn Rate"
+        },
+        {
+          "line": 312,
+          "text": "Days Remaining"
+        },
+        {
+          "line": 340,
+          "text": "End Day"
+        }
+      ]
+    },
+    {
+      "file": "features\\social\\components\\BusinessCard.tsx",
+      "issues": [
+        {
+          "line": 153,
+          "text": "XP Progress"
+        },
+        {
+          "line": 169,
+          "text": "BizCoins"
+        },
+        {
+          "line": 176,
+          "text": "Streak"
+        },
+        {
+          "line": 183,
+          "text": "Lessons"
+        },
+        {
+          "line": 264,
+          "text": "Your shareable digital identity card"
+        }
+      ]
+    },
+    {
+      "file": "features\\social\\components\\FriendRequestList.tsx",
+      "issues": [
+        {
+          "line": 59,
+          "text": "No pending requests"
+        },
+        {
+          "line": 91,
+          "text": "Pending"
+        }
+      ]
+    },
+    {
+      "file": "features\\social\\components\\FriendSearch.tsx",
+      "issues": [
+        {
+          "line": 94,
+          "text": "KidCap Tycoon"
+        }
+      ]
+    },
+    {
+      "file": "features\\social\\components\\UserProfile.tsx",
+      "issues": [
+        {
+          "line": 186,
+          "text": "Profits Patrol Tycoon"
+        },
+        {
+          "line": 195,
+          "text": "Level"
+        },
+        {
+          "line": 209,
+          "text": "Badges"
+        }
+      ]
+    },
+    {
+      "file": "features\\tank\\components\\NegotiationBattle.tsx",
+      "issues": [
+        {
+          "line": 148,
+          "text": "NEGOTIATION"
+        },
+        {
+          "line": 149,
+          "text": "Tycoon Exclusive"
+        },
+        {
+          "line": 164,
+          "text": "Tough Supplier"
+        },
+        {
+          "line": 169,
+          "text": "Patience"
+        },
+        {
+          "line": 201,
+          "text": "Current Price"
+        },
+        {
+          "line": 214,
+          "text": "Lowball"
+        },
+        {
+          "line": 215,
+          "text": "High Risk"
+        },
+        {
+          "line": 224,
+          "text": "State Facts"
+        },
+        {
+          "line": 225,
+          "text": "Safe Drop"
+        },
+        {
+          "line": 234,
+          "text": "Flatter"
+        },
+        {
+          "line": 244,
+          "text": "Walk Away"
+        },
+        {
+          "line": 245,
+          "text": "All or Nothing"
+        },
+        {
+          "line": 258,
+          "text": "Collect Commission"
+        },
+        {
+          "line": 267,
+          "text": "Deal Failed"
+        },
+        {
+          "line": 282,
+          "text": "Exit"
+        }
+      ]
+    },
+    {
+      "file": "features\\venture\\components\\RealEstateApp.tsx",
+      "issues": [
+        {
+          "line": 343,
+          "text": "Properties"
+        },
+        {
+          "line": 360,
+          "text": "No properties yet"
+        }
+      ]
+    },
+    {
+      "file": "components\\layout\\BottomNavigation.tsx",
+      "issues": [
+        {
+          "line": 41,
+          "text": "Quests"
+        },
+        {
+          "line": 63,
+          "text": "News"
+        },
+        {
+          "line": 74,
+          "text": "Avatar"
+        }
+      ]
+    },
+    {
+      "file": "components\\layout\\PublicNavbar.tsx",
+      "issues": [
+        {
+          "line": 45,
+          "text": "English"
+        },
+        {
+          "line": 49,
+          "text": "Deutsch"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_files_scanned": 189,
+    "files_without_hook": 61,
+    "missing_key_occurrences": 233,
+    "files_with_hardcoded": 59
+  }
+}

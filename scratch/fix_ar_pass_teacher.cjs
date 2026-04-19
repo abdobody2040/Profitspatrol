@@ -1,0 +1,106 @@
+const fs = require('fs');
+
+const arPath = 'src/locales/ar.ts';
+let content = fs.readFileSync(arPath, 'utf8');
+
+const t = {
+  // Co-op Pitch
+  "WHAT {{name}} SAID:": "ما قاله {{name}}:",
+  "To add to what my partner said... Our revenue last month was... We're asking for $X for Y% equity...": "إضافةً لما قاله شريكي... كانت إيراداتنا الشهر الماضي... نطلب تمويلاً قدره X مقابل Y% من حصة الشركة...",
+  "Submit to The Tank!": "أرسل إلى ذا تانك!",
+  "Combining your pitches...": "جاري دمج عروضكم...",
+  "The judges are conferring...": "القضاة يتشاورون...",
+  "Analyzing your joint strategy...": "جاري تحليل استراتيجيتكم المشتركة...",
+  "Making a decision...": "جاري اتخاذ القرار...",
+  "Combined pitch being reviewed by the judges...": "يتم مراجعة العرض المشترك من قبل القضاة...",
+  "{{count}} Joint Offer(s)!": "{{count}} عرض/عروض مشتركة!",
+  "The judges loved your teamwork! Pick an offer to negotiate.": "أحب القضاة عملكم الجماعي! اختر عرضاً للتفاوض.",
+  "Judge #{{num}}": "القاضي رقم {{num}}",
+  "for {{equity}}%": "مقابل {{equity}}% حصة",
+  "Joint Offer": "عرض مشترك",
+  "Accept Deal Together!": "قبول الصفقة معاً!",
+  "Co-founders Win!": "فوز المؤسسين الشركاء!",
+  "Pitch Rejected": "تم رفض العرض",
+  "Even the best co-founders get rejected. Refine your pitch and try again!": "حتى أفضل الشركاء المؤسسين يتعرضون للرفض. حسن عرضك وحاول مرة أخرى!",
+  "Include specific numbers (revenue, users, ask amount). Judges need to see the financials!": "تلميح: قم بتضمين أرقام محددة (الإيرادات، المستخدمين، المبلغ المطلوب). القضاة يحتاجون لرؤية البيانات المالية!",
+  "Try Again Together": "حاولا مرة أخرى معاً",
+  
+  // Coffee Game
+  "Coffee Cart": "عربة القهوة",
+  "Become a barista! Brew the perfect cup and manage your stock.": "كن باريستا! حضّر الفنجان المثالي وأدِر مخزونك.",
+  "Buy Beans, Milk, and Cups.": "اشترِ البن والحليب والأكواب.",
+  "Adjust your recipe: Roast & Foam.": "اضبط وصفتك: التحميص والرغوة.",
+  "Set your price.": "حدد سعرك.",
+  "Rainy days = More customers!": "الأيام الممطرة = زبائن أكثر!",
+  "You need cups!": "تحتاج لأكواب!",
+  "Sunny": "مشمس",
+  "Rainy": "ممطر",
+  "Cloudy": "غائم",
+  "Forecast": "التوقعات",
+  "Tip: Rain boosts demand!": "تلميح: المطر يزيد الطلب!",
+  "Beans": "البن",
+  "Milk": "الحليب",
+  "Cups": "أكواب",
+  "Buy": "شراء",
+  "Price": "السعر",
+  "Roast Strength": "قوة التحميص",
+  "Start Brewing": "ابدأ التحضير",
+  "Serving Customers...": "جاري خدمة الزبائن...",
+  "Day Complete!": "انتهى اليوم!",
+  "Sold": "تم بيع",
+  "Revenue": "الإيرادات",
+  "Tips": "بقشيش",
+  "Total": "الإجمالي",
+
+  // Classroom & Teacher
+  "Admin Classroom Inspector": "مفتش الفصل الإداري",
+  "Premium Active": "الاشتراك المميز نشط",
+  "Profits Patrol Pro": "بروفيتس باترول برو",
+  "Next billing date: July 15, 2025": "تاريخ الفوترة القادم: 15 يوليو 2025",
+  "Manage Subscription": "إدارة الاشتراك",
+  "Unlock Full Potential": "فتح كامل الإمكانيات",
+  "Get unlimited access to all 30+ business simulations, AI tutoring, and advanced analytics.": "احصل على وصول غير محدود لجميع محاكيات الأعمال الـ 30+، والدروس الخصوصية بالذكاء الاصطناعي، والتحليلات المتقدمة.",
+  "All Games": "جميع الألعاب",
+  "AI Tutor": "معلم ذكاء اصطناعي",
+  "Upgrade Now": "الترقية الآن",
+  "Child Settings & Controls": "إعدادات وتحكم الطفل",
+  "Daily Goal": "الهدف اليومي",
+  "Sound Effects": "تأثيرات صوتية",
+  "Background Music": "موسيقى الخلفية",
+  "Danger Zone": "منطقة خطر",
+  "Resetting passwords cannot be undone.": "إعادة تعيين كلمة المرور لا يمكن التراجع عنها.",
+  "Reset Password": "إعادة تعيين كلمة المرور",
+  "Class Code": "رمز الفصل",
+  "Grading": "التقييم",
+  "Groups": "المجموعات",
+  "Rubrics": "قواعد التقييم",
+  "Action Items": "مهام مطلوبة",
+  "Ungraded Submissions": "تقديمات غير مقيمة",
+  "Review Now": "راجع الآن",
+  "At-Risk Radar": "رادار الطلاب المتعثرين",
+  "All students on track!": "جميع الطلاب يسيرون بشكل جيد!",
+  "Upcoming": "القادم",
+  "No active assignments": "لا توجد واجبات نشطة",
+  "Student Roster": "قائمة الطلاب",
+  "Manage Groups": "إدارة المجموعات",
+  "Curriculum Controls": "التحكم في المنهج",
+  "Lock content to keep the class in sync.": "قفل المحتوى لإبقاء الفصل متزامناً.",
+  "Class Assignments": "واجبات الفصل",
+  "New Assignment": "واجب جديد",
+  "Student Submissions": "تقديمات الطلاب",
+  "Differentiated Groups": "مجموعات متمايزة",
+  "Add Group": "إضافة مجموعة",
+  "Grading Rubrics": "قواعد تقييم الدرجات",
+  "Create New Rubric": "إنشاء قاعدة تقييم جديدة",
+  "No rubrics yet. Create one to standardize your grading!": "لا توجد قواعد تقييم بعد. أنشئ واحدة لتوحيد معايير التقييم الخاصة بك!",
+  "Edit Student": "تعديل طالب",
+  "Remove from Class": "حذف من الفصل",
+};
+
+Object.keys(t).forEach(eng => {
+  const regex = new RegExp(":\\s*['\"]" + eng.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "['\"]", 'g');
+  content = content.replace(regex, ": '" + t[eng] + "'");
+});
+
+fs.writeFileSync(arPath, content, 'utf8');
+console.log('Classroom, Co-op and Mini-games Arabic translation pass complete.');
