@@ -1,12 +1,19 @@
 import { StorageAdapter } from './StorageAdapter';
 import { User, UserRole, Classroom, UniversalLessonUnit, BusinessSimulation, Book, CMSContent, Assignment, Submission, StudentGroup, Rubric } from '../../types';
 import { Logger } from '../logger';
-import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 
 export class SupabaseAdapter implements StorageAdapter {
     public get client() {
         return supabase;
+    }
+
+    public isTableMissing(error: any): boolean {
+        if (!error) return false;
+        const code = String(error.code || '');
+        const message = String(error.message || '').toLowerCase();
+        return code === '42P01' || message.includes('relation') && message.includes('does not exist');
     }
 
     async initialize(): Promise<void> {
@@ -54,6 +61,8 @@ export class SupabaseAdapter implements StorageAdapter {
                 { data: games, error: gamesErr },
                 { data: books, error: booksErr },
                 { data: cmsRows, error: cmsErr },
+                { data: stockPortfolios, error: stockPortfoliosErr },
+                { data: corpMembers, error: corpMembersErr },
             ] = await Promise.all([
                 supabase!.from('profiles').select('*, subscription_tier, subscription_status, billing_cycle, invite_code'),
                 supabase!.from('classrooms').select('*'),
@@ -61,30 +70,49 @@ export class SupabaseAdapter implements StorageAdapter {
                 supabase!.from('submissions').select('*'),
                 supabase!.from('games').select('*'),
                 supabase!.from('books').select('*'),
-                supabase!.from('cms_content').select('*')
+                supabase!.from('cms_content').select('*'),
+                supabase!.from('stock_portfolio').select('*'),
+                supabase!.from('corporation_members').select('*')
             ]);
 
             // ✅ SECURITY FIX: Check every query result — the 7th (cms_content) was silently discarded before.
-            [profilesErr, classroomsErr, assignmentsErr, submissionsErr, gamesErr, booksErr, cmsErr]
-                .filter(Boolean)
-                .forEach(err => Logger.error('Supabase loadAllData partial failure', err));
+            const errors = [profilesErr, classroomsErr, assignmentsErr, submissionsErr, gamesErr, booksErr, cmsErr].filter(Boolean);
+            
+            if (errors.length > 0) {
+                errors.forEach(err => Logger.error('Supabase loadAllData partial failure', err));
+                
+                // If the profiles table is missing, the whole app is likely uninitialized
+                if (profilesErr && this.isTableMissing(profilesErr)) {
+                    throw new Error("DATABASE_NOT_INITIALIZED: profiles table missing");
+                }
+            }
+
+            if (stockPortfoliosErr) {
+                Logger.error("Supabase: failed to load stock_portfolio", stockPortfoliosErr);
+            }
+            if (corpMembersErr) {
+                Logger.error("Supabase: failed to load corporation_members", corpMembersErr);
+            }
 
             // Transform profiles to User objects (Snake case -> Camel case if needed, or rely on direct mapping if schema matches)
-            // Note: Schema uses snake_case (e.g. biz_coins), Types use camelCase (bizCoins).
+            // Note: Schema uses snake_case (e.g. pp_tokens), Types use camelCase (ppTokens).
             // We need a mapper. For now, assuming basic mapping or we'll need a robust transformer.
 
             // Temporary: Returning empty for now to avoid compilation errors until mappers are written.
             // In a real implementation, we would map `profiles` -> `users` here.
 
             return {
-                users: (profiles || []).map(p => this.mapProfileToUser(p, profiles || [])),
+                users: (profiles || []).map(p => {
+                    const myCorp = (corpMembers || []).find((cm: any) => cm.user_id === p.id);
+                    return this.mapProfileToUser(p, profiles || [], stockPortfolios || [], myCorp?.corporation_id);
+                }),
                 classrooms: (classrooms || []).map(c => this.mapRowToClassroom(c)),
                 lessons: [], // Lessons might be static or fetched
                 games: (games || []) as unknown as BusinessSimulation[],
                 library: (books || []) as unknown as Book[],
-                cmsContent: {} as CMSContent, // TODO: map CMS
-                assignments: (assignments || []) as unknown as Assignment[],
-                submissions: (submissions || []) as unknown as Submission[],
+                cmsContent: {} as CMSContent, // Default empty CMS store snapshot
+                assignments: (assignments || []).map(a => this.mapRowToAssignment(a)),
+                submissions: (submissions || []).map(s => this.mapRowToSubmission(s)),
                 studentGroups: [],
                 rubrics: []
             };
@@ -99,7 +127,12 @@ export class SupabaseAdapter implements StorageAdapter {
     // ✅ SECURITY FIX: Public mappers — allows type-safe access from store slices,
     // eliminating all `(supabaseAdapter as any).mapXxx()` encapsulation bypasses.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public mapProfileToUser(profile: any, allProfiles?: any[]): User {
+    public mapProfileToUser(
+        profile: any,
+        allProfiles?: any[],
+        stockPortfolios?: any[],
+        corporationId?: string
+    ): User {
         const user: User = {
             id: profile.id,
             name: profile.username || 'Unknown', // profile table has username
@@ -113,8 +146,9 @@ export class SupabaseAdapter implements StorageAdapter {
             })(),
             parentId: profile.parent_id,
             xp: profile.xp,
+            seasonXp: profile.season_xp || 0,
             level: profile.level,
-            bizCoins: profile.biz_coins, // DB snake_case -> TS camelCase
+            ppTokens: profile.pp_tokens, // DB snake_case -> TS camelCase
             inventory: profile.inventory || [],
             badges: profile.badges || [],
             settings: profile.settings || {},
@@ -140,7 +174,20 @@ export class SupabaseAdapter implements StorageAdapter {
             unlockedSkills: [],
             referralCode: profile.referral_code || profile.invite_code, // fallback to invite_code if it exists
             referredBy: profile.referred_by,
-            totalReferrals: profile.total_referrals || 0
+            totalReferrals: profile.total_referrals || 0,
+            // Year 2 Hydrations
+            lastSpinDate: profile.settings?.lastSpinDate || undefined,
+            totalSpins: profile.settings?.totalSpins || 0,
+            stockPortfolio: stockPortfolios
+                ? stockPortfolios
+                    .filter((sp: any) => sp.user_id === profile.id)
+                    .map((sp: any) => ({
+                        stockId: sp.stock_id,
+                        shares: sp.quantity,
+                        avgBuyPrice: sp.avg_buy_price
+                    }))
+                : [],
+            corporationId: corporationId || undefined
         };
         
         // Apply Subscription Inheritance (Parent -> Kid) and Parent-Child Link (Kid -> Parent)
@@ -183,6 +230,46 @@ export class SupabaseAdapter implements StorageAdapter {
         };
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public mapRowToAssignment(row: any): Assignment {
+        return {
+            id: row.id,
+            classId: row.classroom_id, // DB classroom_id -> TS classId
+            lessonId: row.lesson_id,
+            title: row.title,
+            description: row.description,
+            studentGroupId: row.student_group_id,
+            specificStudentIds: row.specific_student_ids || [],
+            scheduledAt: row.scheduled_at,
+            dueDate: row.due_date,
+            rubricId: row.rubric_id,
+            maxPoints: row.max_points,
+            resourceUrl: row.resource_url,
+            createdAt: row.created_at,
+            status: row.status
+        };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public mapRowToSubmission(row: any): Submission {
+        return {
+            id: row.id,
+            assignmentId: row.assignment_id,
+            studentId: row.student_id,
+            submittedAt: row.submitted_at,
+            status: row.status,
+            content: row.content,
+            grade: row.grade ? Number(row.grade) : undefined,
+            feedback: row.feedback,
+            // Fields that might be missing in DB but in TS type
+            audioFeedbackUrl: row.audio_feedback_url,
+            rubricScores: row.rubric_scores,
+            letterGrade: row.letter_grade,
+            ppTokensAwarded: row.pp_tokens_awarded,
+            xpGained: row.xp_gained
+        };
+    }
+
     async saveUser(user: User): Promise<void> {
         if (!isSupabaseConfigured()) return;
 
@@ -192,11 +279,16 @@ export class SupabaseAdapter implements StorageAdapter {
             role: user.role.toLowerCase(),
             email: (user as any).email || null,
             xp: user.xp,
+            season_xp: user.seasonXp,
             level: user.level,
-            biz_coins: user.bizCoins,
+            pp_tokens: user.ppTokens,
             inventory: user.inventory,
             badges: user.badges,
-            settings: user.settings,
+            settings: {
+                ...user.settings,
+                lastSpinDate: user.lastSpinDate,
+                totalSpins: user.totalSpins
+            },
             hq_level: user.hqLevel,
             portfolio: user.portfolio,
             placed_items: user.placedItems,
@@ -209,12 +301,9 @@ export class SupabaseAdapter implements StorageAdapter {
             // these columns do not exist in the profiles table schema.
         };
 
-        // Use service-role client if available so admin saves bypass RLS.
-        // We use update→insert instead of upsert to avoid Supabase checking
-        // both INSERT + UPDATE policies simultaneously (which can cause false
-        // RLS violations even with the service-role key).
-        const client = supabaseAdmin ?? supabase!;
-        const { data: updated, error: updateError } = await client
+        // ✅ SECURITY: Use the anon client — RLS policy ensures users can only write their own row.
+        // The service_role key is NOT available on the client (see lib/supabase.ts).
+        const { data: updated, error: updateError } = await supabase!
             .from('profiles')
             .update(profile)
             .eq('id', user.id)
@@ -227,18 +316,27 @@ export class SupabaseAdapter implements StorageAdapter {
 
         // If no row was updated (new user not yet in profiles), insert instead
         if (!updated || updated.length === 0) {
-            const { error: insertError } = await client.from('profiles').insert(profile);
+            const { error: insertError } = await supabase!.from('profiles').insert(profile);
             if (insertError) {
                 Logger.error("Supabase: Save User (insert) Failed", { error: insertError.message, userId: user.id });
                 throw insertError;
+            }
+        }
+
+        // Sync stock portfolio
+        if (user.stockPortfolio) {
+            try {
+                await this.saveStockPortfolio(user.id, user.stockPortfolio);
+            } catch (err) {
+                Logger.error("Supabase: Save Stock Portfolio inside saveUser failed", err);
             }
         }
     }
 
     async deleteUser(userId: string): Promise<void> {
         if (!isSupabaseConfigured()) return;
-        const client = supabaseAdmin ?? supabase!;
-        const { error } = await client.from('profiles').delete().eq('id', userId);
+        // ✅ SECURITY: Anon client with RLS. Only admin-role users should call this.
+        const { error } = await supabase!.from('profiles').delete().eq('id', userId);
         if (error) {
             Logger.error("Supabase: Delete User Failed", { error: error.message, userId });
             throw error;
@@ -278,7 +376,7 @@ export class SupabaseAdapter implements StorageAdapter {
 
         const row = {
             id: assignment.id,
-            class_id: assignment.classId,
+            classroom_id: assignment.classId, // FIX: class_id -> classroom_id
             lesson_id: assignment.lessonId,
             title: assignment.title,
             description: assignment.description,
@@ -320,17 +418,54 @@ export class SupabaseAdapter implements StorageAdapter {
             status: submission.status,
             content: submission.content,
             grade: submission.grade,
-            feedback: submission.feedback,
-            audio_feedback_url: submission.audioFeedbackUrl,
-            rubric_scores: submission.rubricScores,
-            letter_grade: submission.letterGrade,
-            biz_coins_awarded: submission.bizCoinsAwarded,
-            xp_gained: submission.xpGained
+            feedback: submission.feedback
+            // Omitted fields not present in current DB schema (MASTER_SCHEMA.sql):
+            // audio_feedback_url, rubric_scores, letter_grade, pp_tokens_awarded, xp_gained
         };
 
         const { error } = await supabase!.from('submissions').upsert(row);
         if (error) {
             Logger.error("Supabase: Save Submission Failed", { error: error.message, submissionId: submission.id });
+            throw error;
+        }
+    }
+
+    async deleteSubmission(submissionId: string): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+        const { error } = await supabase!.from('submissions').delete().eq('id', submissionId);
+        if (error) {
+            Logger.error("Supabase: Delete Submission Failed", { error: error.message, submissionId });
+            throw error;
+        }
+    }
+
+    async saveStudentGroup(group: StudentGroup): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+        const row = {
+            id: group.id,
+            classroom_id: group.classId,
+            name: group.name,
+            student_ids: group.studentIds,
+            color: group.color
+        };
+        const { error } = await supabase!.from('student_groups').upsert(row);
+        if (error) {
+            Logger.error("Supabase: Save Student Group Failed", { error: error.message, groupId: group.id });
+            throw error;
+        }
+    }
+
+    async saveRubric(rubric: Rubric): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+        const row = {
+            id: rubric.id,
+            teacher_id: rubric.teacherId,
+            title: rubric.title,
+            criteria: rubric.criteria
+        };
+        const { error } = await supabase!.from('rubrics').upsert(row);
+        if (error) {
+            Logger.error("Supabase: Save Rubric Failed", { error: error.message, rubricId: rubric.id });
             throw error;
         }
     }
@@ -454,6 +589,130 @@ export class SupabaseAdapter implements StorageAdapter {
         if (error) {
             Logger.error("Supabase: Save CMS Content Failed", { error: error.message });
             throw error;
+        }
+    }
+
+    async saveStockPortfolio(userId: string, holdings: any[]): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+        
+        try {
+            // Delete all existing holdings for the user
+            const { error: deleteError } = await supabase!
+                .from('stock_portfolio')
+                .delete()
+                .eq('user_id', userId);
+                
+            if (deleteError) throw deleteError;
+
+            if (holdings.length === 0) return;
+
+            const updates = holdings.map(h => ({
+                user_id: userId,
+                stock_id: h.stockId,
+                quantity: h.shares,
+                avg_buy_price: Math.round(h.avgBuyPrice),
+                last_updated: new Date().toISOString()
+            }));
+
+            const { error: upsertError } = await supabase!
+                .from('stock_portfolio')
+                .upsert(updates);
+
+            if (upsertError) throw upsertError;
+        } catch (err) {
+            Logger.error("Supabase: saveStockPortfolio failed", err);
+            throw err;
+        }
+    }
+
+    async createCorporation(userId: string, corp: { name: string; motto?: string; emoji: string; color: string }): Promise<string> {
+        if (!isSupabaseConfigured()) {
+            return `corp_${Date.now()}`;
+        }
+        
+        try {
+            const { data: newCorpData, error: corpError } = await supabase!
+                .from('corporations')
+                .insert({
+                    name: corp.name,
+                    motto: corp.motto || 'Building the future together',
+                    logo_emoji: corp.emoji,
+                    logo_color: corp.color,
+                    founder_id: userId,
+                    logo_icon: 'building'
+                })
+                .select('id')
+                .single();
+
+            if (corpError) throw corpError;
+
+            const corpId = newCorpData.id;
+
+            const { error: memberError } = await supabase!
+                .from('corporation_members')
+                .insert({
+                    corporation_id: corpId,
+                    user_id: userId,
+                    role: 'CEO'
+                });
+
+            if (memberError) {
+                await supabase!.from('corporations').delete().eq('id', corpId);
+                throw memberError;
+            }
+
+            return corpId;
+        } catch (err) {
+            Logger.error("Supabase: createCorporation failed", err);
+            throw err;
+        }
+    }
+
+    async joinCorporation(userId: string, corporationId: string, role: string = 'Member'): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+
+        try {
+            const { error } = await supabase!
+                .from('corporation_members')
+                .insert({
+                    corporation_id: corporationId,
+                    user_id: userId,
+                    role: role
+                });
+
+            if (error) throw error;
+        } catch (err) {
+            Logger.error("Supabase: joinCorporation failed", err);
+            throw err;
+        }
+    }
+
+    async leaveCorporation(userId: string, corporationId: string): Promise<void> {
+        if (!isSupabaseConfigured()) return;
+
+        try {
+            const { error } = await supabase!
+                .from('corporation_members')
+                .delete()
+                .eq('user_id', userId)
+                .eq('corporation_id', corporationId);
+
+            if (error) throw error;
+
+            const { data: members, error: countError } = await supabase!
+                .from('corporation_members')
+                .select('id')
+                .eq('corporation_id', corporationId);
+
+            if (!countError && (!members || members.length === 0)) {
+                await supabase!
+                    .from('corporations')
+                    .delete()
+                    .eq('id', corporationId);
+            }
+        } catch (err) {
+            Logger.error("Supabase: leaveCorporation failed", err);
+            throw err;
         }
     }
 }

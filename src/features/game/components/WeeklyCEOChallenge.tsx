@@ -45,7 +45,7 @@ const CHALLENGE_POOL: WeeklyChallenge[] = [
     { id: 'c26', emoji: '🎪', title: 'Show Time', desc: 'Visit the Biz Store once', reward: { type: 'xp', value: 100 }, action: 'visit_store' },
     { id: 'c27', emoji: '🦁', title: 'Top Dog', desc: 'Check the global Leaderboard', reward: { type: 'coins', value: 150 }, action: 'check_leaderboard' },
     { id: 'c28', emoji: '🎁', title: 'Gift Day', desc: 'Use the Daily Spin Wheel', reward: { type: 'xp', value: 150 }, action: 'spin_wheel' },
-    { id: 'c29', emoji: '🏦', title: 'Banker Mode', desc: 'Earn BizCoins from a Gig', reward: { type: 'coins', value: 275 }, action: 'do_gig' },
+    { id: 'c29', emoji: '🏦', title: 'Banker Mode', desc: 'Earn ppTokens from a Gig', reward: { type: 'coins', value: 275 }, action: 'do_gig' },
     { id: 'c30', emoji: '📡', title: 'Signal Boost', desc: 'Complete a lesson on the Learning Map', reward: { type: 'xp', value: 275 }, action: 'complete_lesson' },
 ];
 
@@ -198,8 +198,8 @@ export const WeeklyCEOChallenge: React.FC<WeeklyCEOChallengeProps> = ({ onClose,
                                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{ch.desc}</p>
                                 <div className={`flex items-center gap-1 mt-1 text-xs font-bold ${ch.reward.type === 'coins' ? 'text-yellow-600' : 'text-blue-500'}`}>
                                     {ch.reward.type === 'coins'
-                                        ? <><Coins size={12} /> +{ch.reward.value} BizCoins</>
-                                        : <><Zap size={12} /> +{ch.reward.value} XP</>
+                                        ? <><Coins size={12} /> +{ch.reward.value} {t('weekly.ppTokens_label', { defaultValue: 'ppTokens' })}</>
+                                        : <><Zap size={12} /> +{ch.reward.value} {t('weekly.xp_label', { defaultValue: 'XP' })}</>
                                     }
                                 </div>
                             </div>
@@ -218,7 +218,7 @@ export const WeeklyCEOChallenge: React.FC<WeeklyCEOChallengeProps> = ({ onClose,
                                             onClick={() => handleNavigate(ch.action)}
                                             className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1"
                                         >
-                                            Go <ChevronRight size={10} />
+                                            {t('weekly.go', { defaultValue: 'Go' })} <ChevronRight size={10} />
                                         </button>
                                     )}
                                 </div>
@@ -278,7 +278,7 @@ export const WeeklyCEOChallenge: React.FC<WeeklyCEOChallengeProps> = ({ onClose,
                             <h3 className="text-2xl font-black text-yellow-500">{t('weekly.all_done_title')}</h3>
                             <p className="text-gray-500 dark:text-gray-400 text-sm">{t('weekly.all_done_desc')}</p>
                             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl px-6 py-3 text-white font-black text-xl">
-                                +500 🪙 Bonus!
+                                {t('weekly.bonus_coins', { defaultValue: '+500 💰 Bonus!' })}
                             </div>
                             <button
                                 onClick={() => setShowBonus(false)}

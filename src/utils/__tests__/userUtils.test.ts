@@ -18,7 +18,7 @@ const makeUser = (overrides: Partial<User>): User => ({
     role: 'KID' as any,
     xp: 0,
     level: 1,
-    bizCoins: 0,
+    ppTokens: 0,
     inventory: [],
     badges: [],
     settings: {} as any,

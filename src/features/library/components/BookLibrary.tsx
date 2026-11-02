@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import { useEducationStore } from '../../../store/educationStore';
-import { Book, UserRole } from '../../../types';
+import { Book, UserRole, BookTask } from "../../../types";
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Star, X, Lock, CheckCircle2, CheckCircle, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -9,10 +9,11 @@ import InvestorPitchModal from '../../game/components/InvestorPitchModal';
 import SmartImage from '../../../components/ui/SmartImage';
 import BookTaskCard from './BookTaskCard';
 import BookTaskModal from './BookTaskModal';
-import { BookTask } from '../../../types';
 import { hasSchoolBypass } from '../../../utils/premiumAccess';
-import ExclusiveBookCard from './ExclusiveBookCard';
 import { CLASSIC_BOOKS } from '../data/classicBooks';
+import { MORE_BOOKS } from '../data/moreBooks';
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import { Logger } from '../../../services/logger';
 
 // IDs of Profits Patrol Exclusive books (Moved inside component for HMR sync)
 
@@ -24,6 +25,8 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
     () => new Set(storeExclusiveBooks.map((b) => b.id)),
     [storeExclusiveBooks]
   );
+
+  Logger.debug('[DEBUG] BookLibrary: storeExclusiveBooks IDs:', { ids: Array.from(EXCLUSIVE_IDS) });
   const {
     library,
     toggleAdminMode,
@@ -75,7 +78,7 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
 
   const getFullContent = (book: Book) => {
     const normalizedId = book.id.replace(/-/g, '_');
-    const ageSuffix = user?.age && user.age < 13 ? '_child' : '_teen';
+    const ageSuffix = user?.age && user.age < 10 ? '_child' : '_teen';
     
     // 1. Try age-specific library_books key
     const libraryAgeKey = `library_books.${normalizedId}.fullContent${ageSuffix}` as any;
@@ -108,7 +111,7 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
   const getTranslatedTitle = (bookId: string, defaultTitle: string) => {
     if (EXCLUSIVE_IDS.has(bookId)) {
       const exclusiveTitle = getExclusiveT(bookId, 'title');
-      console.log(
+      Logger.debug(
         `[DEBUG] getTranslatedTitle (Exclusive): bookId="${bookId}", resultingTitle="${exclusiveTitle || defaultTitle}"`
       );
       if (exclusiveTitle) return exclusiveTitle;
@@ -140,13 +143,28 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
 
   const isInternLocked = checkInternLocked();
 
-  // Exclusively-sourced from store (admin-managed, initialized from MORE_BOOKS)
-  const exclusiveBooks = storeExclusiveBooks;
-  // Bestsellers always show the static CLASSIC_BOOKS list (immune to localStorage state)
-  const bestellerBooks = CLASSIC_BOOKS;
+  // Bestsellers always guarantee fresh verified local coverUrl from static CLASSIC_BOOKS
+  const bestellerBooks = React.useMemo(() => {
+    return CLASSIC_BOOKS.map((staticBook) => {
+      const storeBook = library.find((b) => b.id === staticBook.id);
+      return storeBook ? { ...storeBook, coverUrl: staticBook.coverUrl || storeBook.coverUrl } : staticBook;
+    });
+  }, [library]);
+
+  // Exclusives always guarantee fresh verified local coverUrl from static MORE_BOOKS
+  const exclusiveBooks = React.useMemo(() => {
+    const moreMap = new Map(MORE_BOOKS.map((b) => [b.id, b]));
+    const sourceList = storeExclusiveBooks && storeExclusiveBooks.length > 0 ? storeExclusiveBooks : MORE_BOOKS;
+    return sourceList.map((book) => {
+      const staticBook = moreMap.get(book.id);
+      return staticBook ? { ...book, coverUrl: staticBook.coverUrl || book.coverUrl } : book;
+    });
+  }, [storeExclusiveBooks]);
+
   const displayedBooks = activeTab === 'exclusives' ? exclusiveBooks : bestellerBooks;
 
   const isExclusiveTab = activeTab === 'exclusives';
+  const isMobile = useIsMobile();
 
   return (
     <div className="pb-20 max-w-6xl mx-auto">
@@ -186,15 +204,13 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
           onClick={() => setActiveTab('bestsellers')}
           aria-pressed={!isExclusiveTab}
           aria-label="Business Bestsellers tab"
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-sm transition-all shadow ${
-            !isExclusiveTab
-              ? 'bg-amber-500 text-white shadow-amber-300 scale-105'
-              : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-amber-50 dark:hover:bg-gray-700'
+          className={`flex items-center gap-2 ${
+            !isExclusiveTab ? 'btn' : 'btn btn--ghost'
           }`}
         >
-          <BookOpen size={16} />
+          <BookOpen size={18} />
           {t('library.tab_bestsellers')}
-          <span className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full">
+          <span className="opacity-80 text-xs px-2 py-0.5 rounded-full border border-current">
             {bestellerBooks.length}
           </span>
         </button>
@@ -203,40 +219,22 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
           onClick={() => setActiveTab('exclusives')}
           aria-pressed={isExclusiveTab}
           aria-label="Profits Patrol Exclusives tab"
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-sm transition-all shadow ${
-            isExclusiveTab
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-violet-300 scale-105'
-              : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-violet-50 dark:hover:bg-gray-700'
+          className={`flex items-center gap-2 ${
+            isExclusiveTab ? 'btn' : 'btn btn--ghost'
           }`}
         >
-          <Sparkles size={16} />
+          <Sparkles size={18} />
           {t('library.tab_exclusives')}
-          <span className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300 text-[10px] font-black px-2 py-0.5 rounded-full">
+          <span className="opacity-80 text-xs px-2 py-0.5 rounded-full border border-current">
             {exclusiveBooks.length}
           </span>
         </button>
       </div>
 
-      {/* Exclusive Banner */}
-      {isExclusiveTab && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mx-4 mb-6 p-4 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center gap-4 shadow-lg"
-        >
-          <span className="text-4xl">🚀</span>
-          <div>
-            <p className="font-black text-lg">{t('library.tab_exclusives')}</p>
-            <p className="text-violet-200 text-sm font-semibold">
-              {t('library.exclusive_banner_desc')}
-            </p>
-          </div>
-        </motion.div>
-      )}
-
       {/* Bookshelf Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 px-4 pb-8">
         {displayedBooks.map((book, index) => {
+          Logger.debug(`[DEBUG] BookCard [${index}]: id="${book.id}", title="${book.title}", coverUrl="${book.coverUrl}"`);
           const isRead = user?.readBookIds?.includes(book.id);
           const isExclusive = EXCLUSIVE_IDS.has(book.id);
           // Gating Logic: Interns only see first 3 books (Admins/Bypass bypass)
@@ -248,13 +246,8 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.08 }}
-              className={`group relative rounded-e-2xl rounded-s-md shadow-md flex flex-col overflow-hidden
-                ${
-                  isExclusive
-                    ? 'bg-violet-50 dark:bg-violet-950/40 border-e-8 border-b-8 border-violet-300 dark:border-violet-800'
-                    : 'bg-amber-50 dark:bg-gray-800 border-e-8 border-b-8 border-amber-200 dark:border-gray-700'
-                }
-                ${isLocked ? 'cursor-pointer' : 'hover:-translate-y-2 hover:shadow-xl transition-all duration-300'}
+              className={`card group relative flex flex-col overflow-hidden !p-0 transition-transform duration-200
+                ${isLocked ? 'cursor-pointer' : 'hover:-translate-y-1 hover:shadow-lg'}
             `}
               onClick={() => isLocked && setShowPaywall(true)}
             >
@@ -289,18 +282,18 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
                 </div>
               )}
 
-              <div className={`p-6 flex gap-6 items-start ${isLocked ? 'opacity-50' : ''}`}>
+              <div className={`p-3 md:p-6 flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start ${isLocked ? 'opacity-50' : ''}`}>
                 {/* Cover */}
-                <div className="w-24 h-36 shrink-0 rounded-lg shadow-md overflow-hidden border-2 border-white dark:border-gray-600 transform -rotate-2 group-hover:rotate-0 transition-transform duration-300 bg-gray-200 dark:bg-gray-700">
+                <div className="w-20 h-28 md:w-24 md:h-36 shrink-0 rounded-lg shadow-md overflow-hidden border-2 border-white dark:border-gray-600 transform -rotate-2 group-hover:rotate-0 transition-transform duration-300 bg-gray-200 dark:bg-gray-700">
                   <SmartImage
                     src={book.coverUrl}
-                    alt={book.title}
+                    alt={getTranslatedTitle(book.id, book.title)}
                     type="book"
                     className="w-full h-full object-cover"
                   />
                 </div>
 
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 w-full text-center md:text-start">
                   <div
                     className={`inline-block bg-white dark:bg-gray-700 text-[10px] font-black uppercase px-2 py-1 rounded mb-2 border tracking-wider
                     ${
@@ -309,9 +302,9 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
                         : 'text-amber-800 dark:text-amber-400 border-amber-100 dark:border-gray-600'
                     }`}
                   >
-                    {book.category}
+                    {t(`library.categories.${book.category.toLowerCase()}` as any)}
                   </div>
-                  <h3 className="font-black text-gray-800 dark:text-white text-lg leading-tight mb-1">
+                  <h3 className="font-black text-gray-800 dark:text-white text-sm md:text-lg leading-tight mb-1">
                     {getTranslatedTitle(book.id, book.title)}
                   </h3>
                   <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4">
@@ -331,22 +324,18 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
               </div>
 
               <div
-                className={`mt-auto p-4 border-t ${isExclusive ? 'border-violet-200 dark:border-violet-900/50' : 'border-amber-100 dark:border-gray-700'} bg-white/50 dark:bg-gray-800/50 rounded-ee-xl`}
+                className="mt-auto p-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]"
               >
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleReadSummary(book, isLocked);
                   }}
-                  className={`w-full py-3 text-white font-black rounded-xl flex items-center justify-center gap-2 transition-colors
-                    ${
-                      isLocked
-                        ? 'bg-gray-500 cursor-not-allowed shadow-none'
-                        : isExclusive
-                          ? 'bg-violet-500 dark:bg-violet-600 btn-juicy-violet hover:bg-violet-600 dark:hover:bg-violet-500 shadow-[0_4px_0_0_rgba(109,40,217,1)] dark:shadow-[0_4px_0_0_rgba(76,29,149,1)]'
-                          : 'bg-amber-500 dark:bg-amber-600 btn-juicy hover:bg-amber-600 dark:hover:bg-amber-500 shadow-[0_4px_0_0_rgba(180,83,9,1)] dark:shadow-[0_4px_0_0_rgba(146,64,14,1)]'
-                    }
-                `}
+                  className={`w-full ${
+                    isLocked
+                      ? 'btn btn--ghost opacity-60 cursor-not-allowed'
+                      : 'btn'
+                  }`}
                 >
                   {isLocked ? <Lock size={18} /> : <BookOpen size={18} />}
                   {isLocked ? t('library.unlock') : t('library.read_summary')}
@@ -366,15 +355,33 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
       {/* Book Detail Modal */}
       <AnimatePresence>
         {selectedBook && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedBook(null)}
+          >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 dark:text-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border-2 border-white/10"
+              initial={isMobile ? { y: '100%' } : { scale: 0.9, opacity: 0 }}
+              animate={isMobile ? { y: 0 } : { scale: 1, opacity: 1 }}
+              exit={isMobile ? { y: '100%' } : { scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`card shadow-2xl overflow-hidden flex flex-col !p-0
+                ${isMobile 
+                    ? 'w-full rounded-t-[32px] max-h-[92vh] pb-safe' 
+                    : 'rounded-3xl max-w-2xl w-full m-4 max-h-[85vh]'
+                }
+              `}
             >
+              {isMobile && (
+                  <div className="flex flex-col items-center pt-2 bg-[var(--color-surface)]">
+                      <div className="bottom-sheet-handle" />
+                  </div>
+              )}
               {/* Modal Header */}
-              <div className="bg-amber-50 dark:bg-gray-950 p-6 border-b border-amber-100 dark:border-gray-800 flex justify-between items-start">
+              <div className="bg-[var(--color-surface)] p-6 border-b border-[var(--color-border)] flex justify-between items-start">
                 <div className="flex gap-6">
                   <div className="w-24 h-36 rounded-lg shadow-lg border-4 border-white dark:border-gray-700 overflow-hidden shrink-0 bg-gray-200 dark:bg-gray-700">
                     <SmartImage
@@ -386,7 +393,7 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
                   </div>
                   <div>
                     <div className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-1">
-                      {selectedBook.category}
+                      {t(`library.categories.${selectedBook.category.toLowerCase()}` as any)}
                     </div>
                     <h2 className="text-2xl md:text-3xl font-black text-gray-800 dark:text-white mb-1">
                       {getTranslatedTitle(selectedBook.id, selectedBook.title)}
@@ -396,12 +403,14 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedBook(null)}
-                  className="p-2 bg-white dark:bg-gray-800 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <X size={24} />
-                </button>
+                {!isMobile && (
+                  <button
+                    onClick={() => setSelectedBook(null)}
+                    className="btn btn--ghost !p-2 !rounded-full text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
               </div>
 
               {/* Modal Body */}
@@ -597,16 +606,16 @@ const BookLibrary: React.FC<BookLibraryProps> = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 flex justify-end">
+              <div className="p-6 border-t border-[var(--color-border)] bg-[var(--color-surface)] flex justify-end">
                 <button
                   onClick={() => setSelectedBook(null)}
-                  className="bg-gray-800 dark:bg-white text-white dark:text-gray-900 px-8 py-3 rounded-xl font-bold hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors"
+                  className="btn btn--ghost"
                 >
                   {t('library.close_book')}
                 </button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

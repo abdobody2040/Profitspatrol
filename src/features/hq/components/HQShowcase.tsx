@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 interface ShowcaseEntry {
     id: string;
     name: string;
-    hqName: string;
+    hqNameKey: string;
     level: number;
     furnitureCount: number;
     avatarEmoji: string;
@@ -20,7 +20,7 @@ const THIS_WEEK_SHOWCASES: ShowcaseEntry[] = [
     {
         id: 'showcase_1',
         name: 'Fatima A.',
-        hqName: 'Crescent Tower HQ',
+        hqNameKey: 'hqShowcase.crescent_tower',
         level: 9,
         furnitureCount: 24,
         avatarEmoji: '👩‍💼',
@@ -46,7 +46,7 @@ const THIS_WEEK_SHOWCASES: ShowcaseEntry[] = [
     {
         id: 'showcase_2',
         name: 'Amir K.',
-        hqName: 'Goldmine Operations',
+        hqNameKey: 'hqShowcase.goldmine_ops',
         level: 10,
         furnitureCount: 31,
         avatarEmoji: '🧑‍💻',
@@ -69,7 +69,7 @@ const THIS_WEEK_SHOWCASES: ShowcaseEntry[] = [
     {
         id: 'showcase_3',
         name: 'Sofia R.',
-        hqName: 'Pink Panther Studio',
+        hqNameKey: 'hqShowcase.pink_panther',
         level: 7,
         furnitureCount: 18,
         avatarEmoji: '👩‍🎨',
@@ -93,15 +93,16 @@ const THIS_WEEK_SHOWCASES: ShowcaseEntry[] = [
 export const HQShowcase: React.FC = () => {
     const { user } = useAppStore();
     const [selected, setSelected] = React.useState<string | null>(null);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.language === 'ar';
 
     const now = new Date();
     const monday = new Date(now);
     monday.setDate(now.getDate() - now.getDay() + 1);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const weekLabel = `${fmt(monday)} – ${fmt(sunday)}`;
+    const fmt = (d: Date) => d.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' });
+    const weekLabel = isRTL ? `${fmt(sunday)} – ${fmt(monday)}` : `${fmt(monday)} – ${fmt(sunday)}`;
 
     return (
         <div className="bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-indigo-950 rounded-2xl p-5 border border-indigo-100 dark:border-indigo-900/40 shadow-lg dark:shadow-black/30">
@@ -148,7 +149,7 @@ export const HQShowcase: React.FC = () => {
                             {/* Info */}
                             <div className="flex-1 min-w-0">
                                 <div className={`text-sm font-extrabold truncate ${selected === entry.id ? 'text-indigo-950 dark:text-white' : 'text-gray-800 dark:text-gray-100'}`}>
-                                    {entry.hqName}
+                                    {t(entry.hqNameKey as any)}
                                 </div>
                                 <div className={`text-xs mt-0.5 ${selected === entry.id ? 'text-indigo-800 dark:text-white/70' : 'text-gray-500 dark:text-gray-400'}`}>
                                     {t('hqShowcase.byUser', { name: entry.name })} · {t('hqShowcase.lvl', { level: entry.level })} · {entry.furnitureCount} {t('hqShowcase.items')}
@@ -204,7 +205,7 @@ export const HQShowcase: React.FC = () => {
 
             {/* Your HQ status */}
             {user && (
-                <div className="mt-3.5 p-3 bg-gray-50 dark:bg-white/4 rounded-xl border border-gray-100 dark:border-white/7 flex items-center gap-3">
+                <div className="mt-3.5 p-3 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/10 flex items-center gap-3">
                     <span className="text-xl">🧑</span>
                     <div className="flex-1">
                         <div className="text-sm font-semibold text-gray-600 dark:text-gray-400">

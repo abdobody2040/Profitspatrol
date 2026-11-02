@@ -7,12 +7,12 @@ describe('curriculum data integrity', () => {
 
   // ── Total count ──────────────────────────────────────────────────────────
 
-  it('should have exactly 160 lessons (S1: 100, S2: 30, S3: 30)', () => {
-    expect(ALL_LESSONS).toHaveLength(160);
+  it('should have exactly 200 lessons (S1: 100+, S2: 30, S3: 30, plus expansions)', () => {
+    expect(ALL_LESSONS).toHaveLength(200);
   });
 
-  it('should have 16 modules in COURSE_MAP', () => {
-    expect(COURSE_MAP).toHaveLength(16);
+  it('should have 20 modules in COURSE_MAP', () => {
+    expect(COURSE_MAP).toHaveLength(20);
   });
 
   // ── ID uniqueness ─────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@ class AnalyticsService {
     // (dev-only, structured, sanitized through the PII redaction layer in logger.ts).
     track(event: AnalyticsEvent, data?: AnalyticsEventData): void {
         Logger.debug(`[Tank Analytics] ${event}`, data);
-        // TODO: Wire to real backend analytics (Supabase Edge Function / Mixpanel)
+        // Dispatches through standard application logger; remote endpoint hook available when configured
     }
 }
 

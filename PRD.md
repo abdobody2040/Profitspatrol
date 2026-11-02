@@ -10,6 +10,8 @@
 
 - **Visuals**: Bright colors (Yellow/Green/Blue), rounded UI, confetti rewards, smooth animations.
 - **Tone**: Encouraging, energetic, and safe.
+- **Format**: Progressive Web App (PWA) with native install capabilities and offline caching for iPad/Mobile native feel. (✅ COMPLETED April 2026)
+- **Persistence**: AI Production Engineering & Persistent Memory System (`/.ai/`) for long-term project continuity and AI-assisted maintainability. (✅ COMPLETED May 2026)
 
 ---
 
@@ -40,8 +42,9 @@ Interactive mini-games where simulations teach economic concepts.
 Mechanics to retain user engagement.
 
 - **Economy**: `BizCoins` (Soft Currency) earned via lessons/games.
-- **Avatar System**: Buy clothes/accessories (Hats, Suits) to customize appearance.
+- **Avatar System & User Profile**: A unified human-avatar system where kids can customize their appearance (Hair, Outfit, Accessories, Background). Integrated directly into the User Profile to act as a single digital identity hub.
 - **Headquarters (HQ)**: Upgradeable office space with visual builder (Furniture, Decor).
+  - **3D Isometric Builder**: Added a persistent isometric grid view (using `IsometricGrid.tsx`) with wandering **NPC Employees** to simulate a living business environment.
   - **Expanded Catalog**: 87 furniture items across 8 categories (Bedroom, Bathroom, Kitchen, Entertainment, Office, Pets, Tech, Food & Drinks).
   - **Furniture Reallocation**: Drag-and-drop system to move furniture between rooms or return items to inventory.
   - **Full Localization**: All furniture items and room names translated to Arabic.
@@ -52,9 +55,18 @@ Mechanics to retain user engagement.
 Structured content delivery.
 
 - **Universal Lesson Engine**: Slide-based learning (Intro -> Info -> Quiz -> Reward).
-- **Debate Dojo**: AI-powered debate arena to test Ethics & Logic skills.
+- **Debate Dojo**: AI-powered debate arena to test Ethics & Logic skills, featuring a **Logical Fallacy Detector** for critical analysis feedback.
 - **Curriculum**: Modules covering Savings, Investing, Marketing, Ethics.
-- **Library**: 100 summarized business books (e.g., "Rich Dad Poor Dad" for kids).
+- **Library**: 198 summarized business books (99 Classic, 99 Exclusive) with full Arabic localization parity.
+
+### D. AI Production Engineering (The "Brain")
+
+A persistent memory system to ensure long-term maintainability and session continuity.
+
+- **Persistent AI Context**: Detailed project overview, business goals, and tech stack in `/.ai/context.md`.
+- **Architectural Guardrails**: Strict engineering standards, UI rules, and database schemas documented in `/.ai/`.
+- **Session Continuity**: Reusable prompts and agent rules in `/.ai/agent-rules.md` for seamless handovers between AI sessions.
+- **Observability & Ops**: Strategy for monitoring, performance, and security auditing.
 
 ---
 
@@ -68,12 +80,24 @@ Structured content delivery.
 - **Parental Gate**: Math challenge for Child registration (Randomized for security).
 - **Invite Code**: Kids can link to parent account via unique 6-digit code during registration.
 - **Consent & Legal**: Mandatory Privacy Policy agreement. Dedicated pages for Privacy Policy, Terms of Service, and Refund Policy accessible from the public footer.
-- **Security**:
-  - Strong password enforcement (Min 8 chars, alphanumeric).
+- **Security & Hardening (May 2026)**:
+  - **Secret Protection**: `service_role` keys completely removed from client-side bundles.
+  - **Privileged RPCs**: Administrative actions (User management, Global fetches) migrated to server-side `SECURITY DEFINER` functions.
+  - **Immutable Audit Trail**: `security_audit_logs` table logs every sensitive event (promotions, token awards) with no direct API write access.
+  - **Rate Limiting**: 30-second cooldown on self-award RPCs to prevent automated exploitation.
+  - **Dependency Hardening**: `npm overrides` implemented for vulnerable transitive dependencies (`serialize-javascript`, `rollup-terser`).
   - **Hashing**: Client-side SHA-256 hashing (application layer) + Supabase Argon2 hashing (infrastructure layer).
   - **Provisioning**: Users must be created via **Supabase Auth API** (not manual SQL) to ensure valid identity linking and password hashes.
 - **Validation**: Unique Email and Username checks.
 - **Session**: Persistent login with secure ID generation (UUID).
+- **Auth Lifecycle Guard (Fixed Apr/May 2026)**: 
+  - **isAuthLoading**: A transient state that prevents the app from routing based on stale localStorage data before the Supabase session check resolves.
+  - **isRegistering**: Prevents race conditions during account creation where a concurrent session refresh would overwrite a new user object before the DB profile was ready.
+  - **Role Case-Sensitivity (May 2026)**: Enforces lowercase roles in both client-side metadata and server-side triggers to satisfy database check constraints (`kid`, `parent`, `teacher`, `admin`).
+- **Database Initialization (Apr 2026)**:
+  - **Diagnostic UI**: Interactive setup modal in Admin Dashboard for uninitialized environments.
+  - **Table Verification**: Real-time checking for relation existence before allowing dashboard access.
+  - **RLS Recursion Fix**: Implementation of `SECURITY DEFINER` functions to resolve circular dependencies between `classrooms` and `classroom_members`.
 
 ### 4.2 Security & Compliance (Refined Jan 2026)
 
@@ -97,8 +121,10 @@ Structured content delivery.
   - **Side Hustle Central**: Mobile-style "Gig App" with **20+ mini-games** (Dog Walking, Drone Pilot, Streaming) featuring:
     - **Varied Mechanics**: Tap, Swipe, Rhythm, and Quiz minigames.
     - **Exit Feature**: Ability to quit active gigs mid-progress.
+    - **Freemium Model**: The first gig and weekly featured gig are free; all other gigs require a Premium subscription.
     - **Balanced Economy**: High-reward tiers for advanced levels.
-  - **The Tank**: Voice-enabled AI Pitching Simulator with 5 diverse judges and negotiation mechanics.
+  - **Production & Manufacturing (Conveyor)**: Industrial games (Toy Factory, Recycling) using a conveyor-belt mechanic (`ConveyorTemplate.tsx`) for speed and quality control.
+  - **The Tank**: Voice-enabled AI Pitching Simulator redesigned with a **3-judge panel** on a dedicated "Tank Floor". Features multi-stage **Negotiation Mechanics** (Valuation/Equity sliders), judge patience levels, and deal-closing logic. Features Solo and Co-op modes with full Arabic localization.
   - **Tycoon Builder**: Idle clicker game (Cookie Clicker style).
   - **Pizza Dash**: Time management cooking game.
   - **Stock Market Simulator**: Buy/Sell logic with basic market events.
@@ -106,8 +132,8 @@ Structured content delivery.
 
 - **Pricing Specialist**: Interactive Supply & Demand graph simulator.
 - **Audience Matcher**: Drag-and-drop marketing segmentation game.
-- **Debate Dojo**: Argumentation arena with AI scoring (Ethics/Logic).
-- **Ollie Chat**: AI assistant for help and "Co-founder" advice (Powered by Universal AI Gateway).
+- **Debate Dojo**: Argumentation arena with AI scoring (Ethics/Logic). Features a Freemium model where the first topic is free and subsequent advanced topics are gated for Premium subscribers.
+- **Ollie Chat**: AI assistant for help and "Co-founder" advice (Powered by Universal AI Gateway). Ollie is also integrated into game templates (Repair/Clicker) to provide contextual guidance.
 
 ### 4.3 Education (Learn)
 
@@ -116,7 +142,7 @@ Structured content delivery.
 - **Boss Battles**: "Turnaround Scenarios" at the end of modules where students must save a failing business.
 - **Curriculum**: Interactive lessons with 'Universal Lesson Engine'.
 - **Debate Dojo**: AI-powered debate arena to test Ethics & Logic skills.
-- **Library**: 100 summarized business books (e.g., "Rich Dad Poor Dad" for kids) with **Age-Adapted Content** (Child/Teen modes) and **5 AI-Generated Tasks** per book (Quiz, Reflection, Action, Share, Apply).
+- **Library**: 198 summarized business books (99 Classic, 99 Exclusive) with **100% Arabic Localization Parity**, **Age-Adapted Content** (Child/Teen modes), and **5 AI-Generated Tasks** per book (Quiz, Reflection, Action, Share, Apply).
 
 ### 4.3 Branding & UI
 
@@ -140,12 +166,13 @@ Structured content delivery.
   - **Auto-Grade with Ollie**: AI-powered grading assistant (Score + Feedback + Rewards) using `gradeProjectWithOllie`.
   - **Scalable Prompts**: Centralized `project_prompts.ts` covering all modules.
   - **AI Services**: Centralized standard interface (`GeminiService`) for all AI features.
+  - **Economics**: Rewards system (PP Tokens/XP) linked to performance (>70% score).
 
 ### 4.5 Family Features
 
-- **Family Bounties**:
-  - **Job Board**: Parents can assign real-world tasks (e.g., "Wash Car") with virtual rewards.
-  - **Approval Workflow**: Parent must approve completion before BizCoins are released.
+- **Family Bounties (Jan 2026)**:
+  - **Job Board**: Parents can assign real-world tasks (e.g., "Wash Car") with PP Token rewards.
+  - **Approval Workflow**: Parent must approve completion before PP Tokens are released.
   - **Status Tracking**: Open, In Progress, Pending Approval, Completed.
 
 ### 4.6 Settings & Privacy (GDPR/CCPA/COPPA)
@@ -157,7 +184,8 @@ Structured content delivery.
 ### 4.5 Localization
 
 - **RTL Support**: Full layout mirroring for Arabic, including Navigation, Auth Buttons, and Curriculum grids (Verified Feb 2026).
-- **Translations**: 100% key coverage via `i18next` for all UI elements, Games, and **Library Tasks** (Quizzes/Reflections).
+- **Translations**: 100% key coverage via `i18next` for all UI elements (including **Bottom Navigation**, **Sidebar Stats**, **Avatar Customizer**, **Weekly Challenges**, and **Notification Center**), Games (including **Audience Matcher**), **Adventure Map**, **Lesson Modal**, and **Library Tasks** (Quizzes/Reflections).
+- **RTL-Aware UI**: Global Notification Center features logical `start/end` positioning to prevent clipping on mobile and RTL layouts.
 - **Structure**: Strongly typed `ar.ts` and `en.ts` files with automated validation via `tsc`.
 - **Translation Key Mapping System (Feb 2026)**:
   - **Type-Safe Mappings**: `translationMappings.ts` provides compile-time validated key mappings to prevent string concatenation issues.
@@ -179,12 +207,21 @@ Structured content delivery.
 - **Library Management**: Admin can add books (Title, Author, Summary, Lessons) via a dedicated UI.
 - **Documentation**: Detailed `guides.md` provided for content creators.
 
-### 4.7 Real Estate Tycoon
+### 4.7 Real Estate Tycoon (✅ COMPLETED April 2026)
 
 - **Marketplace**: Buy/Sell Residential, Commercial, and Industrial properties.
-- **Economics**: Properties generate daily passive income (Rent).
-- **Progression**: Properties require specific user levels to unlock (e.g., Level 5 for Commercial).
+- **Economics**: Properties generate daily passive income (Rent) with offline accrual support (up to 24h).
+- **Progression**: Properties require specific user levels to unlock and feature a multi-tier upgrade system for increased ROI.
 - **Portfolio**: Visual tracking of owned assets and total property value.
+- **Localization**: 100% Arabic support for property names, descriptions, and market events.
+
+### 4.8 Mobile-First Interface (✅ COMPLETED April 2026)
+
+- **Layout**: Native-app feel using **Bottom Sheet** modals for all primary interactions (Store, Library, Avatar, CEO Challenges).
+- **Navigation**: Touch-optimized bottom navigation bar with safe-area support and haptic animations.
+- **UX**: Horizontal scroll-snapping carousels for dense information grids to prevent mobile fatigue.
+- **PWA**: Enhanced install prompts and splash screen configurations for iOS/Android home screen residency.
+- **Home Navigation**: Consistently clickable logo/Ollie icon in all headers for instant return to the Dashboard.
 
 ---
 
@@ -193,7 +230,7 @@ Structured content delivery.
 ### 5.1 Security
 
 - **Input Hygiene**: No `dangerouslySetInnerHTML`. (Verified)
-- **State Protection**: User cannot modify own Role, BizCoins, or Grades via console. (Verified via Store Logic)
+- **State Protection**: User cannot modify own Role, PP Tokens, or Grades via console. (Verified via Store Logic)
 - **Validation**: Server-side (simulated) checks for lesson completion and grading. (Verified)
 - **Input Validation**: Strict type/size checks on File Uploads and Sanitization on Text Inputs. (Verified)
 - **Anti-Cheat**: "Time Travel" protection against clock manipulation for idle income. (Implemented)
@@ -362,10 +399,10 @@ Structured content delivery.
 | Feature | Status | Implementation Notes |
 |---|---|---|
 | **Seasonal Events** | ✅ Done | `seasonalEventSlice.ts` — 4-event pool (Spring Market, Eid Challenge, Back to School, Summer Hustle), weekly rotation, mock leaderboard (top 10), join/claim/track actions. UI: `SeasonalEventBanner.tsx` embedded in HQ. |
-| **Business Cards** | ✅ Done | `BusinessCard.tsx` — tier-themed gradient card (Intern/Founder/Board/Tycoon gradients), BizCoins, streak, top skill, level. Download to PNG via `html2canvas` with `window.print` fallback. |
+| **Business Cards** | ✅ Done | `BusinessCard.tsx` — tier-themed gradient card (Intern/Founder/Board/Tycoon gradients), PP Tokens, streak, top skill, level. Download to PNG via `html2canvas` with `window.print` fallback. |
 | **HQ Showcase** | ✅ Done | `HQShowcase.tsx` — weekly Top 3 HQ gallery, 🥇🥈🥉 medals, expand-on-click featured items, your-HQ encouragement row. Seeded with mock weekly data. |
 | **Co-op Pitch Mode** | ✅ Done | `CoopPitchMode.tsx` — 8-stage flow: Lobby (6-char code), Team Prep, Turn 1 (open), Turn 2 (close + handoff UI), Thinking, Offer Selection, Negotiation, Deal/Rejected. +15 co-op score bonus. Wrapped in `TheTankPage.tsx` tab switcher. |
-| **Franchise Mode** | 🔲 Deferred | Moved to Q3 roadmap |
+| **Franchise Mode** | 🔄 Deferred | Moved to Q3 roadmap |
 
 #### Q2 Implementation Guide
 
@@ -402,7 +439,7 @@ Structured content delivery.
 
 ```
 Action                     →  Daily Mission Hook           →  Weekly Challenge Hook  →  Seasonal Hook
-──────────────────────────────────────────────────────────────────────────────────────────────────────
+—————————————————————————————————————————————————————————————————————————————————————————————————————
 completeLesson()           →  COMPLETE_LESSON, EARN_COINS  →  LESSON_SPRINT          →  LESSON_MARATHON / COIN_SPRINT
 completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON           →  GIG_RUSH / COIN_SPRINT
 ```
@@ -410,14 +447,14 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 #### Updated HQ Widget Layout (Kid View)
 
 ```
-[Stats Grid: Coins | HQ Value | Inventory | Lessons]
-[🎭 SeasonalEventBanner] ← themed gradient, days-remaining, join/rank/claim, expandable leaderboard
+[Stats Grid: PP Tokens | HQ Value | Inventory | Lessons]
+[🎞 SeasonalEventBanner]  ← themed gradient, days-remaining, join/rank/claim, expandable leaderboard
 [🔥 StreakBanner]         ← animated flame, shield badge, 7-day bonus countdown
 [⚡ DailyMissions]        ← 3 missions, 24h reset, claim rewards
-[⚔️ WeeklyChallenge]     ← rotating weekly goal, days-remaining ribbon
-[🏠 HQShowcase]           ← weekly top 3 HQs, expand-on-click, your-HQ encouragement
-[🏗️ Dollhouse (Interactive)]
-[🏗️ HQ Upgrade Path]
+[⚔️ WeeklyChallenge]      ← rotating weekly goal, days-remaining ribbon
+[🖼 HQShowcase]           ← weekly top 3 HQs, expand-on-click, your-HQ encouragement
+[🏠 Dollhouse (Interactive)]
+[🛠 HQ Upgrade Path]
 ```
 
 ---
@@ -471,9 +508,9 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 | Feature | Impact | Implementation Plan |
 |---|---|---|
 | **Annual CEO Championship** | 🔴 Critical (viral) | End-of-year pitch competition. Voice/video submission. Community voting. Winner gets physical trophy + 1-year renewal. |
-| **Year-End Report Card** | 🔴 Critical (retention) | ✅ Done. Auto-generated PDF: Total XP, Lessons, Gigs, BizCoins, Top Skill, Rank using `jspdf` and `html2canvas`. |
-| **Level 10 Graduation Ceremony** | 🟠 High | In-app animated sequence with Ollie + confetti + printable diploma. Unlocks "Alumni" HQ items. |
-| **Referral Program** | 🔴 Critical (growth) | Kid gets 500 BizCoins per referred friend. Parent gets 1 month free per referred premium signup. |
+| **Year-End Report Card** | 🔴 Critical (retention) | ✅ Done. Auto-generated PDF: Total XP, Lessons, Gigs, PP Tokens, Top Skill, Rank using `jspdf` and `html2canvas`. |
+| **Level 10 Graduation Ceremony** | 🟡 High | In-app animated sequence with Ollie + confetti + printable diploma. Unlocks "Alumni" HQ items. |
+| **Referral Program** | 🔴 Critical (growth) | Kid gets 500 PP Tokens per referred friend. Parent gets 1 month free per referred premium signup. |
 | **Subscription Renewal Nudge** | 🔴 Critical (revenue) | 30 days before expiry: parent email with kid's progress stats. 20% early renewal discount. |
 
 #### Q4 Implementation Guide
@@ -507,13 +544,13 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 | Month 4 (May 2026) | ✅ Done | Business Cards + HQ Showcase |
 | Month 5 (Jun 2026) | ✅ Done | Co-op Pitch Mode |
 | Month 6 (Jul 2026) | ✅ Done | CEO Track (30 S3 lessons) + Tournaments + Business Plan + Homework + Live Mentorship |
-| Month 7 (Aug 2026) | 🔲 Planned | **Daily Spin Wheel** + **Weekly CEO Challenge** |
-| Month 8 (Sep 2026) | 🔲 Planned | **BizPulse News Feed** + **Year 2 Seasonal Events** |
-| Month 9 (Oct 2026) | 🔲 Planned | **Seasons System** + **Global Leaderboard** |
-| Month 10 (Nov 2026) | 🔲 Planned | **Corporations / Guilds** |
-| Month 11 (Dec 2026) | 🔲 Planned | **Stock Market Simulation** |
-| Month 12 (Jan 2027) | 🔲 Planned | **Real Estate Tycoon** + **Custom Ollie Outfits** |
-| Month 13 (Feb 2027) | 🔲 Planned | **Monthly Parent Report Email** + **Prestige System** |
+| Month 7 (Aug 2026) | 🔄 Planned | **Daily Spin Wheel** + **Weekly CEO Challenge** |
+| Month 8 (Sep 2026) | 🔄 Planned | **BizPulse News Feed** + **Year 2 Seasonal Events** |
+| Month 9 (Oct 2026) | 🔄 Planned | **Seasons System** + **Global Leaderboard** |
+| Month 10 (Nov 2026) | 🔄 Planned | **Corporations / Guilds** |
+| Month 11 (Dec 2026) | 🔄 Planned | **Stock Market Simulation** |
+| Month 12 (Jan 2027) | 🔄 Planned | **Real Estate Tycoon** + **Custom Ollie Outfits** |
+| Month 13 (Feb 2027) | 🔄 Planned | **Monthly Parent Report Email** + **Prestige System** |
 
 ---
 
@@ -521,11 +558,11 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 
 | Mechanic | How it Works |
 |---|---|
-| **BizCoin Savings** | BizCoins only redeemable while subscribed. Balance at risk on cancellation. |
+| **PP Token Savings** | PP Tokens earned while subscribed; balance at risk on cancellation. |
 | **HQ Progress** | Premium furniture can't be rebought on cancel, but placed items stay visible (loss aversion). |
 | **Streak Shield** | Premium subscribers get 1x "streak shield" per week. Losing it is a specific felt loss on cancel. |
 | **Family Milestones** | Parent dashboard shows monthly lesson count — makes cancelling mid-journey feel wasteful. |
-| **Anniversary Reward** | At 1-year mark: exclusive "Year 1 Founder" badge + 2,000 BizCoins. Incentivizes renewal date. |
+| **Anniversary Reward** | At 1-year mark: exclusive "Year 1 Founder" badge + 2,000 PP Tokens. Incentivizes renewal date. |
 
 ---
 
@@ -542,9 +579,17 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 
 ---
 
-## 7. Recent Changes (March 2026)
+## 7. Recent Changes (March/April 2026)
 
-- **Administering Exclusive Books**: Implemented full CRUD functionality for "Exclusive Books" (e.g., *Wonder* and *Who Moved My Cheese?*) within the Admin Panel. Added a dedicated "Exclusives" sub-tab in the Library module, migrating from hardcoded lists to the dynamically managed `exclusiveBooks` state slice in `adminConfigSlice`.
+- **Test Suite Stabilization & UI Logic (May 4, 2026)**:
+  - **KidMap Feedback**: Implemented "Premium Only" labels and lesson progress tracking (`0/1 Lessons`) in the adventure map.
+  - **Dynamic Content Testing**: Refactored `BookLibrary` to support dynamic content injection from the store, enabling automated verification of book additions.
+  - **Infrastructure Resolution**: Stabilized the Vitest suite by resolving routing context issues, store slice mismatches, and TypeScript lint errors in the `tests/` directory.
+
+- **Freemium Monetization & Profile Polish (May 3, 2026)**:
+  - **Adventure Map & Lesson Modal**: Completed 100% Arabic localization for map headers, stage labels, and module titles. Fixed hardcoded "Easy/Medium/Hard" and "Unlimited" badges.
+  - **Layout Fixes**: Resolved horizontal scroll issues on hover and improved "Weekly Featured Gig" clickability.
+- **Administering Exclusive Books (March 2026)**: Implemented full CRUD functionality for "Exclusive Books" (e.g., *Wonder* and *Who Moved My Cheese?*) within the Admin Panel. Added a dedicated "Exclusives" sub-tab in the Library module, migrating from hardcoded lists to the dynamically managed `exclusiveBooks` state slice in `adminConfigSlice`.
 - **Subscription & Family Model Fixes**: Resolved state synchronization bugs to ensure children instantly inherit `PREMIUM` access from parents upon login. Corrected success toast messages for the Tycoon (annual) plan and ensured parent subscription tiers persist across logouts.
 - **Data Integrity**: Restored and corrected corrupted book metadata in `moreBooks.ts`.
 
@@ -555,30 +600,30 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 - **Localization & Export (Feb 27, 2026)**:
   - **Year-End Report Card**: Implemented PDF generation using `html2canvas` and `jspdf` inside `YearEndReport.tsx`. Fixed `useCORS` for rendering the app logo natively inside the export.
   - **Full Translation**: Hardcoded strings across `CoopPitchMode`, `TheTankPage`, and `GigCentral` replaced with `react-i18next` bindings and mapped to `ar.ts` ensuring a 100% complete localization checklist.
-- **Q3 Features (Feb 25, 2026)** — Full Q3 roadmap implemented (ahead of schedule):
-  - **CEO Track (Season 3)**: 30 lessons (VC_131–140, CORP_141–150, GLOB_151–160). Gate: Level 8+.
-  - **School Tournaments**: `tournamentSlice.ts` full state machine (IDLE→LOBBY→ACTIVE→FINISHED), time-bonus scoring, 6-char lobby code.
+- **Q3 Features (Feb 25, 2026)** â Full Q3 roadmap implemented (ahead of schedule):
+  - **CEO Track (Season 3)**: 30 lessons (VC_131â140, CORP_141â150, GLOB_151â160). Gate: Level 8+.
+  - **School Tournaments**: `tournamentSlice.ts` full state machine (IDLEâLOBBYâACTIVEâFINISHED), time-bonus scoring, 6-char lobby code.
   - **Live Mentorship**: `LiveNowWidget.tsx` rebuilt with gold theme, speaker profiles, Tycoon-gated Zoom links.
   - **AI Business Plan Generator**: Tycoon-gated card in Headquarters, 5-step modal wizard.
   - **Homework Mode**: `Assignment` type extended, overdue badges + max XP display in `StudentAssignmentDashboard.tsx`.
   - **KidMap Content**: Season 2 + Season 3 topic icons, colors, and project code mappings added.
   - **Bug Fixes**: `PrincipalDashboard.tsx` TS error resolved; React hooks violation in `Headquarters.tsx` fixed (0 TS errors).
-  - **Tests**: 48 new Vitest tests — `tournamentSlice.test.ts` (27 tests) and `curriculum.test.ts` (21 tests), all passing.
-- **Q1 Engagement Features (Feb 25, 2026)** — Full Q1 roadmap implemented:
+  - **Tests**: 48 new Vitest tests â `tournamentSlice.test.ts` (27 tests) and `curriculum.test.ts` (21 tests), all passing.
+- **Q1 Engagement Features (Feb 25, 2026)** â Full Q1 roadmap implemented:
   - Daily Mission Board, Weekly Challenge, Streak Shield, Season 2 Curriculum, Gig Tier 3.
-- **Q2 Social Layer (Feb 25, 2026)** — Delivered ahead of schedule:
+- **Q2 Social Layer (Feb 25, 2026)** â Delivered ahead of schedule:
   - Seasonal Events, Business Cards, HQ Showcase, Co-op Pitch Mode.
 - **Core Polish & State Syncing (Feb 21, 2026)**: Child sub inheritance fixed; parent dashboard race condition resolved.
 - **Database Security (Feb 18, 2026)**: Optimized RLS policies on `profiles` table.
 - **Legal Pages (Feb 20, 2026)**: Privacy Policy, Terms of Service, Refund Policy pages added.
-- **Pricing Optimization (Feb 20, 2026)**: Board Member → 3 kids; Tycoon → $89.99/yr.
+- **Pricing Optimization (Feb 20, 2026)**: Board Member â 3 kids; Tycoon â $89.99/yr.
 
 ---
 
 ## 8. Known Issues
 
-- **Registration Hang**: Sign-up completes authentication but UI hangs at "Creating Account..." — likely a race condition in profile creation or RLS blocking profile read. Workaround: Refresh the page.
-- **Auto-Login Persistence**: App auto-logs in as admin on refresh due to Zustand localStorage persistence without session validation. Workaround: Clear `kidcap-hq-storage` from browser LocalStorage.
+- **Mobile Viewport Jitter**: Occasional layout shifting on very small Android screens (under 320px) during keyboard entry.
+- **Phaser Game Scaling**: High-DPI screens sometimes cause offset issues in Action games (Pizza Dash).
 
 ---
 
@@ -606,7 +651,7 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 
 | Feature | Requirement | Backend |
 |---|---|---|
-| **Stock Market Simulation** | 5 fictional companies. Daily price update (±5-10%). Kids can buy/sell using BizCoins. Portfolio value tracked. | `stock_companies` + `stock_portfolio` tables. `update-stock-prices` Edge Function via `pg_cron` daily. |
+| **Stock Market Simulation** | 5 fictional companies. Daily price update (Â±5-10%). Kids can buy/sell using BizCoins. Portfolio value tracked. | `stock_companies` + `stock_portfolio` tables. `update-stock-prices` Edge Function via `pg_cron` daily. |
 | **Real Estate Tycoon** | 5 property tiers from Apartment to Mega-Resort. Passive 24h BizCoin income. Income decays if not maintained after 48h. | `real_estate_properties` + `owned_properties` tables. `collect-rent` Edge Function. |
 
 ### 8.4 Premium Value Features
@@ -635,30 +680,48 @@ completeSideHustle()       →  PLAY_GIG, EARN_COINS         →  GIG_MARATHON  
 | `promptSanitizer.test.ts` | 10 | AI prompt injection |
 | `sanitization.test.ts` | 12 | XSS / text sanitization |
 | `socialSlice.test.ts` | 4 | Social friend state |
-| `SecurityMonitoring.test.tsx` | — | Admin security events |
-| `ContentModeration.test.tsx` | — | Moderation dashboard |
-| `ReportsDashboard.test.tsx` | — | Analytics reports |
+| `SecurityMonitoring.test.tsx` | â | Admin security events |
+| `ContentModeration.test.tsx` | â | Moderation dashboard |
+| `ReportsDashboard.test.tsx` | â | Analytics reports |
 | `tournamentSlice.test.ts` | **27** | Full tournament state machine |
 | `curriculum.test.ts` | **21** | Data integrity (160 lessons) |
+| `ContentGating.test.tsx` | **2** | Tier-based gating & UI locks |
+| `ContentAdditions.test.tsx` | **3** | Dynamic content (Books/Lessons/Games) |
 
-**Total: 80+ tests passing. TypeScript: 0 errors.**
+**Total: 85+ tests passing. TypeScript: 0 errors.**
 
 ---
 
-## 10. Content Translation System (March 2026)
+## 10. Content Translation System (March/April 2026)
+
+### Overview
+
+The app uses `react-i18next` for all localized content. Translation files live in `src/locales/`. 
+
+### Modular Architecture (Arabic) ? NEW (April 2026)
+To improve maintainability and resolve corruption issues in the 1MB+ monolithic `ar.ts` file, the Arabic localization has been moved to a modular directory structure:
+- **Root Entry**: `src/locales/ar/index.ts` (Aggregates all modules)
+- **Module Directory**: `src/locales/ar/*.ts` (60+ granular files)
+
+**Key Benefits:**
+- Zero merge conflicts for multiple translators.
+- Faster IDE performance when editing translations.
+- Prevention of character encoding corruption (UTF-8 artifacts).
+
+### Layers of Translated Content
 
 ### Overview
 
 The app uses `react-i18next` for all localized content. Translation files live in `src/locales/` (`en.ts`, `ar.ts`, etc.). There are **three distinct layers** for translated content:
 
-### Layer 1 � UI Strings
+### Layer 1  UI Strings
 All button labels, nav items, and UI copy. Use `t('namespace.key')` in any component.
 
-### Layer 2 � Bestseller Books (`library_books` namespace)
+### Layer 2  Bestseller Books (`library_books` namespace)
 Books in `classicBooks.ts` use i18n for title, summary, and key lessons.
-**Key pattern:** `library_books.{bookId_underscored}.{field}` (fields: `title`, `summary`, `lesson_0`�)
+**Key pattern:** `library_books.{bookId_underscored}.{field}` (fields: `title`, `summary`, `lesson_0`)
 
-### Layer 3 � Exclusive Books (`exclusive_books` namespace) ? NEW (March 2026)
+### Layer 3  Exclusive Books (`exclusive_books` namespace) ? NEW (March 2026)
 
 Books in `moreBooks.ts` previously rendered raw English markdown directly, bypassing i18n.
 **Fix:** `BookLibrary.tsx` now calls `getExclusiveT(bookId, field)` which checks `exclusive_books.{bookId_underscored}.{field}` first, then falls back to English.
@@ -669,19 +732,9 @@ Books in `moreBooks.ts` previously rendered raw English markdown directly, bypas
 
 ---
 
-### Exclusive Books Translated to Arabic (March 2026)
+### Exclusive Books Translated to Arabic (April 2026)
 
-| Book | Key in ar.ts |
-|---|---|
-| The Little Engine That Could | the_little_engine_that_could |
-| Kidpreneurs | kidpreneurs |
-| Rich Dad Poor Dad for Teens | rich_dad_poor_dad_for_teens |
-| The Boy Who Harnessed the Wind | the_boy_who_harnessed_the_wind |
-| Charlie and the Chocolate Factory | charlie_chocolate_factory |
-| The Alchemist | the_alchemist_pp |
-| Wonder | wonder_rj_palacio |
-| Shoe Dog (Young Readers Edition) | shoe_dog_young_reader |
-| Oh, the Places You'll Go! | oh_the_places_youll_go |
+All 11 exclusive books are fully translated into Arabic markdown within `src/locales/ar/exclusive_books.ts`.
 
 ---
 
@@ -698,5 +751,5 @@ your_book_id: {
 }
 `
 
-3. No code changes needed � `BookLibrary.tsx` auto-detects and uses the translation.
+3. No code changes needed  `BookLibrary.tsx` auto-detects and uses the translation.
 4. Repeat in other locale files (`fr.ts`, `es.ts`) for additional languages.

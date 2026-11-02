@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { gradeProjectWithOllie } from '../../../lib/gemini';
-import { X, Save, CheckCircle, AlertCircle, ExternalLink, MessageCircle, Ruler, Bot, Sparkles, Loader2 } from 'lucide-react';
+import { X, Save, CheckCircle, Ruler, Bot, Loader2 } from "lucide-react";
 import { Submission, User, Rubric } from '../../../types';
+import CoinIcon from '../../../components/ui/CoinIcon';
 import { useGradingStore } from '../../education/store/useGradingStore';
-import { useAppStore } from '../../../store'; // Keep this if AppStore is used for other things, otherwise remove.
 import { useEducationStore } from '../../../store/educationStore'; // New import
 import { Logger } from '../../../services/logger';
 
@@ -69,7 +69,7 @@ const AdminProjectPanel: React.FC<AdminProjectPanelProps> = ({ submission, stude
             letterGrade,
             status: 'GRADED',
             // Default rewards based on tier
-            bizCoinsAwarded: letterGrade === 'Tycoon' ? 50 : letterGrade === 'Founder' ? 30 : 10,
+            ppTokensAwarded: letterGrade === 'Tycoon' ? 50 : letterGrade === 'Founder' ? 30 : 10,
             xpGained: letterGrade === 'Tycoon' ? 100 : letterGrade === 'Founder' ? 75 : 50
         };
 
@@ -178,7 +178,7 @@ const AdminProjectPanel: React.FC<AdminProjectPanelProps> = ({ submission, stude
                             <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('admin.dashboard.grading_panel.rewards_label')}</div>
                             <div className="flex justify-between items-center text-sm font-bold">
                                 <div className="flex items-center gap-2 text-yellow-600">
-                                    <span>🪙</span>
+                                    <CoinIcon size={14} />
                                     <span>{letterGrade === 'Tycoon' ? 50 : letterGrade === 'Founder' ? 30 : 10} {t('admin.dashboard.grading_panel.coins')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-blue-600">

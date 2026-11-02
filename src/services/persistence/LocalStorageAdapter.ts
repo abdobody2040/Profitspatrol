@@ -1,8 +1,4 @@
 import { StateStorage } from 'zustand/middleware';
-import { User, Classroom, UniversalLessonUnit, BusinessSimulation, Book, CMSContent, Assignment, Submission, StudentGroup, Rubric } from '../../types';
-import { ALL_LESSONS } from '../../features/education/data/curriculum';
-import { GAMES_DB } from '../../features/game/data/games';
-import { INITIAL_LIBRARY } from '../../features/library/data/libraryBooks';
 import { Logger } from '../logger';
 
 const STORAGE_KEY = 'profitspatrol-storage';

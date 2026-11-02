@@ -1,0 +1,333 @@
+{
+  "classic": [],
+  "exclusive": [
+    {
+      "id": "zero-to-one-teens",
+      "title": "Zero to One (Teen Edition)"
+    },
+    {
+      "id": "how-to-turn-100-into-1000000",
+      "title": "How to Turn $100 into $1,000,000"
+    },
+    {
+      "id": "better-than-lemonade-stand",
+      "title": "Better Than a Lemonade Stand"
+    },
+    {
+      "id": "do-hard-things",
+      "title": "Do Hard Things"
+    },
+    {
+      "id": "i-am-malala-young-reader",
+      "title": "I Am Malala (Young Readers Edition)"
+    },
+    {
+      "id": "hidden-figures-young-readers",
+      "title": "Hidden Figures Young Readers"
+    },
+    {
+      "id": "max-einstein-genius-experiment",
+      "title": "Max Einstein: The Genius Experiment"
+    },
+    {
+      "id": "georges-secret-key",
+      "title": "George"
+    },
+    {
+      "id": "a-long-walk-to-water",
+      "title": "A Long Walk to Water"
+    },
+    {
+      "id": "the-crossover",
+      "title": "The Crossover"
+    },
+    {
+      "id": "enders-game-yr",
+      "title": "Ender"
+    },
+    {
+      "id": "teen-entrepreneur-toolbox",
+      "title": "Teen Entrepreneur Toolbox"
+    },
+    {
+      "id": "kid-ceo",
+      "title": "Kid CEO"
+    },
+    {
+      "id": "young-entrepreneurs-guide",
+      "title": "The Young Entrepreneur"
+    },
+    {
+      "id": "rock-brock-savings-shock",
+      "title": "Rock, Brock and the Savings Shock"
+    },
+    {
+      "id": "total-money-makeover-teen",
+      "title": "The Total Money Makeover (Teen Edition)"
+    },
+    {
+      "id": "broke-millennial-teen",
+      "title": "Broke Millennial"
+    },
+    {
+      "id": "make-your-kid-money-genius",
+      "title": "Make Your Kid a Money Genius"
+    },
+    {
+      "id": "richest-kid-in-world",
+      "title": "The Richest Kid in the World"
+    },
+    {
+      "id": "young-money-book",
+      "title": "Young Money"
+    },
+    {
+      "id": "money-can-buy-happiness",
+      "title": "Money Can Buy Happiness"
+    },
+    {
+      "id": "grit-young-reader",
+      "title": "Grit (Young Reader"
+    },
+    {
+      "id": "power-of-yet",
+      "title": "The Power of Yet"
+    },
+    {
+      "id": "you-are-a-badass-teen",
+      "title": "You Are a Badass (Teen Edition)"
+    },
+    {
+      "id": "five-am-club-teen",
+      "title": "The 5 AM Club (Teen Edition)"
+    },
+    {
+      "id": "the-energy-bus-kids",
+      "title": "The Energy Bus for Kids"
+    },
+    {
+      "id": "growth-mindset-coach",
+      "title": "Growth Mindset Coach"
+    },
+    {
+      "id": "cant-hurt-me-teen",
+      "title": "Can"
+    },
+    {
+      "id": "the-lion-witch-wardrobe",
+      "title": "The Lion, the Witch and the Wardrobe"
+    },
+    {
+      "id": "matilda-pp",
+      "title": "Matilda"
+    },
+    {
+      "id": "james-giant-peach",
+      "title": "James and the Giant Peach"
+    },
+    {
+      "id": "the-hobbit-business",
+      "title": "The Hobbit"
+    },
+    {
+      "id": "charlottes-web-pr",
+      "title": "Charlotte"
+    },
+    {
+      "id": "alice-wonderland-biz",
+      "title": "Alice"
+    },
+    {
+      "id": "the-little-prince-biz",
+      "title": "The Little Prince"
+    },
+    {
+      "id": "treasure-island-biz",
+      "title": "Treasure Island"
+    },
+    {
+      "id": "harry-potter-stone-biz",
+      "title": "Harry Potter and the Sorcerer"
+    },
+    {
+      "id": "the-giver-biz",
+      "title": "The Giver"
+    },
+    {
+      "id": "peter-pan-biz",
+      "title": "Peter Pan"
+    },
+    {
+      "id": "wrinkle-in-time-biz",
+      "title": "A Wrinkle in Time"
+    },
+    {
+      "id": "wizard-of-oz-biz",
+      "title": "The Wonderful Wizard of Oz"
+    },
+    {
+      "id": "richest-man-babylon-teens",
+      "title": "The Richest Man in Babylon (For Teens)"
+    },
+    {
+      "id": "rich-kid-smart-kid",
+      "title": "Rich Kid, Smart Kid"
+    },
+    {
+      "id": "teach-you-be-rich-teen",
+      "title": "I Will Teach You to Be Rich (Teen Edition)"
+    },
+    {
+      "id": "motley-fool-teens",
+      "title": "The Motley Fool Investment Guide for Teens"
+    },
+    {
+      "id": "make-your-bed-teen",
+      "title": "Make Your Bed"
+    },
+    {
+      "id": "extreme-ownership-teen",
+      "title": "Extreme Ownership"
+    },
+    {
+      "id": "7-habits-teens",
+      "title": "The 7 Habits of Highly Effective Teens"
+    },
+    {
+      "id": "hunger-games-biz",
+      "title": "The Hunger Games"
+    },
+    {
+      "id": "dune-biz",
+      "title": "Dune"
+    },
+    {
+      "id": "fahrenheit-451-biz",
+      "title": "Fahrenheit 451"
+    },
+    {
+      "id": "1984-biz",
+      "title": "1984"
+    },
+    {
+      "id": "enders-game-biz",
+      "title": "Ender"
+    },
+    {
+      "id": "brave-new-world-biz",
+      "title": "Brave New World"
+    },
+    {
+      "id": "the-martian-biz",
+      "title": "The Martian"
+    },
+    {
+      "id": "ready-player-one-biz",
+      "title": "Ready Player One"
+    },
+    {
+      "id": "snow-crash-biz",
+      "title": "Snow Crash"
+    },
+    {
+      "id": "time-machine-biz",
+      "title": "The Time Machine"
+    },
+    {
+      "id": "foundation-biz",
+      "title": "Foundation"
+    },
+    {
+      "id": "i-robot-biz",
+      "title": "I, Robot"
+    },
+    {
+      "id": "hitchhikers-guide-biz",
+      "title": "The Hitchhiker"
+    },
+    {
+      "id": "animal-farm-biz",
+      "title": "Animal Farm"
+    },
+    {
+      "id": "barbarians-at-the-gate-biz",
+      "title": "Barbarians at the Gate"
+    },
+    {
+      "id": "bad-blood-biz",
+      "title": "Bad Blood"
+    },
+    {
+      "id": "shoe-dog-biz",
+      "title": "Shoe Dog"
+    },
+    {
+      "id": "everything-store-biz",
+      "title": "The Everything Store"
+    },
+    {
+      "id": "too-big-to-fail-biz",
+      "title": "Too Big to Fail"
+    },
+    {
+      "id": "the-big-short-biz",
+      "title": "The Big Short"
+    },
+    {
+      "id": "steve-jobs-biz",
+      "title": "Steve Jobs"
+    },
+    {
+      "id": "flash-boys-biz",
+      "title": "Flash Boys"
+    },
+    {
+      "id": "liars-poker-biz",
+      "title": "Liar"
+    },
+    {
+      "id": "disneywar-biz",
+      "title": "DisneyWar"
+    },
+    {
+      "id": "hatching-twitter-biz",
+      "title": "Hatching Twitter"
+    },
+    {
+      "id": "super-pumped-biz",
+      "title": "Super Pumped"
+    },
+    {
+      "id": "red-notice-biz",
+      "title": "Red Notice"
+    },
+    {
+      "id": "billion-dollar-whale-biz",
+      "title": "Billion Dollar Whale"
+    },
+    {
+      "id": "win-friends-biz",
+      "title": "How to Win Friends and Influence People"
+    },
+    {
+      "id": "start-with-why-biz",
+      "title": "Start with Why"
+    },
+    {
+      "id": "good-to-great-biz",
+      "title": "Good to Great"
+    },
+    {
+      "id": "art-of-war-biz",
+      "title": "The Art of War"
+    },
+    {
+      "id": "thinking-fast-slow-biz",
+      "title": "Thinking, Fast and Slow"
+    },
+    {
+      "id": "lean-startup-biz",
+      "title": "The Lean Startup"
+    }
+  ]
+}

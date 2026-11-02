@@ -1,6 +1,5 @@
-import React from 'react';
 import { useAppStore } from '../../../store';
-import { Video, Clock, ExternalLink, Lock } from 'lucide-react';
+import { Video, ExternalLink, Lock } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LiveNowWidget = () => {

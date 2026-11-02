@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
-import { useAppStore } from '../index';
-import type { SocialState } from '../socialStore';
+import { useAppStore } from '../useAppStore';
+import type { SocialState } from '../socialTypes';
 import { Bounty } from '../../types';
 import { Logger } from '../../services/logger';
 
@@ -10,6 +10,8 @@ export interface BountySlice {
     updateBounty: (id: string, updates: Partial<Bounty>) => void;
     deleteBounty: (id: string) => void;
     approveBounty: (id: string) => void;
+    submitBountyForApproval: (id: string, photoUrl?: string) => void;
+    refreshRecurringBounties: () => void;
 }
 
 export const createBountySlice: StateCreator<SocialState, [], [], BountySlice> = (set, get) => ({
@@ -64,7 +66,7 @@ export const createBountySlice: StateCreator<SocialState, [], [], BountySlice> =
                 if (u.id === bounty.assigneeId) {
                     return {
                         ...u,
-                        bizCoins: (u.bizCoins || 0) + bounty.reward,
+                        ppTokens: (u.ppTokens || 0) + bounty.reward,
                         xp: (u.xp || 0) + 50 // Flat 50 XP for a chore
                     };
                 }
@@ -73,7 +75,7 @@ export const createBountySlice: StateCreator<SocialState, [], [], BountySlice> =
 
             if (appState.user && appState.user.id === bounty.assigneeId) {
                 currentUserUpdates = {
-                    bizCoins: (appState.user.bizCoins || 0) + bounty.reward,
+                    ppTokens: (appState.user.ppTokens || 0) + bounty.reward,
                     xp: (appState.user.xp || 0) + 50
                 };
             }
@@ -86,6 +88,78 @@ export const createBountySlice: StateCreator<SocialState, [], [], BountySlice> =
         useAppStore.setState({
             users: updatedUsers,
             user: appState.user ? { ...appState.user, ...currentUserUpdates } : null
+        });
+
+        // Notify Kid
+        useAppStore.getState().addNotification({
+            title: 'Bounty Approved! 💰',
+            message: `Your work on "${bounty.title}" has been approved. You earned ${bounty.reward} P Tokens!`,
+            type: 'SUCCESS'
+        });
+    },
+
+    submitBountyForApproval: (id: string, photoUrl?: string) => {
+        const state = get();
+        const bounty = state.bounties.find(b => b.id === id);
+        if (!bounty) return;
+
+        set((state) => ({
+            bounties: state.bounties.map(b => 
+                b.id === id ? { ...b, status: 'PENDING_APPROVAL', photoUrl, completedAt: new Date().toISOString() } : b
+            )
+        }));
+
+        // Notify Parent
+        useAppStore.getState().addNotification({
+            title: 'Task Pending Review 📋',
+            message: `A kid has submitted "${bounty.title}" for approval.`,
+            type: 'INFO'
+        });
+    },
+
+    refreshRecurringBounties: () => {
+        const state = get();
+        const today = new Date().toISOString().split('T')[0];
+        
+        set((state) => {
+            const updatedBounties = [...state.bounties];
+            let changed = false;
+
+            state.bounties.forEach(b => {
+                if (!b.frequency || b.frequency === 'ONCE') return;
+
+                const lastGen = b.lastGeneratedAt ? b.lastGeneratedAt.split('T')[0] : '';
+                
+                if (lastGen !== today) {
+                    // Check if it's DAILY or WEEKLY
+                    let shouldReset = false;
+                    if (b.frequency === 'DAILY') {
+                        shouldReset = true;
+                    } else if (b.frequency === 'WEEKLY') {
+                        // Simple weekly check: if lastGen was > 7 days ago or different week number
+                        // For MVP, we'll just check if it's a different date and hope the user doesn't open it twice a day
+                        // A better check would be comparing week numbers
+                        const lastDate = new Date(b.lastGeneratedAt || b.createdAt);
+                        const diff = (new Date().getTime() - lastDate.getTime()) / (1000 * 3600 * 24);
+                        if (diff >= 7) shouldReset = true;
+                    }
+
+                    if (shouldReset) {
+                        const idx = updatedBounties.findIndex(ob => ob.id === b.id);
+                        updatedBounties[idx] = {
+                            ...b,
+                            status: 'OPEN',
+                            assigneeId: undefined,
+                            photoUrl: undefined,
+                            completedAt: undefined,
+                            lastGeneratedAt: new Date().toISOString()
+                        };
+                        changed = true;
+                    }
+                }
+            });
+
+            return changed ? { bounties: updatedBounties } : {};
         });
     }
 });

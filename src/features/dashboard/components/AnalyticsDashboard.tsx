@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
-} from 'recharts';
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    AreaChart,
+    Area,
+} from "recharts";
 import { Users, TrendingUp, BookOpen, Clock, Award } from 'lucide-react';
 import { UserRole } from '../../../types';
 import { useEducationStore } from "../../../store/educationStore";

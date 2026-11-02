@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const SkeletonPageLoader = () => (
     <div className="flex flex-col min-h-screen w-full bg-gray-50 dark:bg-gray-900 p-4 md:p-8 space-y-6">
         {/* Header Skeleton */}

@@ -18,7 +18,7 @@ import type { ShopItem } from '../data/constants';
 // ---------------------------------------------------------------------------
 
 export interface NetWorthBreakdown {
-    readonly bizCoins: number;
+    readonly ppTokens: number;
     readonly inventoryValue: number;  // at 50-cent on-the-dollar liquidation rate
     readonly businessValue: number;
     readonly total: number;
@@ -51,7 +51,7 @@ export interface StrongestSkillResult {
  * @param shopItemsMap - Pre-built Map<id, ShopItem> from constants (O(1) lookup).
  */
 export function calculateNetWorth(
-    subject: Readonly<Pick<User, 'bizCoins' | 'inventory' | 'portfolio'>>,
+    subject: Readonly<Pick<User, 'ppTokens' | 'inventory' | 'portfolio'>>,
     shopItemsMap: ReadonlyMap<string, Pick<ShopItem, 'id' | 'cost'>>
 ): NetWorthBreakdown {
     const inventoryValue = subject.inventory.reduce<number>((sum, id) => {
@@ -65,10 +65,10 @@ export function calculateNetWorth(
     );
 
     return {
-        bizCoins: subject.bizCoins,
+        ppTokens: subject.ppTokens,
         inventoryValue: inventoryValue * 0.5,   // 50-cent liquidation rate
         businessValue,
-        total: subject.bizCoins + (inventoryValue * 0.5) + businessValue,
+        total: subject.ppTokens + (inventoryValue * 0.5) + businessValue,
     };
 }
 

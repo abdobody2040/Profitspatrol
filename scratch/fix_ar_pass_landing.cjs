@@ -85,4 +85,3 @@ Object.keys(t).forEach(eng => {
 });
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('Landing and Curriculum Arabic translation pass complete.');

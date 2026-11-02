@@ -1,0 +1,1714 @@
+{
+  "blackBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "blackBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "blackBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "blondeBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "blondeBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "blondeBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "brown1Brow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "brown1Brow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "brown1Brow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "brown2Brow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "brown2Brow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "brown2Brow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "eyeBlack_large.png": {
+    "w": 21,
+    "h": 21
+  },
+  "eyeBlack_small.png": {
+    "w": 15,
+    "h": 16
+  },
+  "eyeBlue_large.png": {
+    "w": 21,
+    "h": 21
+  },
+  "eyeBlue_small.png": {
+    "w": 15,
+    "h": 16
+  },
+  "eyeBrown_large.png": {
+    "w": 21,
+    "h": 21
+  },
+  "eyeBrown_small.png": {
+    "w": 15,
+    "h": 16
+  },
+  "eyeGreen_large.png": {
+    "w": 21,
+    "h": 21
+  },
+  "eyeGreen_small.png": {
+    "w": 15,
+    "h": 16
+  },
+  "eyePine_large.png": {
+    "w": 21,
+    "h": 21
+  },
+  "eyePine_small.png": {
+    "w": 15,
+    "h": 16
+  },
+  "face1.png": {
+    "w": 100,
+    "h": 101
+  },
+  "face2.png": {
+    "w": 98,
+    "h": 108
+  },
+  "face3.png": {
+    "w": 112,
+    "h": 65
+  },
+  "face4.png": {
+    "w": 111,
+    "h": 87
+  },
+  "greyBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "greyBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "greyBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "mouth_glad.png": {
+    "w": 34,
+    "h": 13
+  },
+  "mouth_happy.png": {
+    "w": 34,
+    "h": 13
+  },
+  "mouth_oh.png": {
+    "w": 15,
+    "h": 15
+  },
+  "mouth_sad.png": {
+    "w": 34,
+    "h": 13
+  },
+  "mouth_straight.png": {
+    "w": 36,
+    "h": 6
+  },
+  "mouth_teethLower.png": {
+    "w": 34,
+    "h": 13
+  },
+  "mouth_teethUpper.png": {
+    "w": 34,
+    "h": 13
+  },
+  "redBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "redBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "redBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "tanBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "tanBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "tanBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "tint1Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint1Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint1Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint2Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint2Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint2Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint3Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint3Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint3Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint4Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint4Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint4Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint5Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint5Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint5Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint6Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint6Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint6Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint7Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint7Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint7Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "tint8Nose1.png": {
+    "w": 31,
+    "h": 21
+  },
+  "tint8Nose2.png": {
+    "w": 24,
+    "h": 24
+  },
+  "tint8Nose3.png": {
+    "w": 22,
+    "h": 15
+  },
+  "whiteBrow1.png": {
+    "w": 40,
+    "h": 17
+  },
+  "whiteBrow2.png": {
+    "w": 41,
+    "h": 11
+  },
+  "whiteBrow3.png": {
+    "w": 40,
+    "h": 17
+  },
+  "blackMan1.png": {
+    "w": 158,
+    "h": 119
+  },
+  "blackMan2.png": {
+    "w": 158,
+    "h": 138
+  },
+  "blackMan3.png": {
+    "w": 158,
+    "h": 119
+  },
+  "blackMan4.png": {
+    "w": 158,
+    "h": 119
+  },
+  "blackMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "blackMan6.png": {
+    "w": 158,
+    "h": 119
+  },
+  "blackMan7.png": {
+    "w": 158,
+    "h": 119
+  },
+  "blackMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "blackWoman1.png": {
+    "w": 165,
+    "h": 227
+  },
+  "blackWoman2.png": {
+    "w": 158,
+    "h": 285
+  },
+  "blackWoman3.png": {
+    "w": 160,
+    "h": 227
+  },
+  "blackWoman4.png": {
+    "w": 158,
+    "h": 286
+  },
+  "blackWoman5.png": {
+    "w": 168,
+    "h": 213
+  },
+  "blackWoman6.png": {
+    "w": 164,
+    "h": 213
+  },
+  "blondeMan1.png": {
+    "w": 159,
+    "h": 119
+  },
+  "blondeMan2.png": {
+    "w": 159,
+    "h": 138
+  },
+  "blondeMan3.png": {
+    "w": 159,
+    "h": 119
+  },
+  "blondeMan4.png": {
+    "w": 159,
+    "h": 119
+  },
+  "blondeMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "blondeMan6.png": {
+    "w": 159,
+    "h": 119
+  },
+  "blondeMan7.png": {
+    "w": 159,
+    "h": 119
+  },
+  "blondeMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "blondeWoman1.png": {
+    "w": 158,
+    "h": 285
+  },
+  "blondeWoman2.png": {
+    "w": 160,
+    "h": 227
+  },
+  "blondeWoman3.png": {
+    "w": 158,
+    "h": 286
+  },
+  "blondeWoman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "blondeWoman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "blondeWoman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "brown1Man1.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown1Man2.png": {
+    "w": 158,
+    "h": 138
+  },
+  "brown1Man3.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown1Man4.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown1Man5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "brown1Man6.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown1Man7.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown1Man8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "brown1Woman1.png": {
+    "w": 158,
+    "h": 285
+  },
+  "brown1Woman2.png": {
+    "w": 160,
+    "h": 227
+  },
+  "brown1Woman3.png": {
+    "w": 158,
+    "h": 286
+  },
+  "brown1Woman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "brown1Woman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "brown1Woman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "brown2Man1.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown2Man2.png": {
+    "w": 158,
+    "h": 138
+  },
+  "brown2Man3.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown2Man4.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown2Man5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "brown2Man6.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown2Man7.png": {
+    "w": 158,
+    "h": 119
+  },
+  "brown2Man8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "brown2Woman1.png": {
+    "w": 158,
+    "h": 285
+  },
+  "brown2Woman2.png": {
+    "w": 160,
+    "h": 227
+  },
+  "brown2Woman3.png": {
+    "w": 158,
+    "h": 286
+  },
+  "brown2Woman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "brown2Woman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "brown2Woman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "greyMan1.png": {
+    "w": 159,
+    "h": 119
+  },
+  "greyMan2.png": {
+    "w": 159,
+    "h": 138
+  },
+  "greyMan3.png": {
+    "w": 159,
+    "h": 119
+  },
+  "greyMan4.png": {
+    "w": 159,
+    "h": 119
+  },
+  "greyMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "greyMan6.png": {
+    "w": 159,
+    "h": 119
+  },
+  "greyMan7.png": {
+    "w": 159,
+    "h": 119
+  },
+  "greyMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "greyWoman1.png": {
+    "w": 158,
+    "h": 285
+  },
+  "greyWoman2.png": {
+    "w": 160,
+    "h": 227
+  },
+  "greyWoman3.png": {
+    "w": 158,
+    "h": 286
+  },
+  "greyWoman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "greyWoman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "greyWoman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "redMan1.png": {
+    "w": 159,
+    "h": 119
+  },
+  "redMan2.png": {
+    "w": 159,
+    "h": 138
+  },
+  "redMan3.png": {
+    "w": 159,
+    "h": 119
+  },
+  "redMan4.png": {
+    "w": 159,
+    "h": 119
+  },
+  "redMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "redMan6.png": {
+    "w": 159,
+    "h": 119
+  },
+  "redMan7.png": {
+    "w": 159,
+    "h": 119
+  },
+  "redMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "redWoman1.png": {
+    "w": 159,
+    "h": 285
+  },
+  "redWoman2.png": {
+    "w": 161,
+    "h": 227
+  },
+  "redWoman3.png": {
+    "w": 159,
+    "h": 286
+  },
+  "redWoman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "redWoman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "redWoman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "tanMan1.png": {
+    "w": 158,
+    "h": 119
+  },
+  "tanMan2.png": {
+    "w": 158,
+    "h": 138
+  },
+  "tanMan3.png": {
+    "w": 158,
+    "h": 119
+  },
+  "tanMan4.png": {
+    "w": 158,
+    "h": 119
+  },
+  "tanMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "tanMan6.png": {
+    "w": 158,
+    "h": 119
+  },
+  "tanMan7.png": {
+    "w": 158,
+    "h": 119
+  },
+  "tanMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "tanWoman1.png": {
+    "w": 158,
+    "h": 285
+  },
+  "tanWoman2.png": {
+    "w": 160,
+    "h": 227
+  },
+  "tanWoman3.png": {
+    "w": 168,
+    "h": 213
+  },
+  "tanWoman4.png": {
+    "w": 158,
+    "h": 286
+  },
+  "tanWoman5.png": {
+    "w": 165,
+    "h": 227
+  },
+  "tanWoman6.png": {
+    "w": 164,
+    "h": 213
+  },
+  "whiteMan1.png": {
+    "w": 159,
+    "h": 119
+  },
+  "whiteMan2.png": {
+    "w": 159,
+    "h": 138
+  },
+  "whiteMan3.png": {
+    "w": 159,
+    "h": 119
+  },
+  "whiteMan4.png": {
+    "w": 159,
+    "h": 119
+  },
+  "whiteMan5.png": {
+    "w": 171,
+    "h": 130
+  },
+  "whiteMan6.png": {
+    "w": 159,
+    "h": 119
+  },
+  "whiteMan7.png": {
+    "w": 159,
+    "h": 119
+  },
+  "whiteMan8.png": {
+    "w": 158,
+    "h": 47
+  },
+  "whiteWoman1.png": {
+    "w": 159,
+    "h": 285
+  },
+  "whiteWoman2.png": {
+    "w": 161,
+    "h": 227
+  },
+  "whiteWoman3.png": {
+    "w": 159,
+    "h": 286
+  },
+  "whiteWoman4.png": {
+    "w": 165,
+    "h": 227
+  },
+  "whiteWoman5.png": {
+    "w": 164,
+    "h": 213
+  },
+  "whiteWoman6.png": {
+    "w": 168,
+    "h": 213
+  },
+  "legYellow_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "legYellow_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "legYellow_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsBlue11.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue12.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue13.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue14.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue1_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsBlue1_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsBlue1_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsBlue21.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue22.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue23.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue24.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBlue2_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsBlue2_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsBlue2_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsBrown1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBrown2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBrown3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBrown4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsBrown_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsBrown_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsBrown_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsGreen1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGreen2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGreen3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGreen4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGreen_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsGreen_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsGreen_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsGrey1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGrey2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGrey3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGrey4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsGrey_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsGrey_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsGrey_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsLightBlue1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsLightBlue2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsLightBlue3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsLightBlue4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsLightBlue_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsLightBlue_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsLightBlue_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsNavy1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsNavy2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsNavy3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsNavy4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsNavy_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsNavy_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsNavy_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsPine1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsPine2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsPine3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsPine4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsPine_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsPine_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsPine_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsRed1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsRed2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsRed3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsRed4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsRed_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsRed_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsRed_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsTan1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsTan2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsTan3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsTan4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsTan_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsTan_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsTan_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsWhite1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsWhite2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsWhite3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsWhite4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsWhite_long.png": {
+    "w": 111,
+    "h": 166
+  },
+  "pantsWhite_short.png": {
+    "w": 107,
+    "h": 118
+  },
+  "pantsWhite_shorter.png": {
+    "w": 104,
+    "h": 105
+  },
+  "pantsYellow1.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsYellow2.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsYellow3.png": {
+    "w": 153,
+    "h": 47
+  },
+  "pantsYellow4.png": {
+    "w": 153,
+    "h": 47
+  },
+  "armWhite_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "armWhite_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "armWhite_shorter.png": {
+    "w": 67,
+    "h": 86
+  },
+  "armYellow_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "armYellow_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "armYellow_shorter.png": {
+    "w": 66,
+    "h": 86
+  },
+  "blueArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "blueArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "blueArm_shorter.png": {
+    "w": 66,
+    "h": 86
+  },
+  "blueShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "blueShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blueShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "greenArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "greenArm_shorter.png": {
+    "w": 67,
+    "h": 86
+  },
+  "greenShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "greenShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greenShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "greyArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "greyArm_shorter.png": {
+    "w": 66,
+    "h": 86
+  },
+  "greyShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "greyShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "greyShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "navyArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "navyArm_shorter.png": {
+    "w": 67,
+    "h": 86
+  },
+  "navyShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "navyShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "navyShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "pineArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "pineArm_shorter.png": {
+    "w": 67,
+    "h": 86
+  },
+  "pineShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "pineShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "pineShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redArm_long.png": {
+    "w": 171,
+    "h": 142
+  },
+  "redArm_short.png": {
+    "w": 118,
+    "h": 96
+  },
+  "redArm_shorter.png": {
+    "w": 66,
+    "h": 86
+  },
+  "redShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "redShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "redShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "shirtYellow5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "shirtYellow8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt1.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt2.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt3.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt4.png": {
+    "w": 161,
+    "h": 174
+  },
+  "whiteShirt5.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt6.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt7.png": {
+    "w": 153,
+    "h": 174
+  },
+  "whiteShirt8.png": {
+    "w": 153,
+    "h": 174
+  },
+  "blackShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blackShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blackShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blackShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blackShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blueShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blueShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blueShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blueShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "blueShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brown2Shoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brown2Shoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brown2Shoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brown2Shoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brown2Shoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brownShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brownShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brownShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brownShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "brownShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "greyShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "greyShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "greyShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "greyShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "greyShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "redShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "redShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "redShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "redShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "redShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tanShoe1.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tanShoe2.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tanShoe3.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tanShoe4.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tanShoe5.png": {
+    "w": 94,
+    "h": 42
+  },
+  "tint1_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint1_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint1_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint1_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint1_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint2_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint2_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint2_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint2_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint2_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint3_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint3_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint3_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint3_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint3_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint4_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint4_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint4_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint4_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint4_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint5_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint5_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint5_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint5_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint5_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint6_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint6_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint6_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint6_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint6_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint7_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint7_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint7_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint7_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint7_neck.png": {
+    "w": 96,
+    "h": 37
+  },
+  "tint8_arm.png": {
+    "w": 170,
+    "h": 136
+  },
+  "tint8_hand.png": {
+    "w": 61,
+    "h": 71
+  },
+  "tint8_head.png": {
+    "w": 173,
+    "h": 168
+  },
+  "tint8_leg.png": {
+    "w": 93,
+    "h": 164
+  },
+  "tint8_neck.png": {
+    "w": 96,
+    "h": 37
+  }
+}

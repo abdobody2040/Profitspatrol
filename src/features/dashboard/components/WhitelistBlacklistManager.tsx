@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useAppStore } from '../../../store';
-import { Plus, Trash2, Edit, Check, X, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Edit, X, AlertCircle } from "lucide-react";
 import { Logger } from '../../../services/logger';
 
 interface WhitelistEntry {

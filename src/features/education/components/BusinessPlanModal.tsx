@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ChevronRight, Download, RefreshCw, X } from 'lucide-react';
 import { useAppStore } from '../../../store';
 import { chatWithOllie } from '../../../lib/gemini';
+import { useTranslation } from 'react-i18next';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -25,11 +26,11 @@ interface GeneratedPlan {
 }
 
 const STEPS = [
-    { key: 'businessName', label: '🏷️ Business Name', placeholder: 'E.g. EcoBottle Co.', hint: 'What would you call your business?' },
-    { key: 'product', label: '📦 Your Product or Service', placeholder: 'E.g. Reusable water bottles made from ocean plastic', hint: 'Describe exactly what you sell or do.' },
-    { key: 'targetCustomer', label: '👥 Target Customer', placeholder: 'E.g. Eco-conscious parents aged 25–40', hint: 'Who is your ideal customer?' },
-    { key: 'revenueModel', label: '💰 Revenue Model', placeholder: 'E.g. Sell direct on Shopify for $25 per bottle', hint: 'How will you make money?' },
-    { key: 'bigGoal', label: '🚀 Your Big Goal', placeholder: 'E.g. Reach $100K revenue in year 1 and expand to Europe', hint: 'What do you want to achieve in 1–2 years?' },
+    { key: 'businessName', labelKey: 'business_plan.steps.name.label', placeholderKey: 'business_plan.steps.name.placeholder', hintKey: 'business_plan.steps.name.hint', icon: '🏷️', defaultLabel: 'Business Name', defaultPlaceholder: 'E.g. EcoBottle Co.', defaultHint: 'What would you call your business?' },
+    { key: 'product', labelKey: 'business_plan.steps.product.label', placeholderKey: 'business_plan.steps.product.placeholder', hintKey: 'business_plan.steps.product.hint', icon: '📦', defaultLabel: 'Your Product or Service', defaultPlaceholder: 'E.g. Reusable water bottles made from ocean plastic', defaultHint: 'Describe exactly what you sell or do.' },
+    { key: 'targetCustomer', labelKey: 'business_plan.steps.customer.label', placeholderKey: 'business_plan.steps.customer.placeholder', hintKey: 'business_plan.steps.customer.hint', icon: '👥', defaultLabel: 'Target Customer', defaultPlaceholder: 'E.g. Eco-conscious parents aged 25–40', defaultHint: 'Who is your ideal customer?' },
+    { key: 'revenueModel', labelKey: 'business_plan.steps.revenue.label', placeholderKey: 'business_plan.steps.revenue.placeholder', hintKey: 'business_plan.steps.revenue.hint', icon: '💰', defaultLabel: 'Revenue Model', defaultPlaceholder: 'E.g. Sell direct on Shopify for $25 per bottle', defaultHint: 'How will you make money?' },
+    { key: 'bigGoal', labelKey: 'business_plan.steps.goal.label', placeholderKey: 'business_plan.steps.goal.placeholder', hintKey: 'business_plan.steps.goal.hint', icon: '🚀', defaultLabel: 'Your Big Goal', defaultPlaceholder: 'E.g. Reach $100K revenue in year 1 and expand to Europe', defaultHint: 'What do you want to achieve in 1–2 years?' },
 ] as const;
 
 const SYSTEM_PROMPT = `You are Ollie, an expert business mentor for young entrepreneurs aged 8–16.
@@ -61,6 +62,7 @@ interface BusinessPlanModalProps {
 
 const BusinessPlanModal: React.FC<BusinessPlanModalProps> = ({ onClose }) => {
     const { user } = useAppStore();
+    const { t, i18n } = useTranslation();
 
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<Partial<PlanAnswers>>({});
@@ -100,7 +102,7 @@ Target Customer: ${answers.targetCustomer}
 Revenue Model: ${answers.revenueModel}
 Big Goal: ${answers.bigGoal}
 
-Generate a complete business plan as JSON.`;
+Generate a complete business plan as JSON. VERY IMPORTANT: YOU MUST WRITE ALL YOUR RESPONSES IN ${i18n.language === 'ar' ? 'ARABIC' : 'ENGLISH'}.`;
 
         try {
             const raw = await chatWithOllie(SYSTEM_PROMPT, userPrompt);
@@ -112,13 +114,13 @@ Generate a complete business plan as JSON.`;
         } catch (e) {
             // Graceful fallback with mock plan
             setPlan({
-                executiveSummary: `🌟 ${answers.businessName} is a groundbreaking business created by ${user?.name ?? 'a young entrepreneur'}! Our mission is to deliver ${answers.product} to customers who truly need it, while building a profitable and sustainable company.`,
-                problemSolution: `💡 Many ${answers.targetCustomer}s struggle to find quality solutions in this space. ${answers.businessName} solves this by offering ${answers.product} — making it easier, faster, and more affordable than anything currently available.`,
-                targetMarket: `👥 Our primary customers are ${answers.targetCustomer}. This is a growing market with millions of potential buyers. We'll start locally and expand nationally within 12 months.`,
-                revenueModel: `💰 ${answers.revenueModel}. We project reaching our first $10,000 in revenue within 90 days by focusing on direct sales and word-of-mouth referrals.`,
-                marketingPlan: `📱 We'll grow through social media (TikTok + Instagram), local community events, and strategic partnerships. Our content will showcase real customer stories and behind-the-scenes footage of our process.`,
-                financialSnapshot: `📊 Start-up costs: under $500. Break-even: Month 2. Target Year 1 Revenue: $50,000+. We'll reinvest 30% of profits into growth and keep costs lean.`,
-                nextSteps: `🚀 This week: Build a simple website. Next month: Get 10 paying customers. Month 3: ${answers.bigGoal}. Let's GO!`,
+                executiveSummary: t('business_plan.fallback.executiveSummary', { businessName: answers.businessName, product: answers.product, name: user?.name ?? 'a young entrepreneur', defaultValue: `🌟 ${answers.businessName} is a groundbreaking business created by ${user?.name ?? 'a young entrepreneur'}! Our mission is to deliver ${answers.product} to customers who truly need it, while building a profitable and sustainable company.` }),
+                problemSolution: t('business_plan.fallback.problemSolution', { businessName: answers.businessName, product: answers.product, targetCustomer: answers.targetCustomer, defaultValue: `💡 Many ${answers.targetCustomer}s struggle to find quality solutions in this space. ${answers.businessName} solves this by offering ${answers.product} — making it easier, faster, and more affordable than anything currently available.` }),
+                targetMarket: t('business_plan.fallback.targetMarket', { targetCustomer: answers.targetCustomer, defaultValue: `👥 Our primary customers are ${answers.targetCustomer}. This is a growing market with millions of potential buyers. We'll start locally and expand nationally within 12 months.` }),
+                revenueModel: t('business_plan.fallback.revenueModel', { revenueModel: answers.revenueModel, defaultValue: `💰 ${answers.revenueModel}. We project reaching our first $10,000 in revenue within 90 days by focusing on direct sales and word-of-mouth referrals.` }),
+                marketingPlan: t('business_plan.fallback.marketingPlan', { defaultValue: `📱 We'll grow through social media (TikTok + Instagram), local community events, and strategic partnerships. Our content will showcase real customer stories and behind-the-scenes footage of our process.` }),
+                financialSnapshot: t('business_plan.fallback.financialSnapshot', { defaultValue: `📊 Start-up costs: under $500. Break-even: Month 2. Target Year 1 Revenue: $50,000+. We'll reinvest 30% of profits into growth and keep costs lean.` }),
+                nextSteps: t('business_plan.fallback.nextSteps', { bigGoal: answers.bigGoal, defaultValue: `🚀 This week: Build a simple website. Next month: Get 10 paying customers. Month 3: ${answers.bigGoal}. Let's GO!` }),
             });
         } finally {
             setIsGenerating(false);
@@ -137,13 +139,13 @@ Generate a complete business plan as JSON.`;
     // ─── Plan View ──────────────────────────────────────────────────────────────
     if (plan) {
         const sections = [
-            { icon: '📋', title: 'Executive Summary', content: plan.executiveSummary },
-            { icon: '💡', title: 'Problem & Solution', content: plan.problemSolution },
-            { icon: '👥', title: 'Target Market', content: plan.targetMarket },
-            { icon: '💰', title: 'Revenue Model', content: plan.revenueModel },
-            { icon: '📱', title: 'Marketing Plan', content: plan.marketingPlan },
-            { icon: '📊', title: 'Financial Snapshot', content: plan.financialSnapshot },
-            { icon: '🚀', title: 'Next Steps', content: plan.nextSteps },
+            { icon: '📋', title: t('business_plan.sections.summary', 'Executive Summary'), content: plan.executiveSummary },
+            { icon: '💡', title: t('business_plan.sections.problem', 'Problem & Solution'), content: plan.problemSolution },
+            { icon: '👥', title: t('business_plan.sections.market', 'Target Market'), content: plan.targetMarket },
+            { icon: '💰', title: t('business_plan.sections.revenue', 'Revenue Model'), content: plan.revenueModel },
+            { icon: '📱', title: t('business_plan.sections.marketing', 'Marketing Plan'), content: plan.marketingPlan },
+            { icon: '📊', title: t('business_plan.sections.financial', 'Financial Snapshot'), content: plan.financialSnapshot },
+            { icon: '🚀', title: t('business_plan.sections.nextSteps', 'Next Steps'), content: plan.nextSteps },
         ];
 
         return (
@@ -154,11 +156,11 @@ Generate a complete business plan as JSON.`;
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                         <h2 style={{ fontSize: 20, fontWeight: 900, color: '#fff', margin: 0 }}>
-                            ✨ {answers.businessName} — Business Plan
+                            ✨ {answers.businessName} — {t('business_plan.title', 'Business Plan')}
                         </h2>
                         <div style={{ display: 'flex', gap: 8 }}>
                             <button onClick={handlePrint} style={{ padding: '8px 14px', background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 10, color: '#a78bfa', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                                <Download size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />Save PDF
+                                <Download size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />{t('business_plan.save_pdf', 'Save PDF')}
                             </button>
                             <button onClick={handleReset} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 10, color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}>
                                 <RefreshCw size={14} />
@@ -181,7 +183,7 @@ Generate a complete business plan as JSON.`;
                     ))}
 
                     <div style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>
-                        Generated by Ollie AI · Profits Patrol CEO Track
+                        {t('business_plan.generated_by', 'Generated by Ollie AI · Profits Patrol CEO Track')}
                     </div>
                 </motion.div>
             </div>
@@ -195,7 +197,7 @@ Generate a complete business plan as JSON.`;
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
                     style={{ fontSize: 48, display: 'block' }}>⚙️</motion.div>
                 <div style={{ position: 'absolute', top: '58%', color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600 }}>
-                    Ollie is writing your plan...
+                    {t('business_plan.loading', 'Ollie is writing your plan...')}
                 </div>
             </div>
         );
@@ -210,8 +212,8 @@ Generate a complete business plan as JSON.`;
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                     <div>
-                        <h2 style={{ fontSize: 20, fontWeight: 900, color: '#fff', margin: 0 }}>✨ AI Business Plan</h2>
-                        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', margin: '4px 0 0' }}>Step {step + 1} of {STEPS.length}</p>
+                        <h2 style={{ fontSize: 20, fontWeight: 900, color: '#fff', margin: 0 }}>✨ {t('business_plan.title', 'AI Business Plan')}</h2>
+                        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', margin: '4px 0 0' }}>{t('business_plan.step_x_of_y', { current: step + 1, total: STEPS.length, defaultValue: `Step ${step + 1} of ${STEPS.length}` })}</p>
                     </div>
                     <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 10, padding: '8px 12px', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
                         <X size={16} />
@@ -228,12 +230,12 @@ Generate a complete business plan as JSON.`;
                 <AnimatePresence mode="wait">
                     <motion.div key={step} initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -30, opacity: 0 }}>
                         <label style={{ fontSize: 18, fontWeight: 900, color: '#fff', display: 'block', marginBottom: 8 }}>
-                            {currentStep.label}
+                            {currentStep.icon} {t(currentStep.labelKey, currentStep.defaultLabel)}
                         </label>
-                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>{currentStep.hint}</p>
+                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>{t(currentStep.hintKey, currentStep.defaultHint)}</p>
                         <textarea
                             autoFocus
-                            placeholder={currentStep.placeholder}
+                            placeholder={t(currentStep.placeholderKey, currentStep.defaultPlaceholder)}
                             value={currentValue}
                             onChange={(e) => setAnswers((prev) => ({ ...prev, [stepKey]: e.target.value }))}
                             onKeyDown={handleKeyDown}
@@ -248,7 +250,7 @@ Generate a complete business plan as JSON.`;
                     {step > 0 ? (
                         <button onClick={() => setStep((s) => s - 1)}
                             style={{ padding: '10px 18px', background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 12, color: 'rgba(255,255,255,0.5)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
-                            ← Back
+                            ← {t('business_plan.back', 'Back')}
                         </button>
                     ) : <div />}
 
@@ -256,7 +258,7 @@ Generate a complete business plan as JSON.`;
                         onClick={handleNext}
                         disabled={!currentValue.trim()}
                         style={{ padding: '12px 28px', background: currentValue.trim() ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : 'rgba(255,255,255,0.08)', border: 'none', borderRadius: 12, color: '#fff', fontWeight: 800, fontSize: 15, cursor: currentValue.trim() ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: 8, opacity: currentValue.trim() ? 1 : 0.45 }}>
-                        {isLastStep ? <><Sparkles size={15} /> Generate Plan!</> : <>Next <ChevronRight size={15} /></>}
+                        {isLastStep ? <><Sparkles size={15} /> {t('business_plan.generate', 'Generate Plan!')}</> : <>{t('business_plan.next', 'Next')} <ChevronRight size={15} /></>}
                     </motion.button>
                 </div>
 

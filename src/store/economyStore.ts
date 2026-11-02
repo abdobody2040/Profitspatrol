@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { localStorageAdapter } from '../services/persistence/LocalStorageAdapter';
-import { createSideHustleSlice, SideHustleSlice } from './slices/sideHustleSlice';
-import { createRealEstateSlice, RealEstateSlice } from './slices/realEstateSlice';
+import { createSideHustleSlice } from './slices/sideHustleSlice';
+import { createRealEstateSlice } from './slices/realEstateSlice';
+import type { EconomyState } from './economyTypes';
 
-export type EconomyState = SideHustleSlice & RealEstateSlice;
+export type { EconomyState };
 
 export const useEconomyStore = create<EconomyState>()(
   persist(

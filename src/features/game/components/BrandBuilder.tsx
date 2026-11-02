@@ -2,21 +2,70 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import { BusinessLogo } from '../../../types';
 import {
-    Save, Rocket, Pizza, Star, Smile, Lightbulb, Coffee, Music, Camera, Globe, Anchor, Cpu, Car, Zap,
-    Circle, Square, AppWindow,
+    Save,
+    Rocket,
+    Pizza,
+    Star,
+    Smile,
+    Lightbulb,
+    Coffee,
+    Music,
+    Camera,
+    Globe,
+    Anchor,
+    Cpu,
+    Car,
+    Circle,
+    Square,
+    AppWindow,
     // New Icons (Animals)
-    Cat, Dog, Fish, Bird, Rabbit, Snail, Bug, PawPrint,
+    Cat,
+    Dog,
+    Fish,
+    Bird,
+    Rabbit,
+    Snail,
+    Bug,
+    PawPrint,
     // Tech & Science
-    Gamepad, Laptop, Smartphone, Database, Atom, Microscope, Beaker, Code, Wifi, Server,
+    Gamepad,
+    Laptop,
+    Database,
+    Atom,
+    Code,
+    Wifi,
+    Server,
     // Nature
-    Leaf, TreeDeciduous, Flower, Sun, Moon, Cloud, CloudRain, Flame, Droplets, Mountain, Snowflake,
+    Leaf,
+    TreeDeciduous,
+    Flower,
+    Sun,
+    Flame,
+    Droplets,
+    Snowflake,
     // Objects & Tools
-    Hammer, Wrench, Crown, Trophy, Key, Bell, Gift, ShoppingCart, ShoppingBag, Wallet, PiggyBank,
+    Hammer,
+    Wrench,
+    Crown,
+    Trophy,
+    Key,
+    ShoppingCart,
+    PiggyBank,
     // Food
-    Apple, Carrot, IceCream, Sandwich, Cake, Utensils,
+    Apple,
+    IceCream,
+    Sandwich,
     // Misc
-    Heart, Diamond, Ghost, Skull, Shield, Target, Flag, MapPin, Compass, Plane, Bike, Ship
-} from 'lucide-react';
+    Heart,
+    Diamond,
+    Ghost,
+    Shield,
+    Target,
+    MapPin,
+    Plane,
+    Bike,
+    Ship,
+} from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 interface BrandBuilderProps {
@@ -223,7 +272,7 @@ const BrandBuilder: React.FC<BrandBuilderProps> = ({ onBack }) => {
                             `}
                                 >
                                     <item.icon size={24} />
-                                    <span className="text-[9px] font-bold mt-1 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">{item.label}</span>
+                                    <span className="text-[9px] font-bold mt-1 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">{t(['brand.icons.' + item.id, item.label] as any)}</span>
                                 </button>
                             ))}
                         </div>

@@ -38,14 +38,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
         this.setState({ errorInfo });
 
-        // In production, send to Sentry or similar
+        // In production, record error with full context
         if (import.meta.env.PROD) {
-            // TODO: Send to error monitoring service
-            // if (window.Sentry) {
-            //   window.Sentry.captureException(error, {
-            //     contexts: { react: { componentStack: errorInfo.componentStack } }
-            //   });
-            // }
+            Logger.error('Production ErrorBoundary caught error', {
+                error: error.message,
+                stack: errorInfo.componentStack
+            });
         }
     }
 

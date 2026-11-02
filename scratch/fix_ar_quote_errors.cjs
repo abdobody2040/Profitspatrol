@@ -29,4 +29,3 @@ const fixed = lines.map((line, i) => {
 
 const result = fixed.join('\n');
 fs.writeFileSync(path, result, 'utf8');
-console.log('Fixed unescaped single-quote strings in ar.ts');

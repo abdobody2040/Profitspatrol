@@ -25,7 +25,5 @@ for (const [id, newUrl] of Object.entries(coverFixes)) {
   );
   src = src.replace(re, (m, pre) => `${pre}coverUrl: "${newUrl}"`);
 }
-console.log('✅ 1.2b moreBooks.ts cover URLs updated');
 
 fs.writeFileSync(MORE_PATH, src, 'utf8');
-console.log('✅ moreBooks.ts saved');

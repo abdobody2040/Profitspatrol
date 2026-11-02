@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '../../../store';
 import { SideHustle } from '../../../types';
-import { Coins, Zap, Clock, Play, Sparkles, Trophy, Flame, ChevronLeft } from 'lucide-react';
+import { Coins, Zap, Clock, Play, Sparkles, Trophy, Flame, ChevronLeft, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,9 @@ import RhythmMinigame from './minigames/RhythmMinigame';
 import QuizMinigame from './minigames/QuizMinigame';
 import { getGigLevel, getGigLevelProgress } from '../../../store/slices/sideHustleSlice';
 import { useEconomyStore } from "../../../store/economyStore";
+import { useEducationStore } from '../../../store/educationStore';
+import { hasSchoolBypass } from '../../../utils/premiumAccess';
+import InvestorPitchModal from '../../game/components/InvestorPitchModal';
 
 // ─── Category colors ─────────────────────────────────────────────────────────
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
@@ -29,7 +32,7 @@ const CATEGORY_EMOJIS: Record<string, string> = {
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-const GigCard = ({ job, gigXp, onClick }: { job: SideHustle; gigXp: Record<string, number>; onClick: () => void }) => {
+const GigCard = ({ job, gigXp, onClick, isLocked }: { job: SideHustle; gigXp: Record<string, number>; onClick: () => void; isLocked?: boolean }) => {
     const { t } = useTranslation();
     const level = getGigLevel(job.id, gigXp);
     const progress = getGigLevelProgress(job.id, gigXp);
@@ -42,8 +45,15 @@ const GigCard = ({ job, gigXp, onClick }: { job: SideHustle; gigXp: Record<strin
             key={job.id}
             data-testid="gig-card"
             onClick={onClick}
-            className="bg-white dark:bg-gray-800 p-5 rounded-2xl flex flex-col text-start hover:shadow-xl transition-all border-2 border-transparent hover:border-indigo-200 dark:hover:border-indigo-700 group w-full"
+            className={`bg-white dark:bg-gray-800 p-5 rounded-2xl flex flex-col text-start hover:shadow-xl transition-all border-2 border-transparent group w-full relative overflow-hidden
+                ${isLocked ? 'grayscale opacity-80 cursor-pointer' : 'hover:border-indigo-200 dark:hover:border-indigo-700'}
+            `}
         >
+            {isLocked && (
+                <div className="absolute top-0 end-0 bg-gray-900 text-white text-xs font-black px-3 py-1 rounded-es-xl z-20 flex items-center gap-1">
+                    <Lock size={12} /> {t('arcade.locked', { defaultValue: 'Locked' })}
+                </div>
+            )}
             {/* Header row */}
             <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
@@ -211,6 +221,17 @@ const SideHustleApp = () => {
     const isFinishingRef = React.useRef(false); // prevent double-call guard
     const [jobResult, setJobResult] = useState<{ job: SideHustle; coinsEarned: number; score: number; isNewLevel: boolean; newLevel: number } | null>(null);
     const [activeCategory, setActiveCategory] = useState<string>('All');
+    const [showPaywall, setShowPaywall] = useState(false);
+
+    const classrooms = useEducationStore(state => state.classrooms);
+    const users = useAppStore(state => state.users);
+
+    const isAdmin =
+        user?.role === 'ADMIN' ||
+        user?.role?.toUpperCase?.() === 'ADMIN' ||
+        (user as any)?.isAdmin === true;
+    const activeSchoolBypass = hasSchoolBypass(user, classrooms, users);
+    const isInternLocked = !isAdmin && !activeSchoolBypass && user?.subscriptionTier === 'intern';
 
     // ─── Weekly Featured Gig (rotates every Monday, seeded by ISO week number) ───
     const { weeklyGig, daysUntilMonday } = useMemo(() => {
@@ -321,6 +342,8 @@ const SideHustleApp = () => {
     // ─── Main Gig Board ───────────────────────────────────────────────────────
     return (
         <div className="space-y-6 animate-fade-in pb-24 px-4 md:px-0 mt-4 md:mt-0">
+            <InvestorPitchModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
+            
             <button 
                 onClick={() => navigate('/dashboard')} 
                 className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-sm transition-colors w-fit -mt-2 md:mb-2"
@@ -337,8 +360,8 @@ const SideHustleApp = () => {
                     </div>
                     {user && (
                         <div className="bg-white/20 rounded-2xl px-4 py-3 text-center">
-                            <div className="text-xl font-black">{user.bizCoins.toLocaleString()}</div>
-                            <div className="text-xs opacity-80 font-bold uppercase tracking-wide flex items-center gap-1 justify-center"><Coins size={10} /> Coins</div>
+                            <div className="text-xl font-black">{(user.ppTokens ?? 0).toLocaleString()}</div>
+                            <div className="text-xs opacity-80 font-bold uppercase tracking-wide flex items-center gap-1 justify-center"><Coins size={10} /> {t('common.coins')}</div>
                         </div>
                     )}
                 </div>
@@ -346,10 +369,13 @@ const SideHustleApp = () => {
 
             {/* Weekly Featured Gig */}
             {weeklyGig && (
-                <motion.div
+                <motion.button
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="relative bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-5 text-white overflow-hidden shadow-lg shadow-orange-200 dark:shadow-orange-900/30"
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => startJob({ ...weeklyGig, rewardCoins: weeklyGig.rewardCoins * 3 })}
+                    className="relative bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-5 text-white overflow-hidden shadow-lg shadow-orange-200 dark:shadow-orange-900/30 w-full text-start"
                 >
                     <div className="absolute top-0 end-0 opacity-10 text-9xl select-none">⭐</div>
                     <div className="flex items-center gap-2 mb-2">
@@ -363,21 +389,20 @@ const SideHustleApp = () => {
                             <p className="text-orange-100 text-sm font-medium">{t(`gig_central.jobs.${weeklyGig.id}.desc` as any, weeklyGig.description)}</p>
                             <div className="flex gap-2 mt-2">
                                 <span className="flex items-center gap-1 text-xs font-bold bg-white/20 px-2 py-1 rounded-lg">
-                                    <Coins size={11} /> +{weeklyGig.rewardCoins * 3} coins
+                                    <Coins size={11} /> +{weeklyGig.rewardCoins * 3} {t('common.coins')}
                                 </span>
                                 <span className="flex items-center gap-1 text-xs font-bold bg-white/20 px-2 py-1 rounded-lg">
                                     <Clock size={11} /> {t('sideHustlesExtras.resetsIn', { days: daysUntilMonday })}
                                 </span>
                             </div>
                         </div>
-                        <button
-                            onClick={() => startJob({ ...weeklyGig, rewardCoins: weeklyGig.rewardCoins * 3 })}
+                        <div
                             className="flex-shrink-0 bg-white text-orange-500 font-black px-5 py-3 rounded-2xl shadow-md hover:scale-105 transition-transform flex items-center gap-2"
                         >
                             <Play size={16} className="fill-orange-500" /> {t('sideHustlesExtras.play')}
-                        </button>
+                        </div>
                     </div>
-                </motion.div>
+                </motion.button>
             )}
 
             {/* Category Filter */}
@@ -399,9 +424,25 @@ const SideHustleApp = () => {
 
             {/* Gig Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredHustles.map(job => (
-                    <GigCard key={job.id} job={job} gigXp={gigXp} onClick={() => startJob(job)} />
-                ))}
+                {filteredHustles.map((job) => {
+                    // Lock all except the very first job in the entire Side Hustle list
+                    const isLocked = isInternLocked && sideHustles.findIndex(h => h.id === job.id) > 0;
+                    return (
+                        <GigCard 
+                            key={job.id} 
+                            job={job} 
+                            gigXp={gigXp} 
+                            isLocked={isLocked}
+                            onClick={() => {
+                                if (isLocked) {
+                                    setShowPaywall(true);
+                                } else {
+                                    startJob(job);
+                                }
+                            }} 
+                        />
+                    );
+                })}
             </div>
 
             {/* Top Earner Leaderboard */}

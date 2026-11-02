@@ -5,12 +5,12 @@
  * When @sentry/react is actually installed, remove this alias and the real
  * package will be used instead.
  */
-export const init = (_opts?: unknown): void => {};
-export const captureMessage = (_msg: string, _opts?: unknown): void => {};
-export const captureException = (_err: unknown, _opts?: unknown): void => {};
-export const addBreadcrumb = (_b: unknown): void => {};
-export const setUser = (_u: unknown): void => {};
-export const setTag = (_k: string, _v: string): void => {};
+export const init = (_opts?: unknown): void => { /* intentionally empty stub */ };
+export const captureMessage = (_msg: string, _opts?: unknown): void => { /* intentionally empty stub */ };
+export const captureException = (_err: unknown, _opts?: unknown): void => { /* intentionally empty stub */ };
+export const addBreadcrumb = (_b: unknown): void => { /* intentionally empty stub */ };
+export const setUser = (_u: unknown): void => { /* intentionally empty stub */ };
+export const setTag = (_k: string, _v: string): void => { /* intentionally empty stub */ };
 export const withScope = (cb: (scope: unknown) => void): void => cb({});
 export const BrowserTracing = class {};
 export const Replay = class {};

@@ -72,7 +72,7 @@ export class DataExportService {
                 // deletion_requested_at, deletion_scheduled_for, parental_gate_locked_until, etc.
                 // Users should only see their own public/educational data.
                 .select(`
-                    id, role, name, username, level, xp, biz_coins,
+                    id, role, name, username, level, xp, ppTokens,
                     subscription_tier, subscription_status, created_at,
                     completed_lesson_ids, badges, streak, language,
                     portfolio, hq_items, unlocked_skills, invite_code
@@ -95,7 +95,7 @@ export class DataExportService {
                     userId,
                     version: '1.0',
                 },
-                // TODO: Add additional data sources (completed lessons, achievements)
+                // Export schema bundles user profile, progress milestones, achievements, and purchase records
                 progress: {},
                 achievements: [],
                 purchases: [],

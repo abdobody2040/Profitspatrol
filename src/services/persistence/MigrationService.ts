@@ -1,8 +1,6 @@
-import { supabase } from '../../lib/supabase';
-import { localStorageAdapter } from './LocalStorageAdapter';
+import { supabase, isSupabaseConfigured } from "../../lib/supabase";
 import { supabaseAdapter } from './SupabaseAdapter';
 import { Logger } from '../logger';
-import { isSupabaseConfigured } from '../../lib/supabase';
 
 export const MigrationService = {
     /**

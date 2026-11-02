@@ -22,6 +22,17 @@ export default defineConfig({
       threshold: 1024,
     }),
 
+    // Asynchronous non-critical CSS loader to eliminate render-blocking CSS
+    {
+      name: 'async-css-loader',
+      transformIndexHtml(html: string) {
+        return html.replace(
+          /<link rel="stylesheet" crossorigin href="([^"]*chunk-games[^"]*)">/g,
+          '<link rel="stylesheet" crossorigin href="$1" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" crossorigin href="$1"></noscript>'
+        );
+      }
+    },
+
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'generateSW',
@@ -57,10 +68,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Precache the app shell
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        // Max file size to precache (5MB — Phaser is large)
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        // Precache only the essential app shell (no images, audio, or Phaser in precache)
+        globPatterns: ['**/*.{js,css,html}'],
+        globIgnores: ['**/vendor-phaser-*.js', '**/chunk-education-*.js', '**/chunk-games-*.js'],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
           // Google Fonts stylesheets — CacheFirst, 1 year
           {
@@ -119,7 +130,8 @@ export default defineConfig({
 
   server: {
     host: true,
-    port: 5000,
+    port: Number(process.env.PORT) || 5173,
+    strictPort: false,
     allowedHosts: true,
     hmr: false
   },
@@ -145,6 +157,24 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 1000,
+    modulePreload: {
+      polyfill: false,
+      resolveDependencies(filename, deps) {
+        // Exclude heavy lazy chunks from preloading into index.html
+        return deps.filter(dep =>
+          !dep.includes('phaser') &&
+          !dep.includes('recharts') &&
+          !dep.includes('education') &&
+          !dep.includes('games') &&
+          !dep.includes('admin') &&
+          !dep.includes('curriculum') &&
+          !dep.includes('dashboard') &&
+          !dep.includes('venture') &&
+          !dep.includes('social') &&
+          !dep.includes('library')
+        );
+      }
+    },
     rollupOptions: {
       output: {
         // Named entry for better debugging in CDN logs
@@ -157,6 +187,10 @@ export default defineConfig({
               id.includes('node_modules/react-dom/') ||
               id.includes('node_modules/react-router-dom/')) {
             return 'vendor-react';
+          }
+          // ── Vendor: Zustand State Management ────────────────────────────
+          if (id.includes('node_modules/zustand')) {
+            return 'vendor-state';
           }
           // ── Vendor: Phaser (game engine — very large, isolated) ──────────
           if (id.includes('node_modules/phaser')) {
@@ -191,25 +225,43 @@ export default defineConfig({
           if (id.includes('node_modules/@supabase/')) {
             return 'vendor-supabase';
           }
+          // ── Shared Store / State ─────────────────────────────────────────
+          if (id.includes('/src/store/')) {
+            return 'chunk-store';
+          }
+          // ── Data: Heavy curriculum dataset (200 lessons) ─────────────────
+          if (id.includes('/features/education/data/')) {
+            return 'chunk-curriculum-data';
+          }
+          // ── Data: Arcade Games Registry dataset ──────────────────────────
+          if (id.includes('/features/games/data/')) {
+            return 'chunk-games-data';
+          }
           // ── Feature: Game components ─────────────────────────────────────
-          if (id.includes('/features/game/')) {
+          if ((id.includes('/features/game/') || id.includes('/features/games/')) && !id.includes('/data/')) {
             return 'chunk-games';
           }
           // ── Feature: Education ───────────────────────────────────────────
-          if (id.includes('/features/education/')) {
+          if (id.includes('/features/education/') && !id.includes('/data/')) {
             return 'chunk-education';
           }
-          // ── Feature: Admin & Dashboards ──────────────────────────────────
-          if (id.includes('/features/admin/') ||
-              id.includes('/features/dashboard/') ||
-              id.includes('/features/social/')) {
+          // ── Feature: Admin ───────────────────────────────────────────────
+          if (id.includes('/features/admin/')) {
             return 'chunk-admin';
           }
+          // ── Feature: Dashboards ──────────────────────────────────────────
+          if (id.includes('/features/dashboard/')) {
+            return 'chunk-dashboard';
+          }
+          // ── Feature: Social ──────────────────────────────────────────────
+          if (id.includes('/features/social/')) {
+            return 'chunk-social';
+          }
           // ── Feature: Ventures & HQ ───────────────────────────────────────
-          if (id.includes('/features/venture/') ||
+          if ((id.includes('/features/venture/') ||
               id.includes('/features/hq/') ||
               id.includes('/features/tank/') ||
-              id.includes('/features/scenarios/')) {
+              id.includes('/features/scenarios/')) && !id.includes('/data/')) {
             return 'chunk-venture';
           }
           // ── Feature: Marketing pages ─────────────────────────────────────
@@ -217,7 +269,7 @@ export default defineConfig({
             return 'chunk-marketing';
           }
           // ── Feature: Library ─────────────────────────────────────────────
-          if (id.includes('/features/library/')) {
+          if (id.includes('/features/library/') && !id.includes('/data/')) {
             return 'chunk-library';
           }
         },

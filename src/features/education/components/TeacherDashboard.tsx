@@ -1,15 +1,38 @@
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '../../../store';
-import { UserRole, Assignment, StudentGroup, Rubric, User, Submission, RubricCriteria } from '../../../types';
+import { motion } from "framer-motion";
+import { UserRole, Assignment, StudentGroup, Rubric, User, Submission, RubricCriteria, Classroom } from '../../../types';
 import { COURSE_MAP } from '../data/curriculum';
 import {
-    Users, Lock, Unlock, Copy, Settings, Plus, Trash2, Edit,
-    BookOpen, FileText, ClipboardList, CheckSquare, Save, X, MoreVertical,
-    Calendar, Check, UserPlus, GraduationCap, ChevronRight, MessageSquare, Link as LinkIcon,
-    PlusCircle, ArrowLeft, LayoutTemplate, LogOut, Download, Clock, Loader2, School
-} from 'lucide-react';
+    Users,
+    Lock,
+    Unlock,
+    Copy,
+    Settings,
+    Plus,
+    Trash2,
+    Edit,
+    ClipboardList,
+    CheckSquare,
+    Save,
+    X,
+    Calendar,
+    Check,
+    UserPlus,
+    Link as LinkIcon,
+    PlusCircle,
+    ArrowLeft,
+    LayoutTemplate,
+    LogOut,
+    Download,
+    Clock,
+    School,
+    RefreshCcw,
+} from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useEducationStore } from "../../../store/educationStore";
+import { CreateClassModal } from './CreateClassModal';
+import { HeroMentorshipParentCard } from "../../dashboard/components/HeroMentorshipParentCard";
 
 const TeacherDashboard: React.FC = () => {
     const { users, updateUser, deleteUser, user, adminViewingClassroomId } = useAppStore();
@@ -39,7 +62,26 @@ const TeacherDashboard: React.FC = () => {
     const [gradingSubmissionId, setGradingSubmissionId] = useState<string | null>(null);
     const [editingRubric, setEditingRubric] = useState<Rubric | null>(null);
 
-    const classroom = classrooms.find(c => c.teacherId === user?.id || c.id === adminViewingClassroomId);
+    const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+
+    const teacherClasses = useMemo(() => {
+        return classrooms.filter(c => c.teacherId === user?.id || (user?.role === 'ADMIN' && c.id === adminViewingClassroomId));
+    }, [classrooms, user?.id, user?.role, adminViewingClassroomId]);
+
+    const classroom = useMemo(() => {
+        if (selectedClassId) {
+            const found = classrooms.find(c => c.id === selectedClassId);
+            if (found) return found;
+        }
+        if (teacherClasses.length > 0) return teacherClasses[0];
+        return classrooms.find(c => c.teacherId === user?.id || c.id === adminViewingClassroomId);
+    }, [selectedClassId, teacherClasses, classrooms, user?.id, adminViewingClassroomId]);
+
+    const handleCreateClassroom = (newClass: Classroom) => {
+        addClassroom(newClass);
+        setSelectedClassId(newClass.id);
+        setShowCreateModal(false);
+    };
     
     const students = useMemo(() => {
         if (!classroom) return [];
@@ -64,18 +106,58 @@ const TeacherDashboard: React.FC = () => {
     const { t } = useTranslation();
 
     if (!classroom) {
+        if (user?.role === 'ADMIN') {
+            return (
+                <div className="p-8 space-y-8">
+                    <div className="bg-white dark:bg-gray-800 p-10 rounded-[2.5rem] border-4 border-gray-100 dark:border-gray-700 shadow-2xl">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 bg-blue-100 rounded-2xl text-blue-600"><School size={32} /></div>
+                            <div>
+                                <h2 className="text-3xl font-black text-gray-800 dark:text-white">{t('teacher.admin_preview_title', 'Admin: Classroom Preview')}</h2>
+                                <p className="text-gray-500 dark:text-gray-400 font-bold">{t('teacher.admin_preview_desc', 'Select a classroom to manage its assignments and students.')}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {classrooms.map(c => (
+                                <button 
+                                    key={c.id} 
+                                    onClick={() => setViewingClassroom(c.id)}
+                                    className="p-6 bg-gray-50 dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 rounded-[2rem] transition-all text-start group relative overflow-hidden"
+                                >
+                                    <div className="relative z-10">
+                                        <div className="font-black text-xl text-gray-800 dark:text-white group-hover:text-blue-600 mb-1">{c.name}</div>
+                                        <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t('teacher.admin_code', 'Code:')} {c.code}</div>
+                                    </div>
+                                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 -translate-y-4 translate-x-4 rounded-full group-hover:scale-150 transition-transform"></div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         return (
-            <div className="p-8 flex items-center justify-center flex-col gap-4 text-gray-500">
-                <School size={48} className="text-gray-300" />
-                <h2 className="text-xl font-bold text-gray-700">No Classroom Found</h2>
-                <p>You haven\'t set up a classroom yet.</p>
+            <div className="p-8 flex items-center justify-center flex-col gap-5 text-gray-500 min-h-[50vh]">
+                <div className="w-20 h-20 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-500 flex items-center justify-center">
+                    <School size={40} />
+                </div>
+                <h2 className="text-2xl font-black text-gray-800 dark:text-white">{t('teacher.no_classroom_title', 'No Classroom Found')}</h2>
+                <p className="text-sm font-bold text-gray-400 max-w-sm text-center">{t('teacher.no_classroom_desc', "You haven't set up a classroom yet.")}</p>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm shadow-[0_4px_0_0_rgba(37,99,235,1)] active:translate-y-0.5 transition-all"
                 >
                     <PlusCircle size={20} />
-                    Create My Classroom
+                    <span>{t('teacher.create_classroom', 'Create My Classroom')}</span>
                 </button>
+                <CreateClassModal
+                    isOpen={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    onCreate={handleCreateClassroom}
+                    teacherId={user?.id || ''}
+                />
             </div>
         );
     }
@@ -156,7 +238,6 @@ const TeacherDashboard: React.FC = () => {
             rubricId: newAssignRubricId || undefined,
             status: 'PUBLISHED',
             createdAt: new Date().toISOString(),
-            // Phase 3: Differentiated Assignment Logic
             specificStudentIds: assignTarget === 'SPECIFIC' ? selectedAssignees : undefined
         };
 
@@ -268,42 +349,78 @@ const TeacherDashboard: React.FC = () => {
     return (
         <div className="pb-20 space-y-8">
             {/* Header */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-4">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-3xl font-black text-gray-800">{classroom.name}</h2>
-                        {user?.role === UserRole.ADMIN && (
-                            <button
-                                onClick={() => {
-                                    setViewingClassroom(null);
-                                }}
-                                className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-black transition-colors flex items-center gap-2"
-                            >
-                                <LogOut size={16} /> Exit Class
-                            </button>
-                        )}
+            <div className="bg-white dark:bg-gray-800 p-10 rounded-[2.5rem] shadow-2xl border-4 border-white dark:border-gray-700 flex flex-col md:flex-row justify-between md:items-center gap-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50/50 rounded-bl-full opacity-30 -translate-y-12 translate-x-12 group-hover:scale-110 transition-all duration-700"></div>
+                <div className="relative z-10">
+                    <div className="flex items-center gap-6">
+                        <div className="hidden md:block">
+                            <motion.img 
+                                animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+                                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                                src="/assets/ollie_head.png" 
+                                className="w-24 h-24 object-contain drop-shadow-2xl" 
+                            />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-4 flex-wrap">
+                                <h2 className="text-4xl font-black text-gray-800 dark:text-white tracking-tight uppercase">{classroom.name}</h2>
+                                {teacherClasses.length > 1 && (
+                                    <select
+                                        value={classroom.id}
+                                        onChange={(e) => setSelectedClassId(e.target.value)}
+                                        className="bg-gray-100 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white text-xs font-black rounded-2xl px-3 py-2 outline-none cursor-pointer hover:border-blue-500 transition-colors"
+                                    >
+                                        {teacherClasses.map(c => (
+                                            <option key={c.id} value={c.id}>{c.name} ({c.code})</option>
+                                        ))}
+                                    </select>
+                                )}
+                                <button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-4 py-2 rounded-2xl text-xs font-black transition-all active:scale-95 flex items-center gap-1.5"
+                                >
+                                    <PlusCircle size={15} />
+                                    <span>{t('teacher.new_class_button', '+ New Class')}</span>
+                                </button>
+                                {user?.role === UserRole.ADMIN && (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setViewingClassroom(null)}
+                                            className="bg-gray-100 text-gray-600 px-6 py-2 rounded-2xl text-xs font-black transition-all hover:bg-gray-200 shadow-[0_4px_0_0_#d1d5db] active:scale-95 flex items-center gap-2"
+                                        >
+                                            <RefreshCcw size={16} /> {t('teacher.switch_class', 'Switch Class')}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setViewingClassroom(null);
+                                            }}
+                                            className="bg-red-500 text-white px-6 py-2 rounded-2xl text-xs font-black transition-all hover:bg-red-600 shadow-[0_4px_0_0_rgba(185,28,28,1)] active:scale-95 flex items-center gap-2"
+                                        >
+                                            <LogOut size={16} /> {t('teacher.exit_class_admin', 'Exit Class')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex gap-4 mt-2 overflow-x-auto no-scrollbar">
-                        <button onClick={() => setActiveTab('OVERVIEW')} className={`font-bold pb-1 border-b-4 transition-colors whitespace-nowrap ${activeTab === 'OVERVIEW' ? 'text-kid-accent border-kid-accent' : 'text-gray-400 border-transparent'}`}>{t('teacher.tabs.overview')}</button>
-                        <button onClick={() => setActiveTab('ASSIGNMENTS')} className={`font-bold pb-1 border-b-4 transition-colors whitespace-nowrap ${activeTab === 'ASSIGNMENTS' ? 'text-kid-accent border-kid-accent' : 'text-gray-400 border-transparent'}`}>{t('teacher.tabs.assignments')}</button>
-                        <button onClick={() => setActiveTab('GRADING')} className={`font-bold pb-1 border-b-4 transition-colors whitespace-nowrap ${activeTab === 'GRADING' ? 'text-kid-accent border-kid-accent' : 'text-gray-400 border-transparent'}`}>{t('teacher.tabs.grading')} {dashboardStats.actionItems > 0 && <span className="ms-1 bg-red-500 text-white text-[10px] px-1.5 rounded-full align-top">{dashboardStats.actionItems}</span>}</button>
-                        <button onClick={() => setActiveTab('GROUPS')} className={`font-bold pb-1 border-b-4 transition-colors whitespace-nowrap ${activeTab === 'GROUPS' ? 'text-kid-accent border-kid-accent' : 'text-gray-400 border-transparent'}`}>{t('teacher.tabs.groups')}</button>
-                        <button onClick={() => setActiveTab('RUBRICS')} className={`font-bold pb-1 border-b-4 transition-colors whitespace-nowrap ${activeTab === 'RUBRICS' ? 'text-kid-accent border-kid-accent' : 'text-gray-400 border-transparent'}`}>{t('teacher.tabs.rubrics')}</button>
+                    <div className="flex gap-6 mt-6 overflow-x-auto no-scrollbar scroll-smooth">
+                        <button onClick={() => setActiveTab('OVERVIEW')} className={`font-black text-sm uppercase tracking-wider pb-2 border-b-4 transition-all ${activeTab === 'OVERVIEW' ? 'text-blue-600 border-blue-600 scale-110 origin-left' : 'text-gray-400 border-transparent hover:text-gray-600'}`}>{t('teacher.tabs.overview')}</button>
+                        <button onClick={() => setActiveTab('ASSIGNMENTS')} className={`font-black text-sm uppercase tracking-wider pb-2 border-b-4 transition-all ${activeTab === 'ASSIGNMENTS' ? 'text-blue-600 border-blue-600 scale-110 origin-left' : 'text-gray-400 border-transparent hover:text-gray-600'}`}>{t('teacher.tabs.assignments')}</button>
+                        <button onClick={() => setActiveTab('GRADING')} className={`font-black text-sm uppercase tracking-wider pb-2 border-b-4 transition-all ${activeTab === 'GRADING' ? 'text-blue-600 border-blue-600 scale-110 origin-left' : 'text-gray-400 border-transparent hover:text-gray-600'}`}>{t('teacher.tabs.grading')} {dashboardStats.actionItems > 0 && <span className="ms-1 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full animate-pulse">{dashboardStats.actionItems}</span>}</button>
+                        <button onClick={() => setActiveTab('GROUPS')} className={`font-black text-sm uppercase tracking-wider pb-2 border-b-4 transition-all ${activeTab === 'GROUPS' ? 'text-blue-600 border-blue-600 scale-110 origin-left' : 'text-gray-400 border-transparent hover:text-gray-600'}`}>{t('teacher.tabs.groups')}</button>
+                        <button onClick={() => setActiveTab('RUBRICS')} className={`font-black text-sm uppercase tracking-wider pb-2 border-b-4 transition-all ${activeTab === 'RUBRICS' ? 'text-blue-600 border-blue-600 scale-110 origin-left' : 'text-gray-400 border-transparent hover:text-gray-600'}`}>{t('teacher.tabs.rubrics')}</button>
                     </div>
                 </div>
 
-                <div className="bg-blue-50 border-2 border-blue-100 p-4 rounded-2xl flex items-center gap-4 shrink-0">
+                <div className="bg-blue-600 border-4 border-white p-6 rounded-[2.5rem] flex items-center gap-6 shrink-0 shadow-xl relative z-10 group/code cursor-pointer" onClick={handleCopyCode}>
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover/code:opacity-5 transition-opacity"></div>
                     <div>
-                        <div className="text-xs font-bold text-blue-400 uppercase">{t('teacher.code')}</div>
-                        <div className="text-3xl font-black text-blue-700 tracking-widest">{classroom.code}</div>
+                        <div className="text-[10px] font-black text-blue-200 uppercase tracking-[0.2em] mb-1">{t('teacher.code')}</div>
+                        <div className="text-4xl font-black text-white tracking-[0.2em] drop-shadow-md">{classroom.code}</div>
                     </div>
-                    <button
-                        onClick={handleCopyCode}
-                        className="p-2 hover:bg-blue-100 rounded-lg text-blue-600 transition-colors"
-                        title="Copy Code"
-                    >
-                        <Copy size={20} />
-                    </button>
+                    <div className="p-3 bg-white/10 rounded-2xl text-white group-hover/code:scale-125 transition-transform">
+                        <Copy size={24} />
+                    </div>
                 </div>
             </div>
 
@@ -439,23 +556,33 @@ const TeacherDashboard: React.FC = () => {
                             <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                                 <div className="p-6 border-b border-gray-100 flex justify-between items-center">
                                     <h3 className="font-bold text-xl text-gray-800">{t('teacher.roster_title')}</h3>
-                                    <button onClick={() => setActiveTab('GROUPS')} className="text-kid-accent font-bold text-sm hover:underline">{t('teacher.manage_groups')}</button>
+                                    <div className="flex items-center gap-3">
+                                        <button 
+                                            onClick={() => handleExportData('csv')} 
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold transition-all border border-blue-200 dark:border-blue-800"
+                                            title="Export CSV"
+                                        >
+                                            <Download size={14} />
+                                            <span>Export CSV</span>
+                                        </button>
+                                        <button onClick={() => setActiveTab('GROUPS')} className="text-kid-accent font-bold text-sm hover:underline">{t('teacher.manage_groups')}</button>
+                                    </div>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
                                         <thead className="bg-gray-50 text-start text-gray-500 font-bold text-xs uppercase">
                                             <tr>
-                                                <th className="p-4 ps-6">Name</th>
-                                                <th className="p-4">Level</th>
-                                                <th className="p-4">Progress</th>
-                                                <th className="p-4">Action</th>
+                                                <th className="p-4 ps-6">{t('teacher.table.name', 'Name')}</th>
+                                                <th className="p-4">{t('teacher.table.level', 'Level')}</th>
+                                                <th className="p-4">{t('teacher.table.progress', 'Progress')}</th>
+                                                <th className="p-4">{t('teacher.table.action', 'Action')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100">
                                             {students.length === 0 ? (
                                                 <tr>
                                                     <td colSpan={4} className="p-8 text-center text-gray-400 font-bold">
-                                                        No students have joined yet. Share code: {classroom.code}
+                                                        {t('teacher.empty_roster', 'No students have joined yet. Share code:')} {classroom.code}
                                                     </td>
                                                 </tr>
                                             ) : (
@@ -499,8 +626,8 @@ const TeacherDashboard: React.FC = () => {
                                                 <Clock size={20} />
                                             </div>
                                             <div>
-                                                <div className="font-bold text-gray-800 text-sm">School Hours Only</div>
-                                                <div className="text-xs text-gray-500 font-medium">Arcade blocked 3 PM - 8 AM</div>
+                                                <div className="font-bold text-gray-800 text-sm">{t('teacher.school_hours', 'School Hours Only')}</div>
+                                                <div className="text-xs text-gray-500 font-medium">{t('teacher.school_hours_desc', 'Arcade blocked 3 PM - 8 AM')}</div>
                                             </div>
                                         </div>
                                         <button
@@ -525,7 +652,8 @@ const TeacherDashboard: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <HeroMentorshipParentCard childName={classroom?.name || "Classroom Students"} />
+                        </div>
                 )
             }
 
@@ -953,6 +1081,14 @@ const TeacherDashboard: React.FC = () => {
                 )
             }
 
+            {/* CREATE CLASSROOM MODAL */}
+            <CreateClassModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onCreate={handleCreateClassroom}
+                teacherId={user?.id || ''}
+            />
+
             {/* EDIT STUDENT MODAL */}
             {
                 editingStudent && (
@@ -1222,6 +1358,18 @@ const GradingWorkspace: React.FC<GradingProps> = ({ submission, assignment, stud
 
                 <div className="mt-8">
                     <label className="block text-sm font-bold text-gray-500 mb-2">Teacher Feedback</label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                        {['🌟 Outstanding creativity and reasoning!', '💡 Great effort! Double-check the profit margin math.', '🔍 Clear thinking, very well organized.', '🚀 Impressive business execution!'].map((preset) => (
+                            <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setFeedback(prev => prev ? `${prev} ${preset}` : preset)}
+                                className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200 transition-colors font-medium"
+                            >
+                                {preset}
+                            </button>
+                        ))}
+                    </div>
                     <textarea
                         className="w-full p-4 rounded-xl border-2 border-gray-200 font-medium text-gray-700 focus:border-blue-400 outline-none h-32 resize-none"
                         placeholder="Great job! Next time try to..."

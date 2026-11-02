@@ -1,5 +1,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
+import { Logger } from '../../services/logger';
+
 function ReloadPrompt() {
     // checked logic: if site is updated, offlineReady will be false, needRefresh will be true
     const {
@@ -8,10 +10,10 @@ function ReloadPrompt() {
         updateServiceWorker,
     } = useRegisterSW({
         onRegistered(r) {
-            if (import.meta.env.DEV) console.log('SW Registered: ' + r);
+            Logger.info('SW Registered', { registration: r });
         },
         onRegisterError(error) {
-            if (import.meta.env.DEV) console.log('SW registration error', error);
+            Logger.error('SW registration error', { error });
         },
     });
 

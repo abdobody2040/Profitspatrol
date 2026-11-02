@@ -5,6 +5,7 @@ import { BusinessSimulation, VisualConfig } from '../../../../types';
 import { Play, TrendingUp, ShoppingCart, CheckCircle, AlertTriangle, Zap, RotateCcw, Save, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logger } from '../../../../services/logger';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     config: BusinessSimulation;
@@ -21,6 +22,7 @@ interface GameSaveData {
 
 const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
     const { user, completeGame, getSkillModifiers } = useAppStore();
+    const { t } = useTranslation();
     const gameId = config.business_id;
 
     const [day, setDay] = useState(1);
@@ -237,33 +239,51 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
     return (
         <div className="h-full flex flex-col pb-24 md:pb-0" style={{ backgroundColor: visual.colors.background }}>
             {/* HUD */}
-            <div className="p-4 flex justify-between items-center shadow-sm bg-white/50 backdrop-blur-sm">
-                <div className="flex items-center gap-4">
-                    <div className="font-bold text-gray-600 flex items-center gap-2">
-                        Day {day}
+            {/* HUD */}
+            <div className="text-white p-6 flex justify-between items-center relative z-20 shadow-2xl border-b-4 border-white/10" style={{ backgroundColor: visual.colors.primary }}>
+                <div className="flex items-center gap-6">
+                    <motion.div
+                        animate={{ y: [0, -5, 0], rotate: [0, 2, -2, 0] }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                        <img src="/assets/ollie_head.png" alt="Ollie" className="w-14 h-14 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+                    </motion.div>
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-2xl font-black tracking-tight text-white uppercase drop-shadow-sm">{t(`games.${config.business_id}.title`, config.name)}</h2>
+                        <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-2xl border border-white/10">
+                            <span className="text-xs font-black text-white/70 uppercase tracking-widest">{t('sim.day')}</span>
+                            <span className="text-2xl font-black text-white leading-none">{day}</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 bg-white/20 px-5 py-2.5 rounded-[1.25rem] border-2 border-white/30">
+                        <div className="p-1.5 bg-white/20 rounded-lg"><Zap size={16} className="text-white" /></div>
+                        <span className="text-2xl font-black text-white">${funds}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
                         <AnimatePresence>
                             {isSaving && (
-                                <motion.span
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
+                                <motion.div 
+                                    initial={{ opacity: 0, scale: 0.5 }} 
+                                    animate={{ opacity: 1, scale: 1 }} 
                                     exit={{ opacity: 0 }}
-                                    className="text-green-500 text-xs flex items-center gap-1"
+                                    className="flex items-center gap-2 text-[10px] font-black text-white uppercase tracking-widest bg-white/20 px-3 py-1.5 rounded-full border border-white/10"
                                 >
-                                    <Save size={12} />
-                                </motion.span>
+                                    <Save size={12} /> {t('common.saved', 'Saved')}
+                                </motion.div>
                             )}
                         </AnimatePresence>
+                        
+                        <button
+                            onClick={handleReset}
+                            className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-xl"
+                            title="Reset Business"
+                        >
+                            <Trash2 size={20} />
+                        </button>
                     </div>
-                    <button
-                        onClick={handleReset}
-                        className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                        title="Reset Business"
-                    >
-                        <Trash2 size={16} />
-                    </button>
-                </div>
-                <div className="bg-green-100 text-green-800 px-4 py-2 rounded-xl font-black font-mono text-xl">
-                    ${funds}
                 </div>
             </div>
 
@@ -271,24 +291,25 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
                 <div className="max-w-4xl mx-auto space-y-4 md:space-y-8">
 
                     {phase === 'STRATEGY' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-2 md:gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8">
                             {/* INPUTS */}
-                            <div className="bg-white p-4 md:p-6 rounded-xl md:rounded-xl md:rounded-3xl shadow-sm">
-                                <h3 className="font-black text-xl mb-2 md:mb-4 flex items-center gap-2">
-                                    <TrendingUp size={20} /> Strategy
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-[2.5rem] shadow-xl border-4 border-gray-50 dark:border-gray-700">
+                                <h3 className="font-black text-2xl mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                                    <div className="p-2 bg-blue-100 rounded-xl"><TrendingUp className="text-blue-600" size={24} /></div>
+                                    {t('sim.strategy')}
                                 </h3>
-                                <div className="space-y-6">
+                                <div className="space-y-8">
                                     {config.variables?.player_inputs?.map(input => {
                                         const inputKey = String(input);
                                         return (
                                             <div key={inputKey}>
-                                                <div className="flex justify-between mb-2 font-bold text-gray-600 text-xs uppercase tracking-widest">
-                                                    {inputKey.replace(/_/g, ' ')}
-                                                    <span>{sliderValues[inputKey] || 50}%</span>
+                                                <div className="flex justify-between mb-3 font-black text-gray-800 dark:text-gray-200 text-xs uppercase tracking-[0.2em]">
+                                                    {t(['sim.' + inputKey, inputKey.replace(/_/g, ' ')] as any)}
+                                                    <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">{sliderValues[inputKey] || 50}%</span>
                                                 </div>
                                                 <input
                                                     type="range"
-                                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                                    className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full appearance-none cursor-pointer"
                                                     style={{ accentColor: visual.colors.primary }}
                                                     value={sliderValues[inputKey] || 50}
                                                     onChange={(e) => setSliderValues({
@@ -303,12 +324,14 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
                             </div>
 
                             {/* UPGRADES */}
-                            <div className="bg-white p-4 md:p-6 rounded-xl md:rounded-xl md:rounded-3xl shadow-sm">
-                                <h3 className="font-black text-xl mb-2 md:mb-4 flex items-center gap-2">
-                                    <ShoppingCart size={20} /> Shop
+                            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] shadow-xl border-4 border-gray-50 dark:border-gray-700 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-bl-full opacity-30 -translate-y-8 translate-x-8 group-hover:scale-110 transition-transform"></div>
+                                <h3 className="font-black text-2xl mb-6 flex items-center gap-3 text-gray-900 dark:text-white relative z-10">
+                                    <div className="p-2 bg-green-100 rounded-xl"><ShoppingCart className="text-green-600" size={24} /></div>
+                                    {t('sim.shop')}
                                 </h3>
-                                <div className="space-y-3">
-                                    {upgradeTree.length === 0 && <div className="text-gray-400 text-sm">No upgrades available.</div>}
+                                <div className="space-y-4 relative z-10">
+                                    {upgradeTree.length === 0 && <div className="text-gray-400 font-bold italic">{t('sim.no_upgrades', 'No upgrades available.')}</div>}
                                     {upgradeTree.map(u => {
                                         const isOwned = upgrades.includes(u.id);
                                         return (
@@ -316,22 +339,24 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
                                                 key={u.id}
                                                 disabled={isOwned || funds < u.cost}
                                                 onClick={() => buyUpgrade(u)}
-                                                className={`w-full p-3 rounded-xl border-2 text-start flex justify-between items-center transition-all
+                                                className={`w-full p-5 rounded-3xl border-4 text-start flex justify-between items-center transition-all group/item
                                                 ${isOwned
-                                                        ? 'bg-green-50 border-green-200 opacity-70'
+                                                        ? 'bg-green-50 border-green-200 opacity-80'
                                                         : funds >= u.cost
-                                                            ? 'bg-white border-gray-100 hover:border-blue-300'
+                                                            ? 'bg-white border-gray-100 hover:border-blue-400 hover:scale-[1.02] shadow-sm hover:shadow-md'
                                                             : 'bg-gray-50 border-gray-100 opacity-50 cursor-not-allowed'}
                                             `}
                                             >
                                                 <div>
-                                                    <div className="font-bold text-sm text-gray-800">{safeRender(u.name)}</div>
-                                                    <div className="text-xs text-gray-400">{safeRender(u.effect)}</div>
+                                                    <div className="font-black text-lg text-gray-900 dark:text-gray-100">{t(u.nameKey!, u.name)}</div>
+                                                    <div className="text-sm font-bold text-gray-500">{t(u.effectKey!, u.effect)}</div>
                                                 </div>
                                                 {isOwned ? (
-                                                    <CheckCircle size={16} className="text-green-500" />
+                                                    <div className="bg-green-500 text-white p-2 rounded-full shadow-lg"><CheckCircle size={20} strokeWidth={3} /></div>
                                                 ) : (
-                                                    <span className="font-mono font-bold text-sm">${u.cost}</span>
+                                                    <div className={`px-4 py-2 rounded-xl font-black text-lg transition-colors ${funds >= u.cost ? 'bg-blue-100 text-blue-700 group-hover/item:bg-blue-600 group-hover/item:text-white' : 'bg-gray-100 text-gray-400'}`}>
+                                                        ${u.cost}
+                                                    </div>
                                                 )}
                                             </button>
                                         );
@@ -342,45 +367,61 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
                     )}
 
                     {phase === 'SIMULATION' && (
-                        <div className="text-center py-20">
-                            <h3 className="text-lg md:text-2xl font-black text-gray-400 animate-pulse mb-4 md:mb-8">Simulating Day...</h3>
-                            <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-4 md:mb-8">
+                        <div className="text-center py-20 bg-white/50 dark:bg-gray-800/50 rounded-[3rem] backdrop-blur-md border-4 border-white/50 shadow-2xl">
+                            <h3 className="text-2xl md:text-4xl font-black text-gray-400 animate-pulse mb-8 uppercase tracking-widest">{t('sim.simulating', 'Simulating Day...')}</h3>
+                            <div className="max-w-md mx-auto w-full h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-8 border-4 border-white shadow-inner">
                                 <motion.div
-                                    className="h-full bg-blue-500"
-                                    style={{ width: `${progress}%` }}
+                                    className="h-full"
+                                    style={{ width: `${progress}%`, backgroundColor: visual.colors.primary }}
                                 />
                             </div>
                             {eventLog && (
                                 <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-6 py-3 rounded-full font-bold"
+                                    initial={{ scale: 0, rotate: -10 }}
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    className="inline-flex flex-col items-center gap-2 bg-yellow-100 text-yellow-800 p-8 rounded-[2rem] border-4 border-yellow-200 shadow-xl"
                                 >
-                                    <AlertTriangle size={20} /> {eventLog}
+                                    <div className="p-4 bg-yellow-400 rounded-2xl text-yellow-950 mb-2"><AlertTriangle size={32} /></div>
+                                    <div className="text-3xl font-black uppercase tracking-tight">{t(`games.events.${eventLog}.name`, eventLog)}</div>
+                                    <div className="font-bold opacity-70">{t(`games.events.${eventLog}.effect`, '')}</div>
                                 </motion.div>
                             )}
                         </div>
                     )}
 
                     {phase === 'RESULT' && (
-                        <div className="text-center py-10">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Results</h3>
-                            <div className={`text-4xl md:text-6xl font-black mb-2 ${dayStats.profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        <div className="text-center py-10 bg-white dark:bg-gray-800 p-12 rounded-[3rem] shadow-2xl border-4 border-gray-50 relative overflow-hidden">
+                            <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+                            <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.3em] mb-4">{t('sim.report', 'Daily Results')}</h3>
+                            <div className={`text-6xl md:text-8xl font-black mb-6 tracking-tighter drop-shadow-md ${dayStats.profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                                 {dayStats.profit >= 0 ? '+' : '-'}${Math.abs(dayStats.profit)}
                             </div>
-                            <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mt-4 md:mt-8">
-                                <div className="bg-white p-4 rounded-xl shadow-sm">
-                                    <div className="text-xs font-bold text-gray-400 uppercase">Customers</div>
-                                    <div className="text-xl font-black text-blue-600">{dayStats.customers}</div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto mt-8">
+                                <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-[2rem] border-2 border-blue-100 dark:border-blue-800">
+                                    <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">{t('sim.customers')}</div>
+                                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{dayStats.customers}</div>
                                 </div>
-                                <div className="bg-white p-4 rounded-xl shadow-sm">
-                                    <div className="text-xs font-bold text-gray-400 uppercase">Revenue</div>
-                                    <div className="text-xl font-black text-green-600">${dayStats.revenue}</div>
+                                <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-[2rem] border-2 border-green-100 dark:border-green-800">
+                                    <div className="text-[10px] font-black text-green-400 uppercase tracking-widest mb-1">{t('sim.revenue')}</div>
+                                    <div className="text-3xl font-black text-green-600 dark:text-green-400">${dayStats.revenue}</div>
                                 </div>
-                                <div className="bg-white p-4 rounded-xl shadow-sm">
-                                    <div className="text-xs font-bold text-gray-400 uppercase">Expenses</div>
-                                    <div className="text-xl font-black text-red-600">${dayStats.expenses}</div>
+                                <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-[2rem] border-2 border-red-100 dark:border-red-800">
+                                    <div className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">{t('sim.expenses')}</div>
+                                    <div className="text-3xl font-black text-red-600 dark:text-red-400">${dayStats.expenses}</div>
                                 </div>
+                            </div>
+
+                            <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                                <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">{t('sim.satisfaction')}</div>
+                                <div className="w-full max-w-sm h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden relative border-2 border-white shadow-inner">
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${dayStats.satisfaction}%` }}
+                                        className="h-full bg-yellow-400"
+                                    />
+                                </div>
+                                <div className="mt-2 font-black text-yellow-600">{dayStats.satisfaction}%</div>
                             </div>
                         </div>
                     )}
@@ -389,24 +430,24 @@ const SimulationTemplate: React.FC<Props> = ({ config, onExit }) => {
             </div>
 
             {/* Footer Controls */}
-            <div className="p-4 bg-white border-t border-gray-100 flex justify-between">
-                <button onClick={handleExit} className="font-bold text-gray-400 hover:text-gray-600 px-4">
-                    Save & Exit
+            <div className="p-8 bg-white dark:bg-gray-900 border-t-4 border-gray-50 dark:border-gray-800 flex justify-between items-center relative z-10">
+                <button onClick={handleExit} className="font-black text-gray-400 hover:text-red-500 transition-colors px-6 uppercase tracking-[0.2em] text-xs">
+                    {t('sim.save_exit', 'Save & Exit')}
                 </button>
                 {phase === 'STRATEGY' && (
                     <button
                         onClick={startDay}
-                        className="bg-kid-primary text-yellow-900 px-8 py-3 rounded-xl font-black shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy hover:bg-yellow-400 flex items-center gap-2"
+                        className="bg-yellow-400 text-yellow-950 px-16 py-6 rounded-[2.5rem] font-black shadow-[0_10px_0_0_rgba(202,138,4,1)] btn-juicy text-2xl flex items-center gap-4 transition-all active:translate-y-2 active:shadow-none hover:scale-105"
                     >
-                        <Play fill="currentColor" size={18} /> Start Day
+                        <Play fill="currentColor" size={28} /> {t('sim.start_day', 'Start Day')}
                     </button>
                 )}
                 {phase === 'RESULT' && (
                     <button
                         onClick={() => { setDay(d => d + 1); setPhase('STRATEGY'); }}
-                        className="bg-kid-secondary text-white px-8 py-3 rounded-xl font-black shadow-[0_4px_0_0_rgba(21,128,61,1)] btn-juicy hover:bg-green-600 flex items-center gap-2"
+                        className="bg-green-500 text-white px-16 py-6 rounded-[2.5rem] font-black shadow-[0_10px_0_0_rgba(21,128,61,1)] btn-juicy text-2xl flex items-center gap-4 transition-all active:translate-y-2 active:shadow-none hover:scale-105"
                     >
-                        <RotateCcw size={18} /> Next Day
+                        <RotateCcw size={28} /> {t('sim.next_day', 'Next Day')}
                     </button>
                 )}
             </div>

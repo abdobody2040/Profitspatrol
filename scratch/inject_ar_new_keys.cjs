@@ -265,4 +265,3 @@ if (idx === -1) {
 
 content = content.slice(0, idx) + newSection + '\n' + marker + '\n';
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('✅ All new Arabic translations injected successfully');

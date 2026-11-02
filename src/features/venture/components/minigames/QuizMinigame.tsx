@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { SideHustle } from '../../../../types';
 import { CheckCircle2, XCircle, Brain } from 'lucide-react';
-import { QUIZ_QUESTIONS, QuizQuestion } from '../../data/quizQuestions';
+import { QUIZ_QUESTIONS } from "../../data/quizQuestions";
 
 interface QuizMinigameProps {
     gig: SideHustle;

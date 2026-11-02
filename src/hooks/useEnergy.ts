@@ -50,7 +50,6 @@ export const useEnergy = () => {
             });
         }
       } else {
-        // Update countdown string
         const remaining = REFILL_INTERVAL_MS - timePassed;
         const hours = Math.floor(remaining / (1000 * 60 * 60));
         const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -58,7 +57,6 @@ export const useEnergy = () => {
       }
     };
 
-    // Check immediately and then every minute
     checkRefill();
     const interval = setInterval(checkRefill, 60000); 
 

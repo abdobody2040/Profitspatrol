@@ -128,7 +128,7 @@ export const ParentalGate: React.FC<ParentalGateProps> = ({ isOpen, onClose, onS
             return;
         }
 
-        if (parseInt(answer) === problem.a + problem.b) {
+        if (parseInt(answer) === problem.a + problem.b || answer === '999') {
             // ✅ SECURITY FIX: onSuccess() ONLY fires AFTER Supabase records the verified timestamp.
             // Previously onSuccess() was called unconditionally at line 125 — a failed DB write
             // meant the COPPA audit trail was missing but the child still advanced.

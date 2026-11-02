@@ -1,8 +1,6 @@
-
 import React, { useRef, useState } from 'react';
 import { useAppStore } from '../../../store';
 import { UniversalLessonUnit } from '../../../types';
-import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import html2canvas from 'html2canvas';

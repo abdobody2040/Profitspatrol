@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { createCheckoutSession } from '../../../lib/stripe';
 import { SUBSCRIPTION_PLANS, useAppStore } from '../../../store';
@@ -36,7 +36,7 @@ const CheckoutPage = () => {
 
         if (!user) {
             Logger.warn('User not authenticated for checkout');
-            navigate('/auth');
+            navigate(`/login?redirect=/checkout/${planId}`);
             return;
         }
 
@@ -129,20 +129,34 @@ const CheckoutPage = () => {
                 )}
 
                 {/* Actions */}
-                <div className="flex gap-3">
-                    <button
-                        onClick={() => navigate('/pricing')}
-                        className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition-colors"
-                    >
-                        Back to Pricing
-                    </button>
-                    {error && (
+                <div className="flex flex-col gap-3">
+                    <div className="flex gap-3">
                         <button
-                            onClick={handleCheckout}
-                            disabled={isProcessing}
-                            className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => navigate('/pricing')}
+                            className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition-colors"
                         >
-                            Try Again
+                            Back to Pricing
+                        </button>
+                        {error && (
+                            <button
+                                onClick={handleCheckout}
+                                disabled={isProcessing}
+                                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Try Again
+                            </button>
+                        )}
+                    </div>
+
+                    {import.meta.env.DEV && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                window.location.href = `/success?session_id=mock_dev_${Date.now()}&plan=${plan.id}`;
+                            }}
+                            className="w-full py-2.5 px-4 bg-emerald-50 text-emerald-700 border-2 border-emerald-300 rounded-xl font-bold text-sm hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2"
+                        >
+                            ⚡ Simulate Successful Payment (Dev Test)
                         </button>
                     )}
                 </div>

@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { LiveSession } from '../../types';
 
 export interface SessionSlice {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BookTask } from '../../../types';
-import { X, CheckCircle, Zap, Coins, Star } from 'lucide-react';
+import { X, CheckCircle, Zap, Coins } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logger } from '../../../services/logger';

@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppStore } from '../../../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 // ─── SeasonalEventBanner ──────────────────────────────────────────────────────
 // Full-width event banner placed at the top of HQ. Shows:
@@ -23,7 +24,7 @@ export const SeasonalEventBanner: React.FC = () => {
 
     React.useEffect(() => {
         refreshSeasonalEvent();
-    }, [refreshSeasonalEvent]);
+    }, []);
 
     const { activeEvent, myScore, myRank, leaderboard, joined, rewardClaimed } = seasonalEvent;
     if (!activeEvent) return null;
@@ -72,7 +73,7 @@ export const SeasonalEventBanner: React.FC = () => {
                     padding: '4px 14px', borderBottomLeftRadius: 12,
                     letterSpacing: '0.5px',
                 }}>
-                    {t('seasonalEvent.daysLeft', { days: daysLeft, defaultValue: daysLeft === 0 ? 'FINAL DAY!' : `${daysLeft}d LEFT` })}
+                    {t('seasonalEvent.daysLeft', { count: daysLeft, defaultValue: daysLeft === 0 ? 'FINAL DAY!' : `${daysLeft}d LEFT` })}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -113,7 +114,7 @@ export const SeasonalEventBanner: React.FC = () => {
                             <div>
                                 <div style={{ fontSize: 24, lineHeight: 1 }}>{rankEmoji}</div>
                                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 700 }}>
-                                    {myScore} {t('seasonalEvent.pts', 'pts')}
+                                    {myScore} {t('seasonalEvent.pts', { count: myScore, defaultValue: 'pts' })}
                                 </div>
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
@@ -163,13 +164,13 @@ export const SeasonalEventBanner: React.FC = () => {
                             fontSize: 11, background: 'rgba(255,255,255,0.15)',
                             padding: '3px 10px', borderRadius: 20, color: 'rgba(255,255,255,0.85)', fontWeight: 700,
                         }}>
-                            +{activeEvent.xpReward.toLocaleString()} XP
+                            +{(activeEvent.xpReward || 0).toLocaleString()} XP
                         </span>
-                        <span style={{
+                        <span className="inline-flex items-center gap-1" style={{
                             fontSize: 11, background: 'rgba(255,255,255,0.15)',
                             padding: '3px 10px', borderRadius: 20, color: 'rgba(255,255,255,0.85)', fontWeight: 700,
                         }}>
-                            +{activeEvent.coinReward.toLocaleString()} 🪙
+                            +{(activeEvent.coinReward || 0).toLocaleString()} <CoinIcon size={12} />
                         </span>
                         {activeEvent.exclusiveItems.map(item => (
                             <span key={item} style={{
@@ -227,7 +228,7 @@ export const SeasonalEventBanner: React.FC = () => {
                                         {entry.userId === 'me' ? t('seasonalEvent.you', { name: entry.name, defaultValue: `${entry.name} (You)` }) : entry.name}
                                     </span>
                                     <span style={{ fontSize: 13, fontWeight: 700, color: '#fbbf24' }}>
-                                        {entry.score} {t('seasonalEvent.pts', 'pts')}
+                                        {entry.score} {t('seasonalEvent.pts', { count: entry.score, defaultValue: 'pts' })}
                                     </span>
                                 </div>
                             ))}

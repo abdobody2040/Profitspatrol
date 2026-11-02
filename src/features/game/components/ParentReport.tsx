@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Mail, Send, CheckCircle2, Loader2, X, BarChart2, Star, Flame, BookOpen, Briefcase } from 'lucide-react';
+import CoinIcon from '../../../components/ui/CoinIcon';
 import { useAppStore } from '../../../store';
 import { supabase } from '../../../lib/supabase';
 
@@ -40,7 +41,7 @@ export const ParentReport: React.FC<ParentReportProps> = ({ onClose }) => {
     const stats = [
         { icon: <Star size={18} />, label: 'XP Earned', value: (kid?.xp ?? 0).toLocaleString(), color: '#6366F1' },
         { icon: <BarChart2 size={18} />, label: 'CEO Level', value: kid?.level ?? 1, color: '#8B5CF6' },
-        { icon: <span className="font-black text-base">🪙</span>, label: 'BizCoins', value: (kid?.bizCoins ?? 0).toLocaleString(), color: '#F59E0B' },
+        { icon: <CoinIcon size={18} />, label: 'ppTokens', value: (kid?.ppTokens ?? 0).toLocaleString(), color: '#F59E0B' },
         { icon: <BookOpen size={18} />, label: 'Lessons', value: (kid?.lessonsCompleted ?? 0), color: '#10B981' },
         { icon: <Briefcase size={18} />, label: 'Gigs Done', value: (kid?.gigsCompleted ?? 0), color: '#0EA5E9' },
         { icon: <Flame size={18} />, label: 'Day Streak', value: (kid?.streakDays ?? 0), color: '#EF4444' },

@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
 import { useAppStore } from '../../../store';
 import { motion } from 'framer-motion';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 // ─── BusinessCard ─────────────────────────────────────────────────────────────
 // A premium "shareable business card" for the kid's profile.
-// Displays: name, title/rank, top skill, streak, BizCoins, HQ level.
+// Displays: name, title/rank, top skill, streak, ppTokens, HQ level.
 // Has a "Download as Image" button using the Canvas API (no html2canvas dep needed).
 
 const RANK_TITLES: Record<string, string> = {
@@ -32,7 +33,7 @@ export const BusinessCard: React.FC = () => {
     const gradient = RANK_COLORS[tier] ?? RANK_COLORS.intern;
     const topSkill = user.unlockedSkills?.[0] ?? 'Business Strategy';
     const level = user.level ?? 1;
-    const bizCoins = user.bizCoins ?? 0;
+    const ppTokens = user.ppTokens ?? 0;
     const streak = user.streak ?? 0;
 
     // Download card as PNG using the browser's built-in print / screenshot API via a blob
@@ -239,7 +240,7 @@ export const BusinessCard: React.FC = () => {
                     gap: 12, marginBottom: 20,
                 }}>
                     {[
-                        { label: 'BizCoins', value: bizCoins.toLocaleString(), icon: '🪙' },
+                        { label: 'ppTokens', value: ppTokens.toLocaleString(), icon: <CoinIcon size={20} className="mx-auto" /> },
                         { label: 'Streak', value: `${streak}d`, icon: '🔥' },
                         { label: 'Top Skill', value: topSkill.split(' ')[0], icon: '⚡' },
                     ].map(({ label, value, icon }) => (

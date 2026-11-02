@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { useAppStore } from '../../../store';
-import { TurnaroundScenario } from '../../../types';
 import { AlertTriangle, CheckCircle2, DollarSign, Flame, ArrowRight, ShieldAlert, X, ChevronRight, Trophy, RotateCcw, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -72,16 +71,16 @@ const ScenarioEngine = () => {
                         i.id === issue.id ? { ...i, fixed: true } : i
                     );
                     updateScenarioState({ issues: updatedIssues });
-                    newLog.push(`🛠️ Fixed: ${getIssueDesc(issue)} (-$${issue.costToFix})`);
+                    newLog.push(`🛠️ ${t('scenario_engine.fixed', 'Fixed')}: ${getIssueDesc(issue)} (-$${issue.costToFix})`);
                 } else {
-                    newLog.push(`❌ Not enough cash to fix ${getIssueDesc(issue)}`);
+                    newLog.push(`❌ ${t('scenario_engine.not_enough_cash', { issue: getIssueDesc(issue), defaultValue: `Not enough cash to fix ${getIssueDesc(issue)}` })}`);
                 }
             }
         }
 
         // Apply Burn
         newCash -= newBurn;
-        newLog.push(`🔥 Burn Rate consumed $${newBurn}`);
+        newLog.push(`🔥 ${t('scenario_engine.burn_consumed', { amount: newBurn, defaultValue: `Burn Rate consumed $${newBurn}` })}`);
 
         // ── Surprise Event fires on turn 3 (from the end), once per boss ──
         const turnsElapsed = activeScenario.turns; // will be decremented below
@@ -90,10 +89,11 @@ const ScenarioEngine = () => {
             newCash += surprise.cashDelta;
             newBurn += surprise.burnDelta;
             const cashStr = surprise.cashDelta > 0 ? `+$${surprise.cashDelta}` : surprise.cashDelta < 0 ? `-$${Math.abs(surprise.cashDelta)}` : '';
-            const burnStr = surprise.burnDelta < 0 ? ` Burn -$${Math.abs(surprise.burnDelta)}/day` : surprise.burnDelta > 0 ? ` Burn +$${surprise.burnDelta}/day` : '';
-            newLog.push(`⚡ SURPRISE: ${surprise.headline} ${cashStr}${burnStr}`);
+            const burnStr = surprise.burnDelta < 0 ? ` Burn -$${Math.abs(surprise.burnDelta)}${t('common.per_day')}` : surprise.burnDelta > 0 ? ` Burn +$${surprise.burnDelta}${t('common.per_day')}` : '';
+            const surpriseTitle = t(`scenarios.${activeScenario.id}.surprise_headline`, { defaultValue: surprise.headline });
+            newLog.push(`⚡ ${t('scenario_engine.surprise_event', 'SURPRISE:')} ${surpriseTitle} ${cashStr}${burnStr}`);
             setSurpriseFired(true);
-            setSurpriseVisible(surprise.headline);
+            setSurpriseVisible(surpriseTitle);
             setTimeout(() => setSurpriseVisible(null), 4000);
         }
 
@@ -154,33 +154,33 @@ const ScenarioEngine = () => {
                             </div>
 
                             <div className={`text-xs font-black text-center uppercase tracking-widest mb-1 flex items-center justify-center gap-1 ${theme.badgeClass}`}>
-                                <ShieldAlert size={14} /> Boss Battle
+                                <ShieldAlert size={14} /> {t('scenario_engine.boss_battle', 'Boss Battle')}
                             </div>
                             <h2 className="text-2xl font-black text-center text-gray-900 dark:text-white mb-1">{getScenarioTitle()}</h2>
                             <p className="text-center text-sm font-bold text-gray-400 mb-5">{getCompanyName()}</p>
 
                             {/* Dramatic tagline */}
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 mb-5 border border-gray-100 dark:border-gray-700 text-center">
-                                <p className="text-gray-700 dark:text-gray-300 font-medium italic">"{theme.tagline}"</p>
+                                <p className="text-gray-700 dark:text-gray-300 font-medium italic">"{t(`scenarios.${activeScenario.id}.situation`, { defaultValue: theme.tagline })}"</p>
                             </div>
 
                             <div className="space-y-2 mb-6 text-sm">
                                 <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                                    <span>🎯 Goal:</span>
+                                    <span>🎯 {t('scenario_engine.goal_prefix', 'Goal:')}</span>
                                     <span className="font-bold text-gray-700 dark:text-gray-200">{getValues_Goal()}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                                    <span>💰 Starting Cash:</span>
+                                    <span>💰 {t('scenario_engine.starting_cash', 'Starting Cash:')}</span>
                                     <span className="font-bold text-green-600 dark:text-green-400">${activeScenario.initialCash}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                                    <span>🔥 Daily Burn:</span>
-                                    <span className="font-bold text-red-500">-${activeScenario.initialBurnRate}/day</span>
+                                    <span>🔥 {t('scenario_engine.daily_burn', 'Daily Burn:')}</span>
+                                    <span className="font-bold text-red-500">-${activeScenario.initialBurnRate}{t('common.per_day')}</span>
                                 </div>
                                 {theme.surpriseEvent && (
                                     <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                                        <span>⚡ Surprise:</span>
-                                        <span className="font-bold text-yellow-500">Hidden on Day 3!</span>
+                                        <span>⚡ {t('scenario_engine.surprise', 'Surprise:')}</span>
+                                        <span className="font-bold text-yellow-500">{t('scenario_engine.hidden_on_day_3', 'Hidden on Day 3!')}</span>
                                     </div>
                                 )}
                             </div>
@@ -189,7 +189,7 @@ const ScenarioEngine = () => {
                                 onClick={() => setGameState('PLAYING')}
                                 className={`w-full py-4 text-white font-black rounded-xl text-lg shadow-lg transition-all flex items-center justify-center gap-2 ${theme.btnClass}`}
                             >
-                                Start Mission <ChevronRight size={24} />
+                                {t('scenario_engine.start_mission', 'Start Mission')} <ChevronRight size={24} />
                             </button>
                         </div>
                     </motion.div>
@@ -208,12 +208,12 @@ const ScenarioEngine = () => {
                             <div className="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-yellow-500">
                                 <Trophy size={40} fill="currentColor" />
                             </div>
-                            <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 uppercase">Mission Complete!</h2>
-                            <p className="text-gray-500 dark:text-gray-400 font-bold mb-6">You saved {getCompanyName()}! 🎉</p>
+                            <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 uppercase">{t('scenario_engine.mission_complete', 'Mission Complete!')}</h2>
+                            <p className="text-gray-500 dark:text-gray-400 font-bold mb-6">{t('scenario_engine.saved_company', { company: getCompanyName(), defaultValue: `You saved ${getCompanyName()}! 🎉` })}</p>
 
                             <div className="flex gap-4 justify-center mb-8">
                                 <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-3 rounded-2xl border border-blue-100 dark:border-blue-800">
-                                    <div className="text-xs font-bold text-blue-400 uppercase">Reward</div>
+                                    <div className="text-xs font-bold text-blue-400 uppercase">{t('scenario_engine.reward', 'Reward')}</div>
                                     <div className="text-2xl font-black text-blue-600 dark:text-blue-400">+1000 Coins</div>
                                 </div>
                             </div>
@@ -222,7 +222,7 @@ const ScenarioEngine = () => {
                                 onClick={() => endScenario(true)}
                                 className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black rounded-xl text-lg shadow-lg shadow-green-200 dark:shadow-none transition-all flex items-center justify-center gap-2"
                             >
-                                Continue Journey <ArrowRight size={24} />
+                                {t('scenario_engine.continue', 'Continue Journey')} <ArrowRight size={24} />
                             </button>
                         </div>
                     </motion.div>
@@ -241,14 +241,14 @@ const ScenarioEngine = () => {
                             <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
                                 <Flame size={40} />
                             </div>
-                            <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 uppercase">Mission Failed</h2>
-                            <p className="text-gray-500 dark:text-gray-400 font-bold mb-8">The company ran out of money. Try again!</p>
+                            <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 uppercase">{t('scenario_engine.mission_failed', 'Mission Failed')}</h2>
+                            <p className="text-gray-500 dark:text-gray-400 font-bold mb-8">{t('scenario_engine.ran_out_of_money', 'The company ran out of money. Try again!')}</p>
 
                             <button
                                 onClick={handleRestart}
                                 className={`w-full py-4 text-white font-black rounded-xl text-lg transition-all flex items-center justify-center gap-2 ${theme.btnClass}`}
                             >
-                                Try Again <RotateCcw size={24} />
+                                {t('scenario_engine.try_again', 'Try Again')} <RotateCcw size={24} />
                             </button>
                         </div>
                     </motion.div>
@@ -286,7 +286,7 @@ const ScenarioEngine = () => {
                             {/* Boss emoji avatar in sidebar */}
                             <div className="text-4xl mb-2">{theme.emoji}</div>
                             <div className={`text-xs font-bold uppercase tracking-widest mb-1 flex items-center justify-center gap-1 ${theme.badgeClass}`}>
-                                <ShieldAlert size={12} /> Boss Battle
+                                <ShieldAlert size={12} /> {t('scenario_engine.boss_battle', 'Boss Battle')}
                             </div>
                             <h1 className="text-xl font-black text-gray-900 dark:text-white leading-tight">{getScenarioTitle()}</h1>
                             <p className="text-gray-500 dark:text-gray-400 text-xs font-bold mt-1">{getCompanyName()}</p>
@@ -295,21 +295,21 @@ const ScenarioEngine = () => {
 
                     <div className="space-y-4 flex-1">
                         <div className="p-4 bg-white/70 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">Cash Available</div>
+                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">{t('scenario_engine.cash_available', 'Cash Available')}</div>
                             <div className={`text-3xl font-mono font-black ${activeScenario.initialCash < 500 ? 'text-red-500 animate-pulse' : 'text-green-600 dark:text-green-400'}`}>
                                 ${activeScenario.initialCash.toLocaleString()}
                             </div>
                         </div>
 
                         <div className="p-4 bg-white/70 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">Daily Burn Rate</div>
+                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">{t('scenario_engine.daily_burn_rate', 'Daily Burn Rate')}</div>
                             <div className="text-3xl font-mono font-black text-red-500 dark:text-red-400">
-                                -${activeScenario.initialBurnRate}<span className="text-sm text-gray-400 dark:text-gray-600">/day</span>
+                                -${activeScenario.initialBurnRate}<span className="text-sm text-gray-400 dark:text-gray-600">{t('common.per_day')}</span>
                             </div>
                         </div>
 
                         <div className="p-4 bg-white/70 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">Days Remaining</div>
+                            <div className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-1">{t('scenario_engine.days_remaining', 'Days Remaining')}</div>
                             <div className="flex items-end gap-2">
                                 <div className={`text-4xl font-black ${activeScenario.turns <= 2 ? 'text-red-500 animate-pulse' : 'text-gray-900 dark:text-white'}`}>
                                     {activeScenario.turns}
@@ -327,7 +327,7 @@ const ScenarioEngine = () => {
                         {theme.surpriseEvent && !surpriseFired && activeScenario.turns > 3 && (
                             <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800 flex items-center gap-2">
                                 <Zap size={14} className="text-yellow-500 flex-shrink-0" />
-                                <p className="text-xs font-bold text-yellow-700 dark:text-yellow-400">⚡ Surprise event incoming on Day 3!</p>
+                                <p className="text-xs font-bold text-yellow-700 dark:text-yellow-400">⚡ {t('scenario_engine.surprise_incoming', 'Surprise event incoming on Day 3!')}</p>
                             </div>
                         )}
                     </div>
@@ -337,17 +337,17 @@ const ScenarioEngine = () => {
                         disabled={isAnimating || activeScenario.turns <= 0}
                         className={`mt-4 w-full py-4 text-white font-black rounded-xl text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${theme.btnClass}`}
                     >
-                        {isAnimating ? 'Processing...' : (<>End Day <ArrowRight size={20} /></>)}
+                        {isAnimating ? t('common.loading', 'Processing...') : (<>{t('scenario_engine.end_day', 'End Day')} <ArrowRight size={20} /></>)}
                     </button>
                     {!selectedIssueId && !isAnimating && (
-                        <p className="text-center text-xs text-red-500 dark:text-red-400 mt-2 font-bold animate-pulse">⚠️ Warning: No fix selected!</p>
+                        <p className="text-center text-xs text-red-500 dark:text-red-400 mt-2 font-bold animate-pulse">⚠️ {t('scenario_engine.warning_no_fix', 'Warning: No fix selected!')}</p>
                     )}
                 </div>
 
                 {/* Main: Issues Panel */}
                 <div className="flex-1 bg-white dark:bg-gray-900 p-8 overflow-y-auto relative">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                        <AlertTriangle className="text-yellow-500" /> Operational Issues
+                        <AlertTriangle className="text-yellow-500" /> {t('scenario_engine.operational_issues', 'Operational Issues')}
                     </h2>
 
                     <div className="grid grid-cols-1 gap-4">
@@ -376,10 +376,10 @@ const ScenarioEngine = () => {
                                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-200'
                                         }`}
                                     >
-                                        {issue.severity}
+                                        {t(`scenario_engine.severity_${issue.severity.toLowerCase()}`, { defaultValue: issue.severity })}
                                     </div>
                                     <div className="font-mono font-bold text-green-600 dark:text-green-400 text-sm">
-                                        COST: ${issue.costToFix}
+                                        {t('scenario_engine.cost', 'COST')}: ${issue.costToFix}
                                     </div>
                                 </div>
                                 <h3 className={`text-lg font-bold mb-1 ${issue.fixed ? 'text-green-600 dark:text-green-500 line-through' : 'text-gray-900 dark:text-white'}`}>
@@ -387,7 +387,7 @@ const ScenarioEngine = () => {
                                 </h3>
                                 <div className="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center gap-2">
                                     <Flame size={14} className="text-red-500" />
-                                    Impact: Reduces burn by ${issue.impactOnBurn}/day
+                                    {t('scenario_engine.impact_prefix', 'Impact: Reduces burn by $')}{issue.impactOnBurn}{t('common.per_day')}
                                 </div>
 
                                 {issue.fixed && (
@@ -409,11 +409,11 @@ const ScenarioEngine = () => {
                     {/* Event Log */}
                     <div className="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6">
                         <h3 className="text-gray-400 font-bold uppercase text-xs mb-3 flex items-center gap-2">
-                            <DollarSign size={12} /> Event Log
+                            <DollarSign size={12} /> {t('scenario_engine.event_log', 'Event Log')}
                         </h3>
                         <div className="space-y-1.5 font-mono text-sm max-h-40 overflow-y-auto">
                             {turnLog.length === 0 && (
-                                <p className="text-gray-300 dark:text-gray-600 italic text-xs">No events yet. End the first day to start.</p>
+                                <p className="text-gray-300 dark:text-gray-600 italic text-xs">{t('scenario_engine.no_events_yet', 'No events yet. End the first day to start.')}</p>
                             )}
                             {[...turnLog].reverse().map((log, i) => (
                                 <motion.div

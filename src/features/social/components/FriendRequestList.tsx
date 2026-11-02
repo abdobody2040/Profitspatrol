@@ -1,9 +1,7 @@
-
-
 import React, { useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { supabase } from '../../../lib/supabase';
-import { UserPlus, X, Check, Users } from 'lucide-react';
+import { X, Check, Users } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSocialStore } from "../../../store/socialStore";
 
@@ -74,11 +72,12 @@ const FriendRequestList: React.FC = () => {
                         key={request.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-lg border-b-[6px] border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-5"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xl shrink-0">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white font-black text-2xl shrink-0 shadow-inner border-2 border-white dark:border-gray-700">
                                 {request.friend?.avatar_url ? (
                                     <img src={request.friend.avatar_url} alt={request.friend.username} className="w-full h-full rounded-full object-cover" />
                                 ) : (
@@ -96,20 +95,20 @@ const FriendRequestList: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 w-full sm:w-auto">
+                        <div className="flex gap-3 w-full sm:w-auto">
                             <button
                                 onClick={() => handleAccept(request.id)}
                                 disabled={isLoading}
-                                className="flex-1 sm:flex-none bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
+                                className="flex-1 sm:flex-none btn-juicy bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_0_0_#16a34a] hover:shadow-[0_2px_0_0_#16a34a] hover:translate-y-[2px]"
                             >
-                                <Check size={16} /> Accept
+                                <Check size={18} /> Accept
                             </button>
                             <button
                                 onClick={() => handleIgnore(request.id)}
                                 disabled={isLoading}
-                                className="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+                                className="flex-1 sm:flex-none btn-juicy bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-700 dark:text-gray-200 px-5 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_0_0_#d1d5db] dark:shadow-[0_4px_0_0_#374151] hover:shadow-[0_2px_0_0_#d1d5db] dark:hover:shadow-[0_2px_0_0_#374151] hover:translate-y-[2px]"
                             >
-                                <X size={16} /> Ignore
+                                <X size={18} /> Ignore
                             </button>
                         </div>
                     </motion.div>

@@ -1,7 +1,13 @@
 export const de = {
   translation: {
+"level_up": {
+    "title": "Level Up!",
+    "subtitle": "Du bist jetzt ein Level {{level}} Unternehmer!",
+    "btn": "Großartig!"
+  },
   "nav": {
     "map": "Abenteuerkarte",
+    "practice": "Üben",
     "assignments": "Aufgaben",
     "games": "Arkade",
     "library": "Bibliothek",
@@ -30,7 +36,14 @@ export const de = {
     "debate": "Debatte Dojo",
     "videos": "Videos",
     "gig_central": "Gig-Zentrale",
-    "real_estate": "Immobilien"
+    "real_estate": "Immobilien",
+    "help": "Hilfe",
+    "card_academy": "Kartenakademie",
+    "spin_wheel": "Glücksrad",
+    "weekly_challenge": "Wöchentliche Herausforderung",
+    "the_tank": "Investoren-Arena",
+    "side_hustle": "Projekte",
+    "play_hub_title": "Spiele-Zentrum"
   },
   "debate": {
     "topics": {
@@ -48,6 +61,41 @@ export const de = {
         "title": "Die geheime Zutat",
         "scenario": "Du hast einen 'Super-Süßstoff' gefunden, der Limonade 10-mal besser schmecken lässt, aber einigen Kindern Bauchschmerzen bereiten könnte, wenn sie zu viel davon trinken. Es gibt noch keine Gesetze, die ihn verbieten.",
         "dilemma": "Benutzt du die geheime Zutat, um mehr zu verkaufen?"
+      },
+      "topic_subscription": {
+        "title": "Einmal zahlen oder abonnieren?",
+        "scenario": "Du hast eine coole Zeichen-App erstellt. Du kannst sie für einen einmaligen Preis von 20 $ verkaufen oder ein monatliches Abonnement von 2 $ anbieten. Einmalig bringt schnelles Geld, aber Abonnements sorgen für stetiges Einkommen jeden Monat.",
+        "dilemma": "Welches Geschäftsmodell ist besser für langfristiges Wachstum?"
+      },
+      "topic_remote": {
+        "title": "Fernarbeit vs. Büro",
+        "scenario": "Ihr Softwareunternehmen wächst. Arbeit von zu Hause spart Mietkosten und hält die Mitarbeiter zufrieden. Arbeit im Büro hilft den Teams, besser zu kommunizieren und schneller Ideen zu entwickeln.",
+        "dilemma": "Sollte Ihr Unternehmen 100% remote bleiben oder ein Büro eröffnen?"
+      },
+      "topic_influencer": {
+        "title": "Die ehrliche Bewertung",
+        "dilemma": "Nimmst du das Geld oder bleibst du ehrlich zu deinen Followern?",
+        "scenario": "Ein Spielzeugunternehmen bietet Ihnen 500 $ dafür, dass Sie in Ihren sozialen Medien sagen, ihr neues Spiel sei 'das beste aller Zeiten'. Sie finden das Spiel eigentlich nur in Ordnung. Wenn Sie ehrlich sind, verlieren Sie die 500 $."
+      },
+      "topic_ads": {
+        "dilemma": "Sollte die Schule das Sponsoring annehmen?",
+        "title": "Werbung im Schulflur",
+        "scenario": "Ein Getränkeunternehmen bietet Ihrer Schule 10.000 Dollar, um ihre Plakate in den Fluren aufzuhängen. Das Geld könnte neue Computer für die Schüler kaufen, aber einige Eltern denken, dass Schulen keine zuckerhaltigen Getränke bewerben sollten."
+      },
+      "topic_automation": {
+        "title": "Roboter vs. menschliche Arbeiter",
+        "dilemma": "Ist es ethisch, Menschen durch Roboter zu ersetzen, um höhere Gewinne zu erzielen?",
+        "scenario": "Ihre Spielzeugfabrik kann einen Roboter kaufen, der rund um die Uhr arbeitet und niemals müde wird. Er kostet so viel wie die Gehälter von 3 Arbeitern. Wenn Sie den Roboter kaufen, müssen Sie 3 Personen entlassen, aber Ihre Spielzeuge werden günstiger herzustellen sein."
+      },
+      "topic_crypto": {
+        "title": "Die Krypto-Euphorie",
+        "dilemma": "Ist es klug, die Ersparnisse Ihres Unternehmens in Kryptowährungen zu riskieren?",
+        "scenario": "Ihr Unternehmen hat zusätzliches Geld. Sie können es auf ein sicheres Bankkonto einzahlen (niedrige Zinsen) oder die Kryptowährung 'PP Token' kaufen (kann sich im Wert verdoppeln, kann auf null fallen)."
+      },
+      "topic_equity": {
+        "dilemma": "Wie überzeugen Sie sie, Ihrem Team beizutreten?",
+        "title": "Den Kuchen teilen",
+        "scenario": "Sie gründen ein neues Unternehmen mit einem brillanten Ingenieur. Sie können ihm ein hohes Gehalt zahlen oder ein kleines Gehalt plus 20% Eigentum (Anteile) am Unternehmen geben."
       }
     },
     "title": "Debatte Dojo",
@@ -57,7 +105,7 @@ export const de = {
     "verdict": "Urteil",
     "results": "Dojo-Ergebnisse",
     "victory": "Sieg!",
-    "reward": "+100 BizCoins und +50 XP",
+    "reward": "+100 P Tokens und +50 XP",
     "argue_case": "Vertrete deinen Standpunkt!",
     "thinking": "Nachdenken...",
     "error": "Hoppla! Mein Gehirn ist eingefroren. Noch einmal versuchen?",
@@ -92,7 +140,14 @@ export const de = {
     "viewing_as_student": "Als Student ansehen in:",
     "preview_mode": "Vorschaumodus für Lehrer/Administrator",
     "no_classes_found": "Keine Klassen gefunden",
-    "please_type_answer": "Bitte geben Sie Ihre Antwort ein oder fügen Sie einen Link ein."
+    "please_type_answer": "Bitte geben Sie Ihre Antwort ein oder fügen Sie einen Link ein.",
+    "tab_daily": "Tagesmissionen & Bezirksverträge",
+    "tab_classroom": "Klassenmissionen",
+    "join_class_button": "Einer Klasse beitreten",
+    "switch_class_button": "Klasse wechseln",
+    "no_class_card_title": "Du bist noch keiner Klasse beigetreten",
+    "no_class_card_desc": "Gib den 6-stelligen Klassencode deiner Lehrkraft ein, um auf Aufgaben und Missionen zuzugreifen.",
+    "enter_code_cta": "Code eingeben & beitreten"
   },
   "auth": {
     "title": "Gewinnpatrouille",
@@ -129,7 +184,20 @@ export const de = {
     "parental_gate_desc": "Zur Sicherheit bitte einen Erwachsenen um Hilfe bitten.",
     "parental_gate_question": "Was ist {{a}} + {{b}}?",
     "parental_gate_error": "Falsche Antwort. Bitte frage einen Elternteil um Hilfe.",
-    "parental_gate_submit": "Verifizieren"
+    "parental_gate_submit": "Verifizieren",
+    "password_symbols": "Nummer oder Symbol",
+    "invite_code": "Einladungscode (optional)",
+    "password_min": "8+ Zeichen",
+    "ollie_welcome": "Hallo! Ich bin Ollie. Bereit, ein Profits Patrol-Held zu werden?",
+    "ollie_signup": "Lass uns zusammen etwas Erstaunliches bauen!",
+    "ollie_login": "Willkommen zurück, Chef! Dein Imperium wartet.",
+    "age_mode_title": "Wähle das passende Level:",
+    "junior_title": "Junior Starter",
+    "junior_age": "6 - 8 Jahre",
+    "junior_desc": "Große Tasten, Sprachvorlesung, spielerisches Lernen",
+    "explorer_title": "Smarter Entdecker",
+    "explorer_age": "9 - 12 Jahre",
+    "explorer_desc": "Gründer-Herausforderungen, Budgets & Kennzahlen"
   },
   "engine": {
     "briefing": "Briefing",
@@ -151,7 +219,14 @@ export const de = {
     "all_levels": "Alle Stufen",
     "level_easy": "Einfach",
     "level_medium": "Mittel",
-    "level_hard": "Schwierig"
+    "level_hard": "Schwierig",
+    "satisfaction": "Zufriedenheit",
+    "results": "Ergebnisse",
+    "next_phase": "Nächste Phase",
+    "heart_lost": "Ein Herz verloren!",
+    "hearts_remaining": "Herzen übrig",
+    "out_of_hearts": "Keine Herzen mehr! Warte auf das Nachfüllen",
+    "analyzing_hint": "Ollie bereitet einen Tipp für dich vor..."
   },
   "project": {
     "briefing": "Projektübersicht",
@@ -217,7 +292,8 @@ export const de = {
     "badge_classic": "KLASSISCH",
     "badge_creative": "KREATIV",
     "badge_pro": "PRO",
-    "badge_new": "NEU"
+    "badge_new": "NEU",
+    "cat_marketing": "Marketing"
   },
   "gig_central": {
     "jobs": {
@@ -338,7 +414,12 @@ export const de = {
       "Finance": "Finanzen",
       "Mindset": "Denkweise",
       "Strategy": "Strategie",
-      "Tutorial": "Anleitung"
+      "Tutorial": "Anleitung",
+      "Shorts": "Shorts",
+      "OllieExplains": "Ollie erklärt",
+      "Challenge": "Action-Herausforderungen",
+      "CaseStudy": "Fallstudie",
+      "Parent": "Elternführer"
     },
     "items": {
       "vid_1": {
@@ -355,7 +436,83 @@ export const de = {
       }
     },
     "title": "Videobibliothek",
-    "subtitle": "Von den besten Köpfen der Wirtschaft lernen und zuschauen."
+    "subtitle": "Von den besten Köpfen der Wirtschaft lernen und zuschauen.",
+    "tabs": {
+      "aiStudio": "✨ KI Video Studio",
+      "explore": "📚 Alles erkunden",
+      "quests": "🏆 Video-Quests",
+      "forYou": "🔥 Für Dich (Shorts)"
+    },
+    "feed": {
+      "watchRewardAlert": "Schau 90% des Videos, um +10 XP & +5 PP-Token zu verdienen!",
+      "rewardClaimed": "Belohnung eingelöst!",
+      "speakerLabel": "Gastgeber",
+      "keyConcept": "Schlüsselbegriff",
+      "swipeHint": "Nach oben wischen oder Pfeiltasten drücken, um zu navigieren",
+      "copiedLink": "Link in die Zwischenablage kopiert!",
+      "saved": "Gespeichert",
+      "replay": "Wiederholen",
+      "liked": "Gefällt mir",
+      "like": "Gefällt mir",
+      "quizBtn": "Quiz machen",
+      "autoPlay": "Automatisches Abspielen",
+      "save": "Speichern",
+      "challengeBtn": "Action-Herausforderung",
+      "share": "Teilen",
+      "modeAnimated": "Interaktive Animation",
+      "modeYoutube": "YouTube-Modus",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "toggleAudio": "Ton umschalten"
+    },
+    "quiz": {
+      "title": "Schnelles Finanzquiz",
+      "failedTitle": "Nicht ganz, überprüfe es und versuche es erneut! 💡",
+      "passedTitle": "Brillante Antwort! 🎉",
+      "submit": "Antwort überprüfen",
+      "subtitle": "Antworten Sie richtig, um +20 EP & +15 PP-Marken zu erhalten!",
+      "completedBadge": "Quiz abgeschlossen",
+      "alreadyEarned": "Du hast die Belohnungen für dieses Quiz bereits gesammelt"
+    },
+    "challenge": {
+      "submitBtn": "Einreichen & Belohnungen beanspruchen",
+      "statusApproved": "Genehmigt & Belohnt! 🎖️",
+      "photoProof": "Nachweisfoto:",
+      "title": "Real-World Action Herausforderung 🚀",
+      "instructionsTitle": "Schritt-für-Schritt-Anleitungen:",
+      "notesPlaceholder": "Schreibe eine kurze Zusammenfassung dessen, was du gebaut oder gelernt hast...",
+      "photoNote": "Laden Sie ein Bild Ihres fertigen Projekts oder einer realen Aktivität hoch",
+      "subtitle": "Wende das Gelernte im wirklichen Leben an, um exklusive Abzeichen und Token zu gewinnen!",
+      "rewardSummary": "Belohnung: +{{xp}} XP & +{{tokens}} PP-Token!"
+    },
+    "quests": {
+      "statsLikes": "Gefällt mir Shorts",
+      "statsWatched": "Gesehene Shorts",
+      "watchGoal": "Sieh dir 2 vollständige Video-Shorts an: {{current}}/2",
+      "bonusClaimed": "Heutige Quest-Belohnung eingelöst!",
+      "quizGoal": "Bestanden 1 Video-Quiz: {{current}}/1",
+      "title": "Tägliche Videoaufgaben",
+      "statsQuizzes": "Bestandene Quiz",
+      "subtitle": "Sieh dir Videolektionen an und löse Quizaufgaben, um die heutige Geheimkiste freizuschalten!",
+      "claimBonus": "Täglichen Quest-Bonus beanspruchen (+50 XP & +30 Token)",
+      "statsBookmarks": "Gemerkt"
+    },
+    "aiStudio": {
+      "title": "KI Videoerstellungsstudio",
+      "topicPlaceholder": "z. B., Wie man ein Schul-Snack-Geschäft startet",
+      "difficultyLabel": "Schwierigkeitsgrad:",
+      "subtitle": "Erstellen Sie auf Abruf maßgeschneiderte Finanzbildungs-Kurzvideos mit der Unterstützung von ProfitsPatrol AI!",
+      "mascotLabel": "Hauptmaskottchen:",
+      "diffAdvanced": "Tycoon (Alter 14-16)",
+      "topicLabel": "Kurzes Thema:",
+      "diffBeginner": "Entdecker (8-10 Jahre)",
+      "diffIntermediate": "Innovator (Alter 11-13)",
+      "previewTitle": "Drehbuch- & Szenenvorschau:",
+      "addToFeedBtn": "Veröffentlichen im Feed 🚀",
+      "generatedSuccess": "KI-Kurztext erfolgreich erstellt!",
+      "generateBtn": "KI-Video-Drehbuch erstellen ⚡",
+      "generating": "Drehbuch schreiben & Bewegungssequenzen gestalten..."
+    }
   },
   "admin": {
     "dashboard": {
@@ -384,7 +541,9 @@ export const de = {
         "teachers": "Lehrer",
         "classes": "Klassenzimmer",
         "assignments": "Aufgaben",
-        "books": "Bücher"
+        "books": "Bücher",
+        "submissions": "Einsendungen",
+        "lessons": "Lektionen"
       },
       "actions": {
         "backup": "Alle Daten sichern",
@@ -569,7 +728,23 @@ export const de = {
         "no_submissions": "Keine Einreichungen gefunden."
       },
       "title": "Admin-Konsole",
-      "subtitle": "Systemverwaltung v2.0"
+      "subtitle": "Systemverwaltung v2.0",
+      "categories": {
+        "content_engine": "Inhaltsgestaltung",
+        "core_data": "Kernsystemdaten",
+        "system_config": "Erweiterbarkeit & Konfiguration"
+      },
+      "setup": {
+        "fixing": "Schema wird angewendet...",
+        "action": "Datenbank initialisieren",
+        "title": "Datenbankeinrichtung erforderlich",
+        "success": "Datenbank initialisiert! Wird aktualisiert...",
+        "error_missing": "Fehlt: {{tables}}",
+        "desc": "Einige Tabellen fehlen in Ihrer Supabase-Datenbank. Sie müssen das MASTER_SCHEMA.sql-Skript in Ihrem Supabase SQL-Editor ausführen, um das System zu initialisieren."
+      },
+      "errors": {
+        "database_not_initialized": "Datenbanktabellen fehlen. Bitte initialisieren Sie das Schema."
+      }
     }
   },
   "tank": {
@@ -698,7 +873,11 @@ export const de = {
     "connect_step_3": "3. Gehe im Kinderkonto zu 'Einstellungen' oder 'Familie' und gib den Code ein.",
     "unlock_premium_title": "Premium-Funktionen freischalten",
     "unlock_premium_desc": "Erhalte unbegrenzten Zugriff auf alle Spiele, Bücher und erweiterte Analysen.",
-    "btn_upgrade": "Jetzt upgraden"
+    "btn_upgrade": "Jetzt upgraden",
+    "insights_from_ollie": "Einblicke von Ollie",
+    "view_progress": "Fortschritt anzeigen",
+    "ollies_wisdom": "Ollies Weisheit",
+    "daily_summary": "Tägliche Zusammenfassung"
   },
   "store": {
     "title": "Der Biz Store",
@@ -820,15 +999,18 @@ export const de = {
   "difficulty_modal": {
     "rookie": {
       "label": "Anfänger",
-      "desc": "Mehr Geld, langsamer Verbrauch"
+      "desc": "Mehr Geld, langsamer Verbrauch",
+      "project_desc": "Einfaches Feedback, nachsichtige Bewertung"
     },
     "founder": {
       "label": "Gründer",
-      "desc": "Standardherausforderung"
+      "desc": "Standardherausforderung",
+      "project_desc": "Standarderwartungen"
     },
     "tycoon": {
       "label": "Magnat",
-      "desc": "Weniger Geld, schneller Verbrauch!"
+      "desc": "Weniger Geld, schneller Verbrauch!",
+      "project_desc": "Strenge Bewertung, CEO-Niveau!"
     },
     "title": "Schwierigkeit wählen",
     "subtitle": "Wie groß soll die Herausforderung sein?"
@@ -878,7 +1060,8 @@ export const de = {
     "edit_logo": "Markenlogo bearbeiten",
     "join_class": "An einem Kurs teilnehmen",
     "student_of": "Student von {{class}}",
-    "wardrobe": "Mein Kleiderschrank"
+    "wardrobe": "Mein Kleiderschrank",
+    "my_jobs": "Meine Jobs (Aufträge)"
   },
   "hq": {
     "rooms": {
@@ -1015,7 +1198,57 @@ export const de = {
     "locked": "Gesperrt",
     "next": "NÄCHSTER",
     "boys": "Jungs",
-    "girls": "Mädchen"
+    "girls": "Mädchen",
+    "ranks": {
+      "hustler": "Gauner",
+      "entrepreneur": "Unternehmer",
+      "rookie": "Anfänger",
+      "newbie": "Neuling",
+      "intern": "Praktikant",
+      "founder": "Gründer",
+      "mogul": "Mogul",
+      "tycoon": "Magnat",
+      "legend": "Legende"
+    },
+    "stat_income": "Einkommen",
+    "stat_tokens": "Token",
+    "tab_empire": "Mein Reich",
+    "stat_badges": "Abzeichen",
+    "stat_streak": "Serie",
+    "xp_progress": "XP-Fortschritt — Stufe",
+    "tab_builder": "HQ-Erbauer",
+    "portfolio_analysis": "Portfoliomanalyse",
+    "empire_items": "Artikel",
+    "empire_skills_count": "Fähigkeiten",
+    "tab_missions": "Missionen",
+    "passive_income_engine": "Passive Einkommensmaschine",
+    "empire_net_worth": "Gesamtvermögen des Imperiums",
+    "collectibles_label": "Sammlerstücke",
+    "empire_cash": "Bargeld",
+    "tab_skills": "Fähigkeiten",
+    "current_hq": "Aktuelles Hauptquartier",
+    "next_label": "WEITER",
+    "upgrade_to": "Upgrade auf",
+    "my_furniture_label": "Meine Möbel",
+    "collectibles_earned": "verdient",
+    "open_shop": "Möbelgeschäft",
+    "view_2d": "🏠 2D-Ansicht",
+    "theme_locked": "Gesperrt (Nur für Gründer)",
+    "view_3d": "🏗️ 3D-Ersteller",
+    "upgrade_path_title": "HQ-Upgrade-Pfad",
+    "daily_missions_title": "Tägliche Missionen",
+    "badges_earned": "verdient",
+    "unlocked": "Entsperrt",
+    "weekly_challenge_title": "Wöchentliche Herausforderung",
+    "skill_category_wisdom": "Weisheit",
+    "skill_category_efficiency": "EFFIZIENZ",
+    "fallback_name": "Junger Unternehmer",
+    "skill_tree": "Fähigkeitenbaum",
+    "skill_category_charisma": "Charisma",
+    "change_theme": "Thema ändern",
+    "need": "Bedürfnis",
+    "fallback_badge": "Aufsteigernder Unternehmer",
+    "need_more": "Brauche noch {{amount}}"
   },
   "skills": {
     "skl_silver_tongue": {
@@ -1079,13 +1312,15 @@ export const de = {
   "leaderboard": {
     "title": "Top-Unternehmer",
     "weekly_reset": "Wöchentliche Zurücksetzung: 3 Tage",
-    "you": "DU"
+    "you": "DU",
+    "empty_state": "Noch keine Spieler — sei der Erste!"
   },
   "stats": {
     "streak": "Serie",
     "days": "Tage",
-    "bizcoins": "PTokens",
-    "level": "Level"
+    "ppTokens": "P Tokens",
+    "level": "Level",
+    "xp": "XP"
   },
   "common": {
     "plan": "Planen",
@@ -1104,7 +1339,30 @@ export const de = {
     "great_job": "Tolle Arbeit!",
     "game_over": "Spiel vorbei",
     "score": "Punktestand",
-    "replay": "Nochmal spielen"
+    "replay": "Nochmal spielen",
+    "subscriber_only": "Nur für Abonnenten",
+    "plan_name": "{{tier}} Plan",
+    "per_day": "/Tag",
+    "ppTokens": "ppTokens",
+    "views": "Anzeigen",
+    "assigned": "Zugewiesen",
+    "coins": "Münzen",
+    "lessons": "Lektionen",
+    "per_hour": "/hr",
+    "pause": "Pause",
+    "resume": "Fortsetzen",
+    "start": "Starten",
+    "play": "Spielen",
+    "retry": "Erneut versuchen",
+    "check": "Prüfen",
+    "correct": "Tolle Entscheidung!",
+    "tryAgain": "Nicht ganz — versuche es noch einmal",
+    "win": "Sieg!",
+    "loss": "Guter Versuch!",
+    "notYet": "Finde einen noch klügeren Weg.",
+    "mission": "Mission",
+    "mute": "Stummschalten",
+    "unmute": "Ton einschalten"
   },
   "certificate_modal": {
     "completion": "Teilnahmezertifikat",
@@ -1142,7 +1400,60 @@ export const de = {
     "saved": "Gespeichert!",
     "est": "Geschätzt",
     "established_text": "Gegründet",
-    "sample_corp": "Leo GmbH"
+    "sample_corp": "Leo GmbH",
+    "icons": {
+      "dog": "Hund",
+      "cat": "Katze",
+      "paw": "Pfote",
+      "rocket": "Rakete",
+      "bird": "Vogel",
+      "rabbit": "Kaninchen",
+      "snail": "Schnecke",
+      "smile": "Glücklich",
+      "crown": "Krone",
+      "fish": "Fisch",
+      "bug": "Käfer",
+      "star": "Stern",
+      "code": "Code",
+      "cpu": "Chip",
+      "diamond": "Edelstein",
+      "shield": "Schild",
+      "heart": "Herz",
+      "laptop": "Technik",
+      "ghost": "Geist",
+      "atom": "Atom",
+      "trophy": "Gewinnen",
+      "gamepad": "Spiel",
+      "tree": "Baum",
+      "snow": "Eis",
+      "robot": "Daten",
+      "flame": "Feuer",
+      "sun": "Sonne",
+      "water": "Wasser",
+      "flower": "Blume",
+      "leaf": "Natur",
+      "pizza": "Pizza",
+      "wifi": "Netz",
+      "apple": "Obst",
+      "key": "Schlüssel",
+      "icecream": "Süß",
+      "coffee": "Café",
+      "burger": "Essen",
+      "money": "Bank",
+      "tools": "Reparieren",
+      "target": "Ziel",
+      "cart": "Geschäft",
+      "bulb": "Idee",
+      "anchor": "Hafen",
+      "plane": "Fliegen",
+      "car": "Auto",
+      "ship": "Meer",
+      "camera": "Foto",
+      "map": "Ort",
+      "bike": "Reiten",
+      "globe": "Welt",
+      "music": "Musik"
+    }
   },
   "weather": {
     "sunny": "Sonnig",
@@ -1154,7 +1465,8 @@ export const de = {
       "rising_star": "Aufstrebender Star",
       "top_10": "Top 10 %",
       "top_50": "Top 50 %"
-    }
+    },
+    "breaking_news": "Eilmeldung"
   },
   "library": {
     "categories": {
@@ -1163,7 +1475,14 @@ export const de = {
       "strategy": "Strategie",
       "biography": "Biografie",
       "fiction": "Fiktion",
-      "category": "Kategorie"
+      "category": "Kategorie",
+      "history": "Geschichte",
+      "negotiation": "Verhandlung",
+      "real-world business": "Echtes Geschäft",
+      "creativity": "Kreativität",
+      "leadership": "Führung",
+      "economics": "Wirtschaftswissenschaft",
+      "sci-fi & dystopian": "Science-Fiction & Dystopie"
     },
     "tasks": {
       "difficulty": {
@@ -1213,23 +1532,129 @@ export const de = {
     },
     "badges": {
       "exclusive": "EXKLUSIV"
-    }
+    },
+    "task_quiz_title": "Teste dein Wissen",
+    "tab_bestsellers": "Business-Bestseller",
+    "tab_exclusives": "Profits Patrol Exklusiv",
+    "task_reflection_title": "Persönliche Reflexion",
+    "task_reflectiontitle": "Persönliche Reflexion",
+    "task_actionchallenge_title": "Täglich anwenden",
+    "task_shareteach_title": "Lehren, um zu lernen",
+    "task_share_teach_title": "Lehren, um zu lernen",
+    "task_action_challenge_title": "Täglich anwenden",
+    "task_quiz_desc": "Beantworte Fragen, um dein Verständnis zu überprüfen.",
+    "task_actionchallenge_desc": "Setze das Gelernte in die Tat um.",
+    "task_action_challenge_desc": "Setze das, was du gelernt hast, in die Tat um.",
+    "task_reflection_desc": "Verbinde die Lektionen des Buches mit deinem eigenen Leben.",
+    "task_share_teach_desc": "Teile die Weisheit mit jemand anderem.",
+    "task_shareteach_desc": "Teile die Weisheit mit jemand anderem.",
+    "task_application_desc": "Setze die Strategien im wirklichen Leben ein.",
+    "school_license_unlocked": "Über Schullizenz freigeschaltet",
+    "task_application_title": "Anwendung in der realen Welt",
+    "exclusive_banner_desc": "Handverlesene Bücher, die nur im Profits Patrol verfügbar sind – von klassischen Geschichten bis zu Leitfäden für junge Unternehmer!"
   },
   "chat": {
     "initial_greeting": "Huhu! 🦉 Ich bin Ollie. Frag mich alles über Business, Geld oder unsere Spiele!",
     "role_consultant": "Unternehmensberater",
     "role_free": "Kostenloser Testmodus",
     "placeholder_paid": "Frag Ollie...",
+    "placeholder_free": "Frag Ollie... (1 übrig)",
+    "placeholder_vip": "Frag deinen Unternehmensberater...",
     "placeholder": "Schreibe hier deine Antwort oder füge einen Link zu deinem Projekt ein...",
     "hire_button": "Stelle Ollie ein (AI freischalten)",
     "free_limit_reply": "🦉 Das ist ein kostenloses Beispiel! Stelle mich als deinen Vollzeit-Executive-Consultant (Tycoon-Plan) ein für unbegrenzte Strategiesitzungen.",
-    "hired_reply": "Du bist eingestellt! 🎩 Ich bin jetzt dein persönlicher Berater. Lass uns gemeinsam ein Milliardenimperium aufbauen!"
+    "hired_reply": "Du bist eingestellt! 🎩 Ich bin jetzt dein persönlicher Berater. Lass uns gemeinsam ein Milliardenimperium aufbauen!",
+    "ollie_name": "Geschäftsführer Ollie",
+    "vip_consultant": "VIP-Berater",
+    "error_message": "Entschuldigung, ich konnte diese Nachricht nicht verarbeiten. Bitte versuchen Sie es erneut."
   },
   "map": {
     "no_curriculum": "Kein Lehrplan geladen. Bitte kontaktiere den Administrator.",
     "start": "START!",
+    "lesson_of_10": "Lektion {{current}} von {{total}}",
+    "level_badge": "Stufe {{level}}",
+    "found_gold_coins": "{{count}} Goldmünzen gefunden!",
+    "complete_prev_first": "Schließe zuerst die vorherigen Lektionen ab!",
+    "review_lesson": "LEKTION WIEDERHOLEN",
+    "start_lesson": "LEKTION STARTEN",
+    "current_lesson": "Aktuelle Lektion",
+    "district_hub": "Bezirkszentrum",
+    "news_and_events": "Patrol-Nachrichten & Events",
+    "bonus_chests_status": "{{current}} von {{total}} Bonustruhen in diesem Pfad freigeschaltet",
+    "path_treasures": "Pfadschätze",
+    "replay_boss": "Boss wiederholen",
+    "fight_boss": "Boss bekämpfen",
+    "boss_locked": "Gesperrt",
+    "boss_unlocked": "Freigeschaltet",
+    "boss_defeated": "Besiegt",
+    "district_boss": "Bezirks-Boss",
+    "advisor_ollie": "Berater Ollie",
+    "financial_advisor": "Finanzberater",
+    "view_all_districts": "Alle 20 Bezirke ansehen",
+    "next_district": "Nächster Bezirk",
+    "prev_district": "Vorheriger Bezirk",
+    "districts_btn": "Bezirke",
+    "welcome_btn": "LOS GEHT'S!",
+    "welcome_desc": "Folge dem Lernpfad Schritt für Schritt, verdiene Münzen und besiege die Bezirks-Bosse!",
+    "welcome_title": "Willkommen bei Profits Patrol!",
     "section": "Abschnitt",
-    "path_title": "Meine Geschäftserfahrung"
+    "path_title": "Meine Geschäftserfahrung",
+    "hud_income": "Einkommen",
+    "hud_current_streak": "Aktuelle Serie",
+    "season_4_label": "Staffel 4 — Meisterschaftspfad",
+    "hud_empire_value": "Imperiumswert",
+    "season_2_label": "Staffel 2 — Fortgeschrittener Kurs",
+    "season_3_label": "Staffel 3 — CEO-Spur",
+    "boss_battle": "Bosskampf",
+    "hud_leaderboard_preview": "Bestenliste Vorschau",
+    "hud_business_portfolio": "Geschäftsportfolio",
+    "district_tagline": "Beginnen Sie Ihre Unternehmerreise",
+    "hud_claimable_rent": "Forderbare Miete",
+    "hud_view_rankings": "Ranglisten anzeigen",
+    "hud_streak_freeze": "Streak-Einfrieren aktiv",
+    "hud_real_estate": "Immobilienvermietung",
+    "district_reward": "Belohnung",
+    "hud_claim_btn": "Miete beanspruchen",
+    "district_label": "Bezirk",
+    "district_complete": "Vollständig",
+    "panel_worth": "Wert",
+    "district_collectible": "Sammlerstück",
+    "income_collected": "Einkommen des Imperiums eingezogen!",
+    "district_next_unlock": "Nächste Freischaltung",
+    "income_no_income": "😴 Noch kein passives Einkommen erwirtschaftet. Wieder in Immobilien/Portfolio investieren!",
+    "panel_hq_level": "HQ-Stufe",
+    "panel_empire": "Reich",
+    "district_lessons": "Lektionen",
+    "district_empire_legend": "Imperium Legende",
+    "panel_open_hq": "Hauptquartier öffnen",
+    "panel_items": "Artikel",
+    "bar_empire": "Reich",
+    "bar_hq": "Zentrale",
+    "panel_income": "Einkommen",
+    "bar_employees": "Mitarbeiter",
+    "bar_collect": "Sammeln",
+    "bar_achieve": "Errungenschaften",
+    "ollie_cta": "Los geht's! 🚀",
+    "bar_business": "Unternehmen",
+    "quest_ready": "Quest bereit! 🏆",
+    "locked_quest": "Gesperrte Quest 🔒",
+    "bar_shop": "Geschäft",
+    "bar_collected": "Gesammelt!",
+    "premium_only": "Nur Premium",
+    "module_lessons": "Lektionen",
+    "next_up": "Als Nächstes!",
+    "lets_chat": "Lass uns plaudern! 💬",
+    "quest_completed_msg": "Fantastische Arbeit! Du hast die Quest erfolgreich abgeschlossen und deine Belohnungen erhalten! 🏆",
+    "bar_no_income_msg": "💼 Noch kein passives Einkommen vorhanden. Kaufe Geschäftsupgrades oder Immobilien, um dein Imperium zu vergrößern!",
+    "completed": "Abgeschlossen ✅",
+    "requirements": "Anforderungen:",
+    "ask_advice": "Um Rat fragen 💡",
+    "rewards": "Belohnungen:",
+    "chitchat": "Plauderei 💬",
+    "active_quest": "Aktive Quest: {{title}}",
+    "sky_label": "Himmel:",
+    "complete_quest_claim": "Quest abschließen & Belohnungen einfordern",
+    "complete_reqs_unlock": "Vollständige Anforderungen, um diese Quest freizuschalten"
   },
   "landing": {
     "arcadeList": [
@@ -1300,7 +1725,34 @@ export const de = {
     "reviews_title": "Geliebt von Eltern & Lehrern überall",
     "footer_copyright": "© 2026 Profits Patrol Inc. Alle Rechte vorbehalten. Mit ❤️ für zukünftige Führungskräfte gemacht.",
     "arcade_section_label": "Die Spielhalle",
-    "action_explore_arcade": "Entdecke die Spielhalle"
+    "action_explore_arcade": "Entdecke die Spielhalle",
+    "tank_section_label": "Der Pitch-Simulator",
+    "dojo_section_label": "Debatte & Ethik",
+    "action_explore_dojo": "Betritt das Dojo",
+    "tankTitle": "Stellen Sie sich den Investoren im Tank",
+    "libraryTitle": "Eine wachsende Geschäftsbibliothek",
+    "library_section_label": "Die Akademie",
+    "libraryDesc": "Lese Hunderte interaktive Bücher, schaue fesselnde Strategie-Videos und erledige praxisnahe Lehrplanaufgaben.",
+    "action_explore_tank": "Stellen Sie Ihre Idee vor",
+    "dojoTitle": "Meistere Ethik & Hustle",
+    "tankDesc": "Stellen Sie unsere KI-Juroren Ihre Geschäftsideen vor, verhandeln Sie Bedingungen und sichern Sie Finanzierung für Ihr virtuelles Start-up.",
+    "dojoDesc": "Diskutiere reale geschäftliche Dilemmas im Dojo gegen KI-Gegner oder erledige schnelle Mini-Jobs in Gig Central, um dein Startkapital aufzubauen.",
+    "action_explore_library": "Bibliothek durchsuchen",
+    "dashboard_section_label": "Für Familien und Schulen",
+    "cards": {
+      "official_offer": "Offizielles Angebot",
+      "offer_amount": "50.000 $ für 15 %",
+      "conservative_investor": "Der konservative Investor",
+      "mr_cash": "Herr Cash",
+      "offer_quote": "Ich liebe die Margen, aber du musst mir die Traktion zeigen. Ich mache dir ein Angebot.",
+      "gig_central": "Gig-Zentrale",
+      "ethics_debates": "Ethikdebatten",
+      "ethics_desc": "Diskutiere reale Dilemmata gegen einen KI-Richter.",
+      "gig_desc": "Autos waschen & Hunde in schnellen Mini-Spielen ausführen."
+    },
+    "action_explore_dashboard": "Dashboard anzeigen",
+    "dashboardTitle": "Wachstum verfolgen & Klassenzimmer verwalten",
+    "dashboardDesc": "Eltern können das Vermögen und die Fähigkeiten überwachen, während Lehrer Klassen verwalten, Aufgaben zuweisen und Projekte mit KI-Unterstützung bewerten können."
   },
   "curriculum": {
     "page_title": "Lehrplan der Akademie",
@@ -1526,12 +1978,18 @@ export const de = {
       "confusing_solution": "Verwirrende Lösung",
       "small_market": "Kleiner Markt",
       "no_team": "Kein Team erwähnt",
-      "missing_finance": "Fehlende Finanzen"
+      "missing_finance": "Fehlende Finanzen",
+      "missing_problem": "Du hast das Kundenproblem nicht klar definiert.",
+      "mentioned_finance": "Du hast Finanzen klar hervorgehoben (Gewinn, Kosten & Preise).",
+      "clear_problem_solution": "Du hast ein klares Problem und eine überzeugende Lösung formuliert.",
+      "mentioned_traction": "Du hast Kunden, Verkäufe und Marktnachfrage betont."
     },
     "tips": {
       "tip_general": "Versuche, das Problem, die Lösung und das Geld abzudecken.",
       "tip_finance": "Investoren lieben Zahlen. Nenne deinen Preis und deine Kosten.",
-      "tip_market": "Wer kauft dein Produkt? Nenne deinen Zielmarkt."
+      "tip_market": "Wer kauft dein Produkt? Nenne deinen Zielmarkt.",
+      "tip_elaborate": "Versuche etwas mehr zu erzählen und zusätzliche Details zu deinem Vorhaben zu nennen!",
+      "tip_keep_it_up": "Tolle Pitch-Länge und Klarheit! Du hast den Juroren solide Details geliefert."
     },
     "title": "Der Tank",
     "subtitle": "Stelle deine Startup-Idee den Titans vor!",
@@ -1575,7 +2033,11 @@ export const de = {
   },
   "tutorial": {
     "how_to_play": "Spielanleitung",
-    "start_game": "Spiel starten"
+    "start_game": "Spiel starten",
+    "shop": "Geschäft",
+    "strategy": "Strategie",
+    "start_day": "Tag starten",
+    "save_exit": "Speichern & Beenden"
   },
   "categories": {
     "retail": "Einzelhandel",
@@ -1670,7 +2132,12 @@ export const de = {
     },
     "craft_corner": {
       "title": "Bastel-Ecke",
-      "desc": "Zeichne Formen genau nach."
+      "desc": "Zeichne Formen genau nach.",
+      "items": {
+        "gold_bead": "Goldperle",
+        "gem": "Edelstein",
+        "string": "Zeichenkette"
+      }
     },
     "content_creator": {
       "title": "Streamer-Leben",
@@ -1708,7 +2175,19 @@ export const de = {
     "score": "Punktestand",
     "game_over": "Spiel vorbei",
     "play_again": "Nochmals spielen",
-    "exit": "Beenden"
+    "exit": "Beenden",
+    "print_shop": {
+      "desc": "Farben den Modellen zuordnen.",
+      "title": "3D-Druck-Labor",
+      "items": {
+        "green": "Grün",
+        "black": "Schwarz",
+        "blue": "Blau",
+        "white": "Weiß",
+        "red": "Rot",
+        "yellow": "Gelb"
+      }
+    }
   },
   "actions": {
     "scoop_vanilla": "Kugel Vanille",
@@ -1721,7 +2200,9 @@ export const de = {
     "clip": "Fell schneiden",
     "brush": "Bürsten",
     "bow": "Schleife hinzufügen",
-    "generic": "Aktion"
+    "generic": "Aktion",
+    "rinse": "Spülen",
+    "wax": "Wachs"
   },
   "games": {
     "operations": {
@@ -1958,7 +2439,19 @@ export const de = {
     },
     "audience": {
       "title": "Zielgruppenmeister",
-      "desc": "Kunden ansprechen."
+      "desc": "Kunden ansprechen.",
+      "ui": {
+        "who_buys": "Wer kauft das?",
+        "pts": "Punkte",
+        "customer_personas": "Kunden-Personas",
+        "target_audience": "Zielgruppe",
+        "match_instruction": "Ordne das Produkt dem richtigen Kunden zu!",
+        "all_done": "Alles erledigt!",
+        "score": "Punktzahl",
+        "product_to_match": "Produkt zum Abstimmen",
+        "calculating": "Punktzahl wird berechnet...",
+        "next": "Weiter:"
+      }
     },
     "brand_builder": {
       "title": "Markenentwickler",
@@ -2052,6 +2545,54 @@ export const de = {
       "tip_financials": "💡 **Tipp:** Fügen Sie spezifische Zahlen hinzu (Umsatz, Nutzer, geforderter Betrag). Die Juroren müssen die Finanzen sehen!",
       "try_again_together": "Versuche es noch einmal zusammen",
       "pitch_rejected": "Pitch abgelehnt"
+    },
+    "ui": {
+      "current_order": "Aktuelle Bestellung",
+      "multiplier": "Multiplikator",
+      "save_exit": "Speichern & Beenden",
+      "start_shift": "SCHICHT BEGINNEN",
+      "orders": "Bestellungen"
+    },
+    "cyber_defense": {
+      "title": "Cyberabwehr",
+      "secure": "SICHER!",
+      "desc": "Netzwerke verteidigen.",
+      "breached": "GEBROCHEN!"
+    },
+    "errors": {
+      "config_sorting": "Spielkonfigurationsfehler: Zum Sortieren von Spielen sind mindestens 3 Gegenstandsobjekte erforderlich."
+    },
+    "exit": "Beenden",
+    "retry": "Erneut versuchen",
+    "collect_rewards": "Belohnungen sammeln",
+    "time_up": "Die Zeit ist um!",
+    "final_score": "Endstand",
+    "success_msg": "SAUBER!",
+    "great_job": "Tolle Arbeit!",
+    "score": "Punktzahl",
+      pricing_lab: {
+      "title": "Labor für Angebot und Nachfrage",
+      "subtitle": "Finde den besten Preis, um Verkäufe und Gewinne zu maximieren!",
+      "selling_price": "Verkaufspreis",
+      "customers": "Kunden",
+      "cost_per_unit": "Kosten/Einheit",
+      "test_price": "Diesen Preis testen",
+      "optimal_found": "Optimaler Preis gefunden!",
+      "turns_remaining": "verbleibende Versuche",
+      "profit_curve": "Gewinn- & Wachstumskurve",
+      "goal": "Höchstziel",
+      "run_test": "Probiere einen Preis aus und klicke auf \"Diesen Preis testen\", um Gewinne zu sehen!",
+      "profit_label": "Gewinn"
+},
+    "districts": {
+      "money": "Geld & Budget",
+      "builders": "Macher & Unternehmen",
+      "risk": "Risikomanagement",
+      "operations": "Betrieb & Systeme",
+      "innovation": "Innovation & F&E",
+      "leadership": "Führung & Teams",
+      "strategy": "Strategie & Planung",
+      "launch": "Start & Wachstum"
     }
   },
   "class": {
@@ -2127,7 +2668,11 @@ export const de = {
       "summary_teen": "Stell dir vor, dein Gehirn ist ein Magnet. Wenn du genug an Erfolg denkst und einen Plan hast, ziehst du ihn an! Es ist wie sich vorzustellen, dass du ein Level in einem Videospiel gewinnst, bevor du den Controller überhaupt in die Hand nimmst.",
       "lesson_0_teen": "Du brauchst ein 'Brennendes Verlangen', um zu gewinnen.",
       "lesson_1_teen": "Glaub daran, dass du es schaffen kannst, selbst wenn es schwer ist.",
-      "lesson_2_teen": "Gib nicht auf, nur weil du kurz vor dem Ziel stehst."
+      "lesson_2_teen": "Gib nicht auf, nur weil du kurz vor dem Ziel stehst.",
+      "title_teen": "Denke nach und werde reich",
+      "title_child": "Die Kraft großer Träume",
+      "fullContent_child": "## 🌟 Die Magie Deines Gehirns\n\nWusstest du, dass deine Gedanken wie Samen sind? Wenn du in deinem Gehirn einen 'Erfolgs-Samen' pflanzt und ihn mit harter Arbeit gießt, wächst etwas Erstaunliches daraus!\n\n**Andrew Carnegie**, einer der reichsten Männer aller Zeiten, teilte ein Geheimnis: Du musst nicht glücklich sein, um erfolgreich zu sein. Du brauchst nur einen Plan.\n\n---\n\n## 📌 Die 6 Schritte zum Erfolg\n\n1. **Wisse genau, was du willst.** Sage nicht einfach 'Ich will Münzen.' Sage 'Ich will 500 Münzen, um einen neuen Schreibtisch zu kaufen!'\n2. **Was wirst du geben?** Um etwas zu bekommen, musst du etwas geben—wie deine Zeit oder dein Talent.\n3. **Setze ein Datum.** Wann wirst du dein Ziel erreichen? Trag es in deinen Kalender ein!\n4. **Erstelle einen Plan.** Fang sofort an, auch wenn du dich noch nicht bereit fühlst.\n5. **Schreibe es auf.** Wenn du dein Ziel jeden Tag siehst, findet dein Gehirn Wege, es zu erreichen.\n6. **Lies es laut vor.** Sag dir jeden Morgen: 'Ich bin ein großartiger Unternehmer!'\n\n---\n\n## 🤝 Das Superteam (Master Mind)\n\nNiemand baut ein Raumschiff allein. Du brauchst eine **Master Mind**-Gruppe—ein Team aus Freunden, die sich gegenseitig helfen. Wenn zwei Gehirne zusammenarbeiten, erzeugen sie ein 'Drittes Gehirn', das noch schlauer ist!\n\n> **\"Alles, was der Geist sich vorstellen und glauben kann, kann er erreichen.\"**\n\nAlso, was ist dein großer Traum heute?",
+      "fullContent_teen": "## 🧠 Die Philosophie des Erfolgs\n\nNapoleon Hill verbrachte zwei Jahrzehnte damit, die erfolgreichsten Menschen seiner Zeit zu interviewen – wie Henry Ford und Thomas Edison. Er entdeckte, dass sie alle derselben geheimen Formel folgten. Erfolg hängt nicht vom Glück ab; es geht um **Einstellung**.\n\n---\n\n## 🔥 Der Ausgangspunkt: Verlangen\n\nDu musst ein **brennendes Verlangen** haben, dein Ziel zu erreichen. Es ist nicht nur ein Wunsch; es ist ein 'Muss', das dich weitermachen lässt, wenn es schwierig wird.\n\n**Die Formel:**\n- **Klarheit des Ziels:** Wisse genau, was du anstrebst.\n- **Glaube:** Glaube daran, dass du es erreichen wirst, noch bevor du die Ergebnisse siehst.\n- **Beharrlichkeit:** Gib niemals auf, selbst wenn du 100 Mal scheiterst.\n\n---\n\n## 👥 Die Mastermind-Gruppe\n\nHill entdeckte, dass niemand großen Erfolg ohne eine **Mastermind** erreicht. Dies ist eine kleine Gruppe von Menschen, die deine Vision teilen und dir helfen, Probleme zu lösen. Wenn du deine Energie mit der anderer kombinierst, vervielfacht sich deine Kraft exponentiell.\n\n## ⚡ Die Macht des Unterbewusstseins\n\nDein Gehirn ist wie ein Supercomputer. Indem du deine Ziele wiederholst und deinen Erfolg visualisierst, 'programmierst' du dein Unterbewusstsein, Gelegenheiten zu finden, die andere übersehen.\n\n> **\"Jede Widrigkeit, jedes Scheitern, jeder Herzschmerz trägt den Samen eines gleichwertigen oder größeren Vorteils in sich.\"**\n\nFange heute an, wie ein CEO zu denken, und deine Realität wird bald folgen."
     },
     "mindset_success": {
       "title": "Mindset: Die neue Psychologie des Erfolgs",
@@ -2517,7 +3062,11 @@ export const de = {
       "lesson_0_teen": "Sei proaktiv – du kontrollierst deine Reaktion auf alles.",
       "summary_teen": "Stephen Coveys 7 Gewohnheiten: 1) Sei proaktiv, 2) Beginne mit dem Ziel vor Augen, 3) Setze das Wichtigste an erste Stelle, 4) Denke Win-Win, 5) Suche zuerst zu verstehen, 6) Synergisiere, 7) Schärfe die Säge. Beherrsche diese, um hoch effektiv zu sein.",
       "lesson_1_teen": "Beginne mit dem Ende im Sinn – definiere deine Mission.",
-      "lesson_2_child": "Mach wichtige Dinge vor Spaßigen Dingen."
+      "lesson_2_child": "Mach wichtige Dinge vor Spaßigen Dingen.",
+      "title_child": "7 Gewohnheiten glücklicher Kinder",
+      "title_teen": "7 Gewohnheiten höchst wirksamer Teenager",
+      "fullContent_teen": "## 🚀 Der Fahrplan zum Erfolg\n\nTeenager zu sein ist wie auf einer Achterbahn zu sein. Sean Covey stellt eine Reihe von Werkzeugen vor – die 7 Gewohnheiten – die dir helfen, im Gleichgewicht zu bleiben, dein 'persönliches Bankkonto' aufzubauen und dich auf eine große Zukunft im Business vorzubereiten.\n\n---\n\n## 🏆 Der private Sieg\n\n- **Gewohnheit 1: Sei proaktiv.** Sei kein Opfer deiner Umstände. Du kannst nicht kontrollieren, was passiert, aber du *kannst* kontrollieren, wie du reagierst.\n- **Gewohnheit 2: Beginne mit dem Ende im Sinn.** Erstelle eine persönliche Missionserklärung. Wenn du deine Zukunft nicht entscheidest, wird es jemand anderes tun.\n- **Gewohnheit 3: Das Wichtigste zuerst.** Meistere deine Zeit. Konzentriere dich auf die Dinge, die wichtig, aber nicht unbedingt 'dringend' sind.\n\n---\n\n## 🌍 Der öffentliche Sieg\n\n- **Gewohnheit 4: Denke Win-Win.** Das Leben ist kein Wettbewerb. Erfolg gibt es genug für alle. Konzentriere dich auf eine 'Fülle-Mentalität'.\n- **Gewohnheit 5: Zuerst verstehen, dann verstanden werden.** Das ist der Schlüssel zur Kommunikation. Die meisten Menschen hören zu, um zu antworten, nicht um zu verstehen.\n- **Gewohnheit 6: Synergisiere.** Das Ganze ist größer als die Summe seiner Teile. Feiere Unterschiedlichkeiten und baue Teams auf, die deine Schwächen ergänzen.\n\n---\n\n## 🔄 Gewohnheit 7: Die Säge schärfen\n\nHör niemals auf zu wachsen. Erneuere dich in vier Bereichen: körperlich, geistig, emotional und spirituell. Wenn du zu beschäftigt bist, die Säge zu benutzen, um die Klinge zu schärfen, wirst du nie durch den Baum kommen.\n\n> **„Der beste Weg, die Zukunft vorherzusagen, ist, sie zu erschaffen.“**",
+      "fullContent_child": "## ⚓ Sei der Kapitän deines Lebens\n\nStell dir vor, du bist auf einem Boot mitten im Ozean. Willst du einfach treiben, wohin der Wind weht, oder willst du das Steuer übernehmen und zur Schatzinsel fahren?\n\n---\n\n## 🚦 Die ersten 3 Gewohnheiten (Selbstbeherrschung)\n\n1. **Sei proaktiv:** Du bist für deine Entscheidungen verantwortlich. Wenn dir langweilig ist oder du wütend bist, hast du die Macht, es zu ändern!\n2. **Beginne mit dem Ende im Sinn:** Zeichne ein Bild von deinem Ziel, bevor du startest. Wenn du eine LEGO-Burg bauen willst, schau dir zuerst die Anleitung an!\n3. **Setze Wichtiges zuerst:** Mach zuerst deine Hausaufgaben und spiele dann Videospiele. Die Spiele machen mehr Spaß, weil du dir keine Sorgen machen musst!\n\n---\n\n## 🤝 Die nächsten 3 Gewohnheiten (Teamarbeit)\n\n4. **Denke Win-Win:** Versuche nicht, deine Freunde zu übertrumpfen. Finde einen Weg, bei dem JEDER gewinnt.\n5. **Versuche zuerst zu verstehen:** Hör deinen Freunden zu, bevor du ihnen deine Ideen erzählst. Benutze deine 'Goldenen Ohren'!\n6. **Synergisiere:** Gemeinsam zu arbeiten ist wie ein Team von Superhelden. 1 + 1 = 3, wenn ihr euch gegenseitig helft!\n\n## 🔋 Gewohnheit 7: Die Säge schärfen\n\nKümmere dich um deinen Körper und Geist! Iss gesund, schlafe gut und lerne weiterhin neue Dinge.\n\n> **\"Zuerst formen wir unsere Gewohnheiten, dann formen unsere Gewohnheiten uns.\"**"
     },
     "how_to_win_friends_and_influence_people": {
       "title": "Wie man Freunde gewinnt und Menschen beeinflusst",
@@ -2532,7 +3081,11 @@ export const de = {
       "lesson_2_child": "Sprich darüber, was SIE mögen, nicht nur, was du magst.",
       "lesson_2_teen": "Sprich in Bezug auf die Interessen der anderen Person.",
       "lesson_1_teen": "Erinnere dich an Namen – der lieblichste Klang für jeden.",
-      "lesson_0_teen": "Lächle – es ist das universelle Willkommen."
+      "lesson_0_teen": "Lächle – es ist das universelle Willkommen.",
+      "title_child": "Super-Freund Anleitung",
+      "title_teen": "Wie man Freunde gewinnt und Menschen beeinflusst",
+      "fullContent_child": "## 🦸 Deine sozialen Superkräfte\n\nWillst du, dass die Leute deinen Ideen zuhören? Willst du die Person sein, die jeder in seinem Team haben möchte? Es geht nicht darum, am lautesten zu sein – es geht darum, am freundlichsten zu sein!\n\n---\n\n## 😊 Die Macht eines Lächelns\n\nEin Lächeln ist wie ein magischer Schlüssel, der Türen öffnet. Es sagt: 'Ich mag dich und freue mich, dich zu sehen!' Menschen sind gerne in der Nähe von glücklichen Menschen.\n\n## 👂 Der 'Goldene Ohren'-Trick\n\nDie meisten Menschen reden gerne über sich selbst. Wenn du ein **Meister des Zuhörens** wirst, werden die Leute denken, dass du die interessanteste Person der Welt bist! Frag sie nach ihrem Lieblingsspiel oder ihrem Haustier.\n\n## 📜 Der schönste Klang\n\nFür jeden Menschen ist der eigene Name der schönste Klang in jeder Sprache. Versuche, dir Namen zu merken und sie zu verwenden, wenn du 'Hallo!' sagst.\n\n---\n\n## 🤝 Wie man ein Anführer ist\n\n- **Schreie niemals oder streite.** Das macht die Leute nur wütend.\n- **Gib ehrliches Lob.** Wenn jemand gute Arbeit leistet, sag es ihm!\n- **Sieh die Dinge von ihrer Seite.** Frag dich: ‚Warum würden sie mir helfen wollen?‘\n\n> **\"Du kannst in zwei Monaten mehr Freunde gewinnen, indem du dich für andere Menschen interessierst, als du in zwei Jahren, indem du versuchst, andere Menschen für dich zu interessieren.\"**",
+      "fullContent_teen": "## 🤝 Die Kunst der Menschenkenntnis\n\nIn der beruflichen Welt reicht technisches Können nur bis zur Hälfte. Die andere Hälfte ist ‚Menschenführung‘. Die Prinzipien von Dale Carnegie werden seit fast einem Jahrhundert von Weltführern und CEOs genutzt, um Einfluss zu gewinnen und Teams zu führen.\n\n---\n\n## 💎 3 Grundlegende Techniken im Umgang mit Menschen\n\n1. **Kritisieren, verurteilen oder klagen Sie nicht.** Das funktioniert nie; es bringt die Menschen nur in die Defensive.\n2. **Schenken Sie ehrliche und aufrichtige Anerkennung.** Jeder möchte sich wichtig fühlen. Aufrichtiges Lob ist der größte Motivator.\n3. **Erwecken Sie beim anderen den Wunsch, etwas zu tun.** Um zu bekommen, was Sie wollen, müssen Sie anderen zeigen, wie sie bekommen, was *sie* wollen.\n\n## ✨ 6 Wege, um Menschen für sich zu gewinnen\n\n- **Seien Sie wirklich an anderen interessiert.** Stellen Sie Fragen zu ihren Zielen.\n- **Lächeln Sie.** Es ist der einfachste Weg, einen guten ersten Eindruck zu machen.\n- **Merken Sie sich Namen.** Der Name einer Person ist das wichtigste Wort für sie.\n- **Seien Sie ein guter Zuhörer.** Ermutigen Sie andere, über sich selbst zu sprechen.\n\n## 🏆 Menschen für Ihre Denkweise gewinnen\n\n- **Vermeiden Sie Streit.** Sie können einen Streit nicht gewinnen. Selbst wenn Sie ‚gewinnen‘, verlieren Sie das Wohlwollen der Person.\n- **Zeigen Sie Respekt für die Meinungen anderer.** Sagen Sie niemals: ‚Sie liegen falsch.‘\n- **Wenn Sie falsch liegen, geben Sie es schnell und nachdrücklich zu.** Das nimmt dem anderen den Wind aus den Segeln.\n\n> **„Erfolg im Umgang mit Menschen hängt von einem einfühlsamen Verständnis für den Standpunkt des anderen ab.“**"
     },
     "lean_startup": {
       "summary": "Baue kein riesiges Schloss, bevor du nicht weißt, ob die Leute darin wohnen wollen. Baue zuerst einen winzigen Schuppen! Dieses Buch lehrt dich, ein 'Minimum Viable Product' zu bauen, um deine Ideen schnell zu testen, ohne Münzen zu verschwenden.",
@@ -2548,6 +3101,20 @@ export const de = {
       "lesson_1_child": "Verschwende keine Zeit mit Dingen, die niemand will.",
       "lesson_2_child": "Scheitere schnell, damit du früher gewinnen kannst.",
       "lesson_2_teen": "Scheitere schnell, um früher erfolgreich zu sein – drehe dich oder halte durch."
+    },
+    "rich_dad_poor_dad": {
+      "title_teen": "Reicher Vater, armer Vater",
+      "title_child": "Reicher Vater, schlaues Kind",
+      "lesson_0_child": "Ein Vermögenswert ist etwas, das Ihnen Geld einbringt.",
+      "lesson_1_child": "Lerne, wie Geld funktioniert, damit du sein Chef sein kannst.",
+      "lesson_1_teen": "Kümmere dich um deine eigenen Angelegenheiten, indem du deine Vermögensspalte aufbaust.",
+      "lesson_0_teen": "Kaufen Sie Vermögenswerte, die Cashflow erzeugen, nicht Verbindlichkeiten.",
+      "summary_teen": "Das #1 Buch über persönliche Finanzen aller Zeiten. Robert Kiyosaki teilt die Lektionen, die er von seinem 'reichen Vater' gelernt hat, darüber, wie wohlhabende Menschen anders denken. Lernen Sie den Unterschied zwischen Vermögenswerten und Verbindlichkeiten und warum finanzielle Bildung die wichtigste Fähigkeit ist, die Sie nie in der Schule lernen werden.",
+      "summary_child": "Wusstest du, dass Geld für DICH wie ein kleiner Roboter arbeiten kann? Anstatt nur für Geld zu arbeiten, zeigt dir dieses Buch, wie man 'Vermögenswerte' (Dinge, die Münzen in deine Tasche legen) kauft und 'Verbindlichkeiten' (Dinge, die Münzen herausnehmen) vermeidet.",
+      "fullContent_teen": "## 💵 Dem Hamsterrad entkommen\n\nDie meisten Menschen verbringen ihr Leben im „Hamsterrad“ – sie arbeiten in einem Job, den sie nicht lieben, um Rechnungen zu bezahlen, die sie sich nicht leisten können. Robert Kiyosaki erklärt, wie ihm sein „reicher Vater“ beibrachte, sich durch den Aufbau eines Systems passiven Einkommens zu befreien.\n\n---\n\n## 📘 Lektion 1: Die Reichen arbeiten nicht für Geld\n\nDie Mittelklasse und die Armen arbeiten für ein Gehalt. Die Reichen lassen ihr Geld für sich arbeiten. Das bedeutet, sich auf **Cashflow** zu konzentrieren – das Geld, das jeden Monat aus Dingen kommt, die man besitzt.\n\n## 🗄️ Lektion 2: Warum finanzielle Bildung lehren?\n\nSchulen lehren dich, ein guter Angestellter zu sein, aber nicht, wie du dein Vermögen verwaltest. Du musst verstehen:\n1. **Buchhaltung:** Die Zahlen eines Unternehmens lesen.\n2. **Investieren:** Geld einsetzen, um mehr Geld zu verdienen.\n3. **Märkte verstehen:** Wissen, was Menschen kaufen wollen.\n4. **Das Gesetz:** Wie man seine Einnahmen schützt.\n\n## 🧱 Baue deine Vermögenssäule auf\n\nKauf nicht weiterhin „Sachen“, die an Wert verlieren. Konzentriere dich stattdessen auf:\n- Aktien und Anleihen\n- Immobilien\n- Geistiges Eigentum (wie Bücher oder Apps)\n- Dein eigenes Geschäft\n\n> **„In der echten Welt sind die klügsten Menschen diejenigen, die Fehler machen und daraus lernen. In der Schule machen die klügsten Menschen keine Fehler.“**\n\nHab keine Angst zu scheitern; hab Angst davor, für immer im Hamsterrad zu bleiben.",
+      "fullContent_child": "## 💰 Zwei Väter, zwei Lektionen\n\nStell dir vor, du hast zwei Väter. Der eine sagt: 'Lerne fleißig, damit du einen guten Job findest.' Der andere sagt: 'Lerne fleißig, damit du eine gute Firma **besitzen** kannst.'\n\nDieses Buch handelt von dem 'reichen Vater', der Robert beigebracht hat, wie man Geld für sich arbeiten lässt!\n\n---\n\n## 📦 Vermögenswerte vs. Verbindlichkeiten\n\nDies ist das wichtigste Geheimnis der Welt:\n\n- **Ein VERMÖGENSWERT** ist wie ein Baum, der Geld wächst und es dir in die Tasche fallen lässt (wie ein Unternehmen oder ein Mietshaus).\n- **Eine VERBINDLICHKEIT** ist wie ein Loch in deiner Tasche, aus dem Geld herausfällt (wie ein teures Spielzeug, das kaputtgeht, oder ein teures Auto).\n\n**Reiche Menschen kaufen Vermögenswerte. Arme Menschen kaufen Verbindlichkeiten, die sie *denken*, Vermögenswerte seien.**\n\n---\n\n## 🤖 Lass dein Geld ein Roboter sein\n\nDie meisten Menschen arbeiten für einen Gehaltsscheck. Aber wenn du ein Unternehmen besitzt, wird dein Geld wie ein Roboter, der für dich arbeitet, selbst während du schläfst!\n\n> **„Es geht nicht darum, wie viel Geld du verdienst. Es geht darum, wie viel Geld du behältst.“**\n\nÜber Geld zu lernen ist wie eine neue Sprache zu lernen. Sobald du 'Geld' sprichst, kannst du alles aufbauen!",
+      "lesson_2_child": "Hab keine Angst, neue Geschäftsideen auszuprobieren!",
+      "lesson_2_teen": "Gehe kalkulierte Risiken ein und lerne aus jeder Investition."
     }
   },
   "dotcom_secrets": {
@@ -3921,7 +4488,8 @@ export const de = {
     "leaderboard_title": "🏆 Top-Vermieter",
     "market_down": "↓ Langsamer Markt",
     "tier_global": "Global",
-    "market_up": "↑ Heißer Markt"
+    "market_up": "↑ Heißer Markt",
+    "per_day": "/Tag"
   },
   "path_title": "Mein Unternehmerweg",
   "subtitle_complete": "Schließe alle Module ab, um CEO zu werden!",
@@ -4029,7 +4597,19 @@ export const de = {
     "feat_admin_dash_school": "Schulleiter-Dashboard",
     "feat_unlocked_content": "Alle Inhalte Freigeschaltet (8-15 Uhr)",
     "feat_priority_support": "Prioritätsbetreuung",
-    "feat_dedicated_manager": "Engagierter Erfolgsmanager"
+    "feat_dedicated_manager": "Engagierter Erfolgsmanager",
+    "per_yr": "/Jahr",
+    "feat_limited_energy": "Standard-Energie (5 Herzen)",
+    "feat_standard_lessons": "Basis-Wirtschaftslektionen",
+    "feat_ads": "Werbefinanziertes Lernen",
+    "feat_unlimited": "Unbegrenzte Energie",
+    "feat_offline": "Offline-Modus",
+    "feat_family": "3 Kinderkonten",
+    "feat_parent_dash": "Eltern-Analyse-Dashboard",
+    "feat_founder_perks": "Alle Gründer-Vorteile",
+    "feat_ai_consultant": "Ollie KI-Unternehmenscoach",
+    "feat_negotiation": "Fortgeschrittene Tank-Verhandlungen",
+    "feat_board_perks": "Alle Vorstandsmitglieder-Vorteile"
   },
   "coop_pitch": {
     "title": "Koop-Pitch-Modus",
@@ -4150,8 +4730,8 @@ export const de = {
     "dm_debate_1Desc": "Gewinne eine Debattier-Dojo-Runde",
     "dm_coins_1": "Geldmacher",
     "dm_coins_2": "Münzsammler",
-    "dm_coins_2Desc": "Verdiene 500 BizCoins durch Aktivitäten",
-    "dm_coins_1Desc": "Verdiene 200 BizCoins durch Aktivitäten",
+    "dm_coins_2Desc": "Verdiene 500 P Tokens durch Aktivitäten",
+    "dm_coins_1Desc": "Verdiene 200 P Tokens durch Aktivitäten",
     "dm_gig_3Desc": "Schließe 5 Aufträge in Gig Central ab",
     "dm_gig_3": "Gig-Legende",
     "dm_lesson_3Desc": "Schließe heute 5 Lektionen ab",
@@ -4179,13 +4759,16 @@ export const de = {
       },
       "wc_coin_grind": {
         "name": "Münzsammler",
-        "desc": "Verdiene diese Woche 2.000 BizCoins durch JEDE Aktivität!"
+        "desc": "Verdiene diese Woche 2.000 P Tokens durch JEDE Aktivität!"
       },
       "wc_quiz_blitz": {
         "desc": "Beantworte 20 Quizfragen in den Lektionen richtig!",
         "name": "Quiz-Blitz"
       }
-    }
+    },
+    "daysLeft": "{{count}}d ÜBRIG",
+    "lastDay": "LETZTER TAG!",
+    "completePct": "Vollständig"
   },
   "seasonalEvent": {
     "events": {
@@ -4194,7 +4777,7 @@ export const de = {
         "desc": "Schließe diese Woche die meisten Lektionen ab, um das exklusive Kirschblüten-Avatar-Item zu erhalten!"
       },
       "eid_entrepreneur_challenge": {
-        "desc": "Verdiene die meisten BizCoins durch Aufträge, um das goldene Halbmond-Abzeichen und die HQ-Mosqueenlampe zu gewinnen!",
+        "desc": "Verdiene die meisten P Tokens durch Aufträge, um das goldene Halbmond-Abzeichen und die HQ-Mosqueenlampe zu gewinnen!",
         "name": "Eid Unternehmer Challenge"
       },
       "back_to_school_blast": {
@@ -4203,7 +4786,7 @@ export const de = {
       },
       "summer_hustle_championship": {
         "name": "Sommer-Hustle-Meisterschaft",
-        "desc": "Verdiene die meisten BizCoins aus beliebigen Quellen. Die Bestverdiener gewinnen die Summer-CEO-Trophäe!"
+        "desc": "Verdiene die meisten P Tokens aus beliebigen Quellen. Die Bestverdiener gewinnen die Summer-CEO-Trophäe!"
       }
     },
     "title": "SAISONALE VERANSTALTUNG",
@@ -4225,10 +4808,36 @@ export const de = {
     "visitors": "Besucher",
     "upgrades": "Upgrades",
     "totalEarned": "Insgesamt verdient",
-    "collectCoins": "Sammle BizCoins",
+    "collectCoins": "Sammle P Tokens",
     "pendingIncome": "Ausstehendes Einkommen",
     "recentVisitors": "NEUESTE BESUCHER",
-    "maxTier": "Max Tier"
+    "maxTier": "Max Tier",
+    "openTitle": "Eröffnen Sie Ihre Franchise!",
+    "perHour": "pro Stunde",
+    "collectBtn": "Sammeln",
+    "openBtn": "Offene Franchise — Kostenlos!",
+    "openDesc": "Erweitern Sie Ihr Imperium, indem Sie einen neuen Standort eröffnen.",
+    "reachLevelToOpen": "Erreiche Stufe {{level}}, um zu öffnen",
+    "youAreLevel": "Du bist Level {{level}}",
+    "tiers": {
+      "KIOSK": {
+        "label": "Straßenkiosk",
+        "desc": "Ein winziger Stand, der Geld verdient, während du schläfst."
+      },
+      "ENTERPRISE": {
+        "label": "Globales Unternehmen",
+        "desc": "Ihre Marke ist überall. Maximaler passiver Einkommen erreicht."
+      },
+      "STORE": {
+        "label": "Flagship-Store",
+        "desc": "Ein vollwertiges Geschäft, das ernsthaft Geld einbringt."
+      },
+      "SHOP": {
+        "desc": "Ein ordentliches Geschäft mit treuen Stammkunden.",
+        "label": "Eckladen"
+      }
+    },
+    "upgradeBtn": "Upgrade"
   },
   "aiGenerator": {
     "desc": "Erstellen Sie in Sekundenschnelle einen vollständigen, investorenfertigen Geschäftsplan mit KI",
@@ -4260,7 +4869,7 @@ export const de = {
     "statXp": "Gesamt-XP",
     "statBooks": "Gelesene Bücher",
     "statLessons": "Lektionen",
-    "statCoins": "BizCoins",
+    "statCoins": "P Tokens",
     "statStreak": "Beste Serie",
     "statGigs": "Auftritte gemeistert",
     "pdfHeaderApp": "Gewinnpatrouille",
@@ -4300,16 +4909,18 @@ export const de = {
   },
   "weekly": {
     "progress": "{{done}}/{{total}} abgeschlossen",
-    "subtitle": "Schließe diese Woche 3 Missionen ab, um einen Bonus von 500 🪙 zu erhalten!",
+    "subtitle": "Schließe diese Woche 3 Missionen ab, um einen Bonus von 500 Münzen zu erhalten!",
     "title": "Wöchentliche CEO-Herausforderung",
     "resets_in": "Setzt in {{days}} Tagen zurück",
     "claim": "✅ Fertig!",
     "all_done_title": "CEO der Woche! 🏆",
     "bonus_hint": "Schließe alle 3 ab, um eine Bonusbelohnung zu erhalten!",
-    "all_done_desc": "Du hast es geschafft! +500 BizCoins wurden deinem Konto hinzugefügt.",
+    "all_done_desc": "Du hast es geschafft! +500 P Tokens wurden deinem Konto hinzugefügt.",
     "close": "Lass uns weitermachen!"
   },
   "bizpulse": {
+    "open_details": "Mehr lesen 📰",
+    "tooltip": "Klicken, um die vollständigen BizPulse-Nachrichten zu lesen",
     "title": "PatrolPulse",
     "subtitle": "Heutige Wirtschaftsnachrichten — lesen & XP verdienen!",
     "already_read": "Heute gelesen ✅",
@@ -4342,8 +4953,42 @@ export const de = {
     "empty_portfolio": "Noch keine Aktien — kaufen Sie Ihre erste Aktie!"
   },
   "avatar": {
-    "subtitle": "Passe dein Aussehen mit BizCoins an!",
-    "title": "Mein Avatar"
+    "subtitle": "Passe dein Aussehen mit P Tokens an!",
+    "title": "Mein Avatar",
+    "cat_hair": "Haar",
+    "cat_accessory": "Zubehör",
+    "not_enough_coins": "❌ Nicht genug Münzen!",
+    "equipped": "Ausgerüstet „{{name}}“",
+    "purchased": "„{{name}}“ gekauft! ✅",
+    "on": "An",
+    "cat_bg": "Hintergrund",
+    "cat_outfit": "Outfit",
+    "equip": "Ausrüsten",
+    "earn_tip": "Verdiene P-Token, indem du Lektionen, Aufträge und tägliche Herausforderungen abschließt",
+    "items": "Artikel",
+    "items_db": {
+      "h4": "Afro-Krone",
+      "o0": "T-Shirt",
+      "h1": "CEO-Kürzung",
+      "o3": "Hoodie",
+      "o4": "CEO-Blazer",
+      "h3": "Mohawk",
+      "h0": "Lässige Locken",
+      "o1": "Businessanzug",
+      "o2": "Laborkittel",
+      "h2": "Zöpfe",
+      "a0": "Keine",
+      "bg0": "Büro",
+      "a3": "Zylinder",
+      "a4": "Raketenrucksack",
+      "a1": "Coole Sonnenbrille",
+      "o5": "Astronaut",
+      "bg2": "Tropischer Strand",
+      "bg1": "Raumstation",
+      "bg3": "Neonstadt",
+      "a2": "Goldene Kette",
+      "bg4": "Geldregen"
+    }
   },
   "season": {
     "title": "Saisonale Veranstaltungen",
@@ -4361,6 +5006,240 @@ export const de = {
   "ceo": {
     "title": "Wöchentliche CEO-Herausforderung",
     "subtitle": "Erreiche das Ziel dieser Woche, um exklusive Belohnungen zu erhalten!"
+  },
+  "bottomNav": {
+    "map": "Karte",
+    "profile": "Profil",
+    "news": "Nachrichten",
+    "quests": "Quests"
+  },
+  "social": {
+    "xp_progress": "XP-FORTSCHRITT",
+    "lessons": "UNTERRICHT",
+    "share_stats": "Statistiken teilen",
+    "business_card_desc": "Ihre teilbare digitale Identitätskarte",
+    "business_card_title": "Meine Visitenkarte",
+    "level_up_2": "Erstellen Sie Ihr Unternehmenslogo im HQ-Designer",
+    "level_up": "Verbessere deine Karte",
+    "level_up_1": "Schließe mehr Lektionen ab, um deinen Rangtitel zu erhöhen",
+    "invite_link": "Ihr einzigartiger Einladungslink",
+    "invite_share_text": "Verwende meinen Einladungs-Code {{code}}, um zu starten!",
+    "save_card": "Karte speichern",
+    "invite_title": "Freunde einladen, Belohnungen verdienen!",
+    "level_up_3": "Aktualisieren Sie Ihr Abonnement, um ein Premium-Kartendesign freizuschalten",
+    "invite_share_title": "Begleite mich bei der Gewinnpatrouille!",
+    "invite_desc": "Erhalte 500 P-Token für jeden Freund, der sich über deinen Link anmeldet.",
+    "ppTokens_earned": "P-Token VERDIENT",
+    "hq": {
+      "garage": "Garage Zentrale",
+      "highrise": "Hochhaus-Hauptquartier",
+      "office": "Büro HQ"
+    },
+    "ranks": {
+      "legendary": "Legendärer CEO",
+      "analyst": "Analyst",
+      "intern": "Praktikant",
+      "grand_tycoon": "Großer Tycoon",
+      "executive": "Exekutiv",
+      "manager": "Manager"
+    },
+    "friends_invited": "EINGELADENE FREUNDE",
+    "parent_bonus": "Elternbonus: Wenn dein Freund auf Premium upgrade, erhalten deine Eltern 1 kostenlosen Monat!",
+    "tiers": {
+      "founder": "Gründer",
+      "tycoon": "Magnat",
+      "board": "Vorstandsmitglied",
+      "intern": "Praktikant",
+      "classroom": "Klassenzimmer",
+      "teacher_pro": "Lehrer Pro",
+      "teacher": "Lehrer"
+    },
+    "bounties": {
+      "title": "Jobs & Prämien",
+      "assigned": "Zugewiesen",
+      "tokens": "ppTokens",
+      "done": "Fertig?",
+      "no_bounties": "Noch keine Jobs veröffentlicht!",
+      "create_hint": "Klicken Sie auf die + Schaltfläche, um eine zu erstellen.",
+      "delete_confirm": "Bist du sicher, dass du diese Prämie löschen möchtest?",
+      "approve": "Genehmigen",
+      "photo_req": "Foto erforderlich",
+      "claim": "Anforderung"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "sound": "Soundeffekte",
+    "preferences": "Einstellungen",
+    "export_json": "Als JSON exportieren",
+    "music": "Hintergrundmusik",
+    "export_desc": "Laden Sie alle Ihre persönlichen Daten im JSON- oder CSV-Format herunter.",
+    "privacy_zone": "Datenschutzbereich",
+    "export_success": "Export erfolgreich! Überprüfen Sie Ihre Downloads.",
+    "export_title": "Exportieren Sie Ihre Daten",
+    "exporting": "Exportieren...",
+    "delete_scheduled_title": "Konto-Löschung geplant",
+    "export_csv": "Als CSV exportieren",
+    "btn_request_delete": "Löschung anfordern",
+    "delete_scheduled_date": "Geplant für: {{date}}",
+    "btn_cancel": "Abbrechen",
+    "btn_cancel_delete": "Löschanfrage stornieren",
+    "delete_scheduled_desc": "Ihr Konto wird in {{days}} Tagen dauerhaft gelöscht. Sie können diese Anfrage jederzeit vorher stornieren.",
+    "delete_title": "Konto löschen",
+    "delete_desc": "Anforderung der dauerhaften Kontolöschung. Ihre Daten werden nach einer 30-tägigen Schonfrist gelöscht. Diese Aktion kann nach Ablauf der Schonfrist nicht rückgängig gemacht werden.",
+    "deleting": "Verarbeitung...",
+    "privacy_rights_title": "Ihre Datenschutzrechte:",
+    "btn_confirm_delete": "Löschung bestätigen",
+    "delete_confirm_question": "Bist du dir absolut sicher, dass du dein Konto löschen möchtest?",
+    "delete_reason_placeholder": "Optional: Sagen Sie uns, warum Sie gehen (hilft uns, uns zu verbessern)",
+    "privacy_rights_desc": "Unter den Vorschriften der DSGVO und COPPA haben Sie das Recht, auf Ihre personenbezogenen Daten zuzugreifen, sie zu exportieren und zu löschen. Wir nehmen Ihre Privatsphäre ernst und verpflichten uns, Ihre Informationen zu schützen."
+  },
+  "family": {
+    "linked_kids": "Verknüpfte Kinder",
+    "invite_label": "Ihr Familien-Einladungscode",
+    "title": "Familien-Hub",
+    "link_parent": "Link zu einem Elternteil",
+    "link_button": "LINK",
+    "link_placeholder": "CODE EINGEBEN",
+    "linking": "Verknüpfen...",
+    "premium_badge": "PREMIUM",
+    "linked_success": "Erfolgreich verknüpft!",
+    "invalid_code": "Ungültiger Einladungscode. Bitte versuche es erneut.",
+    "link_desc": "Gib den Code von dem Dashboard deiner Eltern ein, um Premium-Funktionen freizuschalten!",
+    "copied": "In die Zwischenablage kopiert!",
+    "error_generating": "Fehler beim Erstellen des Einladungscodes. Versuchen Sie, die Seite zu aktualisieren.",
+    "no_kids": "Noch keine Kinder verknüpft.",
+    "part_of_family": "Sie sind Teil eines Familientarifs.",
+    "linked_parent_success": "Erfolgreich mit dem Elternteil verknüpft!",
+    "parent_only_code": "Dieser Code gehört nicht zu einem Elternkonto.",
+    "generating_code": "Generiere deinen einzigartigen Einladungscode...",
+    "premium_unlocked": "Premium-Funktionen freigeschaltet! 🚀"
+  },
+  "business_plan": {
+    "title": "Geschäftsplan",
+    "save_pdf": "PDF speichern",
+    "loading": "Ollie schreibt deinen Plan...",
+    "step_x_of_y": "Schritt {{current}} von {{total}}",
+    "generated_by": "Generiert von Ollie AI · Profits Patrol CEO-Track",
+    "sections": {
+      "marketing": "Marketingplan",
+      "problem": "Problem & Lösung",
+      "financial": "Finanzieller Überblick",
+      "nextSteps": "Nächste Schritte",
+      "summary": "Zusammenfassung für die Geschäftsführung",
+      "market": "Zielmarkt",
+      "revenue": "Erlösmodell"
+    },
+    "back": "Zurück",
+    "generate": "Erzeuge Plan!",
+    "next": "Weiter",
+    "steps": {
+      "name": {
+        "label": "🏷️ Firmenname",
+        "placeholder": "Zum Beispiel EcoBottle GmbH",
+        "hint": "Wie würden Sie Ihr Geschäft nennen?"
+      },
+      "customer": {
+        "label": "👥 Zielkunde",
+        "placeholder": "Zum Beispiel umweltbewusste Eltern im Alter von 25–40 Jahren",
+        "hint": "Wer ist Ihr idealer Kunde?"
+      },
+      "goal": {
+        "label": "🚀 Dein großes Ziel",
+        "placeholder": "Z. B. Erreichen Sie $100.000 Umsatz im ersten Jahr und expandieren Sie nach Europa",
+        "hint": "Was möchten Sie in 1–2 Jahren erreichen?"
+      },
+      "revenue": {
+        "label": "💰 Einnahmenmodell",
+        "hint": "Wie werden Sie Geld verdienen?",
+        "placeholder": "Zum Beispiel direkt auf Shopify für 25 $ pro Flasche verkaufen"
+      },
+      "product": {
+        "hint": "Beschreiben Sie genau, was Sie verkaufen oder tun.",
+        "placeholder": "Zum Beispiel wiederverwendbare Wasserflaschen aus Ozeanplastik",
+        "label": "📦 Ihr Produkt oder Ihre Dienstleistung"
+      }
+    },
+    "fallback": {
+      "nextSteps": "🚀 Diese Woche: Eine einfache Website erstellen. Nächster Monat: 10 zahlende Kunden gewinnen. Monat 3: {{bigGoal}}. Los geht's!",
+      "targetMarket": "👥 Unsere Hauptkunden sind {{targetCustomer}}. Dies ist ein wachsender Markt mit Millionen potenzieller Käufer. Wir werden lokal beginnen und innerhalb von 12 Monaten national expandieren.",
+      "executiveSummary": "🌟 {{businessName}} ist ein bahnbrechendes Unternehmen, das von {{name}} gegründet wurde! Unsere Mission ist es, {{product}} an Kunden zu liefern, die es wirklich benötigen, und gleichzeitig ein profitables und nachhaltiges Unternehmen aufzubauen.",
+      "marketingPlan": "📱 Wir werden durch soziale Medien (TikTok + Instagram), lokale Community-Events und strategische Partnerschaften wachsen. Unsere Inhalte werden echte Kundengeschichten und Aufnahmen hinter den Kulissen unseres Prozesses zeigen.",
+      "revenueModel": "💰 {{revenueModel}}. Wir gehen davon aus, dass wir innerhalb von 90 Tagen unsere ersten 10.000 $ Umsatz erreichen, indem wir uns auf Direktverkäufe und Mund-zu-Mund-Empfehlungen konzentrieren.",
+      "problemSolution": "💡 Viele {{targetCustomer}} haben Schwierigkeiten, in diesem Bereich qualitativ hochwertige Lösungen zu finden. {{businessName}} löst dieses Problem, indem es {{product}} anbietet — einfacher, schneller und günstiger als alles, was derzeit verfügbar ist.",
+      "financialSnapshot": "📊 Start-up-Kosten: unter 500 $. Break-even: Monat 2. Zielumsatz im ersten Jahr: über 50.000 $. Wir werden 30 % der Gewinne in das Wachstum reinvestieren und die Kosten gering halten."
+    }
+  },
+  "hq_builder": {
+    "rotate": "Drehen",
+    "tap_floor": "Tippe auf eine Bodenfliese, um deinen Gegenstand zu platzieren!",
+    "confirm_sell": "✓ Verkaufen?",
+    "sell_item_tooltip": "Artikel verkaufen (zweimal klicken, um zu bestätigen)",
+    "done": "Erledigt",
+    "inventory_empty": "Inventar leer - Kaufe Artikel im Laden!",
+    "selected": "Ausgewählt",
+    "tap_furniture": "Tippen Sie auf Möbel, um sie zu bearbeiten oder unten aus dem Inventar auszuwählen"
+  },
+  "sim": {
+    "ice_per_cup": "Eis pro Tasse",
+    "marketing_budget": "Marketingbudget",
+    "price": "Preis",
+    "marketing_spend": "Marketingausgaben",
+    "repairs": "Reparaturen",
+    "lemons_per_cup": "Zitronen pro Tasse",
+    "price_per_cup": "Preis pro Tasse",
+    "lemons_per_pitcher": "Zitronen pro Krug",
+    "repair_instructions": "Ziehe die Teile zu ihren entsprechenden Umrissen, um das Gerät zu reparieren.",
+    "sugar_per_pitcher": "Zucker pro Krug",
+    "print_quality": "Druckqualität",
+    "marketing_budget_alt": "Marketingbudget",
+    "batch_size": "Batchgröße",
+    "cover_art_budget": "Cover-Art-Budget",
+    "qc_check": "QC-Prüfintervall",
+    "roast_level": "Röstgrad",
+    "conveyor_speed": "Fördergeschwindigkeit",
+    "voltage": "Spannungsziel",
+    "safety_check": "Sicherheitsprüfungsstufe",
+    "milk_foam": "Milchschaum",
+    "revenue": "Einnahmen",
+    "shop": "Geschäft",
+    "recycling_rate": "Recyclingquote",
+    "ration_size": "Portionsgröße",
+    "production_speed": "Produktionsgeschwindigkeit",
+    "expenses": "Ausgaben",
+    "satisfaction": "Zufriedenheit",
+    "work_shift": "Arbeits Schicht Länge",
+    "profit": "Gewinn",
+    "strategy": "Strategie",
+    "customers": "Kunden",
+    "objective": "Ziel",
+    "save_exit": "Speichern & Beenden",
+    "simulating": "Markt wird simuliert...",
+    "no_upgrades": "Keine Updates verfügbar.",
+    "day": "Tag",
+    "report": "Tagesbericht",
+    "owned": "Besessen",
+    "start_day": "Tag starten",
+    "next_day": "Nächster Tag",
+    "sat_high": "Die Kunden liebten es!",
+    "goal_desc": "Ihr Ziel ist es, den Gewinn im Laufe der Zeit zu maximieren.",
+    "net_profit": "Nettogewinn",
+    "welcome_ceo": "Willkommen, Geschäftsführer!",
+    "sat_low": "Die Kunden waren unzufrieden.",
+    "sat_med": "Die Kunden fanden es in Ordnung.",
+    "grow_biz": "Wachsen Sie Ihr Geschäft",
+    "customer_sat": "Kundenzufriedenheit",
+    "strategy_desc": "Bevor jeder Tag beginnt, passen Sie Ihre Strategie-Schieberegler an.",
+    "balance_desc": "Finden Sie die perfekte Balance, um die Kunden zufrieden zu stellen!",
+    "next": "Weiter",
+    "upgrade_desc": "Verwende deine Gewinne, um Upgrades im Laden zu kaufen.",
+    "attract_desc": "Upgrades ziehen mehr Kunden an und steigern den Umsatz."
+  },
+  "coaching": {
+    "no_properties": "Immobilien sind der Weg zum Wohlstand! Gehe zu Venture und kaufe deine erste Immobilie, um passives Einkommen aus Miete zu erzielen! 🏠",
+    "active_district": "Willkommen bei {{name}}! Lass uns die Lektionen meistern und Boss {{bossName}} besiegen, um die Belohnungen für den Abschluss des Bezirks zu erhalten! 🏆",
+    "no_skills": "Hey Chef! Du hast ziemlich viel Geld. In deine Fähigkeiten im Hauptquartier zu reinvestieren wird deine Effizienz und passives Einkommen steigern! 🧠",
+    "low_streak": "Willkommen zurück! Jeden Tag taucht ein erfolgreicher Tycoon auf. Halte deine tägliche Serie heiß! 🔥"
   }
 }
 };

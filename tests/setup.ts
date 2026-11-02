@@ -5,6 +5,39 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import '@/lib/i18n';
 
+// Global PWA Mock to prevent hook destructuring crashes
+vi.mock('virtual:pwa-register/react', () => ({
+  useRegisterSW: () => ({
+    offlineReady: [false, vi.fn()],
+    needRefresh: [false, vi.fn()],
+    updateServiceWorker: vi.fn(),
+  })
+}));
+
+// Mock Supabase to prevent real network calls or session checks
+vi.mock('@/lib/supabase', () => ({
+  supabase: null,
+  isSupabaseConfigured: () => false
+}));
+
+// ─── Global localStorage mock ──────────────────────────────────────────────
+// The custom LocalStorageAdapter wraps native localStorage in a way that
+// breaks direct localStorage.* calls in the jsdom test environment.
+// We provide a simple in-memory implementation to prevent test crashes.
+const _localStorageStore: Record<string, string> = {};
+const _localStorageMock = {
+  getItem: (key: string) => _localStorageStore[key] ?? null,
+  setItem: (key: string, value: string) => { _localStorageStore[key] = value; },
+  removeItem: (key: string) => { delete _localStorageStore[key]; },
+  clear: () => { Object.keys(_localStorageStore).forEach(k => delete _localStorageStore[k]); },
+  key: (idx: number) => Object.keys(_localStorageStore)[idx] ?? null,
+  get length() { return Object.keys(_localStorageStore).length; },
+};
+Object.defineProperty(globalThis, 'localStorage', {
+  value: _localStorageMock,
+  writable: true,
+});
+
 // Mock scroll functions
 window.scrollTo = vi.fn();
 Element.prototype.scrollIntoView = vi.fn();
@@ -83,20 +116,34 @@ Object.defineProperty(window, 'matchMedia', {
 };
 
 // Mock Framer Motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => React.createElement('div', props, children),
-    span: ({ children, ...props }: any) => React.createElement('span', props, children),
-    button: ({ children, ...props }: any) => React.createElement('button', props, children),
-    p: ({ children, ...props }: any) => React.createElement('p', props, children),
-    img: ({ children, ...props }: any) => React.createElement('img', props, children),
-    h1: ({ children, ...props }: any) => React.createElement('h1', props, children),
-    h2: ({ children, ...props }: any) => React.createElement('h2', props, children),
-    h3: ({ children, ...props }: any) => React.createElement('h3', props, children),
-  },
-  AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, {}, children),
-  useAnimation: () => ({ start: vi.fn() }),
-}));
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy({} as any, {
+    get: (target, prop) => {
+      if (typeof prop === 'string') {
+        const Comp = ({ children, ...props }: any) => {
+          // Filter out framer-motion specific props to prevent console warnings/errors
+          const cleanProps = { ...props };
+          delete cleanProps.animate;
+          delete cleanProps.transition;
+          delete cleanProps.initial;
+          delete cleanProps.exit;
+          delete cleanProps.variants;
+          delete cleanProps.whileHover;
+          delete cleanProps.whileTap;
+          return React.createElement(prop, cleanProps, children);
+        };
+        Comp.displayName = `motion.${prop}`;
+        return Comp;
+      }
+      return undefined;
+    }
+  });
+  return {
+    motion: motionProxy,
+    AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, {}, children),
+    useAnimation: () => ({ start: vi.fn() }),
+  };
+});
 
 // Mock Canvas
 HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
@@ -139,5 +186,12 @@ vi.mock('phaser', () => ({
   Scene: class { },
   // Add other exports used in your project
 }));
+
+// Global Fetch Mock to prevent real network calls (e.g. Logger remote calls) from hanging tests
+globalThis.fetch = vi.fn().mockImplementation(() => Promise.resolve({
+  ok: true,
+  json: () => Promise.resolve({}),
+  text: () => Promise.resolve(''),
+} as Response));
 
 

@@ -13,8 +13,9 @@ export const GAMES_DB: BusinessSimulation[] = [
     "descriptionKey": "games.lemonade_stand.desc",
     "visual_config": {
       "theme": "light",
-      "colors": { "primary": "#FFC800", "secondary": "#F59E0B", "accent": "#10B981", "background": "#FEF3C7" },
-      "icon": "🍋"
+      "colors": { "primary": "#CA8A04", "secondary": "#A16207", "accent": "#10B981", "background": "#FEF3C7" },
+      "icon": "🍋",
+      "image": "/images/arcade/lemonade.jpg"
     },
     "variables": {
       "resources": ["lemons", "sugar", "ice", "cups"],
@@ -22,14 +23,20 @@ export const GAMES_DB: BusinessSimulation[] = [
       "player_inputs": ["price_per_cup", "ice_per_cup", "lemons_per_cup"]
     },
     "upgrade_tree": [
-      { "id": "upgrade_ice_chest", "name": "Super Cooler", "effect": "Ice melts 50% slower", "cost": 50, "modifier_target": "quality", "modifier_value": 1.2 },
-      { "id": "upgrade_juicer", "name": "Electric Juicer", "effect": "Production speed +25%", "cost": 100, "modifier_target": "speed", "modifier_value": 1.25 },
-      { "id": "upgrade_sign", "name": "Spinning Sign", "effect": "Customer attraction +20%", "cost": 150, "modifier_target": "demand", "modifier_value": 1.2 }
+      { "id": "upgrade_ice_chest", "name": "Super Cooler", "nameKey": "games.upgrades.ice_chest.name", "effect": "Ice melts 50% slower", "effectKey": "games.upgrades.ice_chest.effect", "cost": 50, "modifier_target": "quality", "modifier_value": 1.2 },
+      { "id": "upgrade_juicer", "name": "Electric Juicer", "nameKey": "games.upgrades.juicer.name", "effect": "Production speed +25%", "effectKey": "games.upgrades.juicer.effect", "cost": 100, "modifier_target": "speed", "modifier_value": 1.25 },
+      { "id": "upgrade_sign", "name": "Spinning Sign", "nameKey": "games.upgrades.sign.name", "effect": "Customer attraction +20%", "effectKey": "games.upgrades.sign.effect", "cost": 150, "modifier_target": "demand", "modifier_value": 1.2 }
     ],
     "event_triggers": {
-      "positive": { "event_name": "Heatwave", "effect": "Demand increases by 200%", "duration": "1_day", "modifier_target": "demand", "modifier_value": 2.0 },
-      "negative": { "event_name": "Sour Batch", "effect": "Refund cost increases by 20%", "duration": "1_day", "modifier_target": "revenue", "modifier_value": 0.8 }
-    }
+      "positive": { "event_name": "Heatwave", "event_nameKey": "games.events.heatwave.name", "effect": "Demand increases by 200%", "effectKey": "games.events.heatwave.effect", "duration": "1_day", "modifier_target": "demand", "modifier_value": 2.0 },
+      "negative": { "event_name": "Sour Batch", "event_nameKey": "games.events.sour_batch.name", "effect": "Refund cost increases by 20%", "effectKey": "games.events.sour_batch.effect", "duration": "1_day", "modifier_target": "revenue", "modifier_value": 0.8 }
+    },
+    "fun_facts": [
+      "🍋 Warren Buffett's first business? A lemonade stand at age 6!",
+      "💰 Lowering price = more customers, but less profit per cup. That's called Price Elasticity!",
+      "☀️ Smart businesses plan for the weather! Airlines, farms, and cafes all use weather forecasts to set prices.",
+      "🏆 The world's most expensive lemonade costs $400/glass. Branding matters!"
+    ]
   },
   {
     "business_id": "BIZ_02_PIZZA",
@@ -42,7 +49,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#EF4444", "secondary": "#B91C1C", "accent": "#F59E0B", "background": "#FFF1F2" },
-      "icon": "🍕"
+      "icon": "🍕",
+      "image": "/images/arcade/pizza.jpg"
     },
     "grid_config": {
       "rows": 8, "cols": 8,
@@ -65,7 +73,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#EC4899", "secondary": "#DB2777", "accent": "#F472B6", "background": "#FDF2F8" },
-      "icon": "🧁"
+      "icon": "🧁",
+      "image": "/images/arcade/cupcake.jpg"
     },
     "cooking_config": {
       "ingredients": [
@@ -95,7 +104,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#78350F", "secondary": "#451a03", "accent": "#D97706", "background": "#FFFBEB" },
-      "icon": "☕"
+      "icon": "☕",
+      "image": "/images/arcade/coffee.jpg"
     },
     "variables": {
       "resources": ["beans", "milk", "cups"],
@@ -103,13 +113,19 @@ export const GAMES_DB: BusinessSimulation[] = [
       "player_inputs": ["roast_level", "milk_foam", "price"]
     },
     "upgrade_tree": [
-      { "id": "up_espresso", "name": "Espresso Machine", "effect": "Speed +30%", "cost": 200 },
-      { "id": "up_beans", "name": "Premium Beans", "effect": "Quality +20%", "cost": 150 }
+      { "id": "up_espresso", "name": "Espresso Machine", "nameKey": "games.upgrades.espresso.name", "effect": "Speed +30%", "effectKey": "games.upgrades.espresso.effect", "cost": 200 },
+      { "id": "up_beans", "name": "Premium Beans", "nameKey": "games.upgrades.premium_beans.name", "effect": "Quality +20%", "effectKey": "games.upgrades.premium_beans.effect", "cost": 150 }
     ],
     "event_triggers": {
-      "positive": { "event_name": "Rainy Day", "effect": "Hot coffee demand +50%", "duration": "1d" },
-      "negative": { "event_name": "Machine Break", "effect": "Speed -50%", "duration": "1d" }
-    }
+      "positive": { "event_name": "Rainy Day", "event_nameKey": "games.events.rainy_day.name", "effect": "Hot coffee demand +50%", "effectKey": "games.events.rainy_day.effect", "duration": "1d" },
+      "negative": { "event_name": "Machine Break", "event_nameKey": "games.events.machine_break.name", "effect": "Speed -50%", "effectKey": "games.events.machine_break.effect", "duration": "1d" }
+    },
+    "fun_facts": [
+      "☕ Starbucks makes $26 BILLION a year. Each latte costs ~$0.35 to make and sells for $6. That's 1600% markup!",
+      "🌅 70% of coffee sales happen before 10am. That's called Peak Demand Hours!",
+      "🌍 Coffee is the world's 2nd most traded commodity after oil!",
+      "💡 The difference between $3 coffee and $7 coffee? Mostly branding and atmosphere!"
+    ]
   },
   {
     "business_id": "BIZ_05_TACO",
@@ -122,7 +138,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#F59E0B", "secondary": "#B45309", "accent": "#EF4444", "background": "#FEF3C7" },
-      "icon": "🌮"
+      "icon": "🌮",
+      "image": "/images/arcade/taco.jpg"
     },
     "cooking_config": {
       "ingredients": [
@@ -152,7 +169,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#F472B6", "secondary": "#DB2777", "accent": "#60A5FA", "background": "#FDF2F8" },
-      "icon": "🍦"
+      "icon": "🍦",
+      "image": "/images/arcade/icecream.jpg"
     },
     "service_config": {
       "actions": [
@@ -183,23 +201,33 @@ export const GAMES_DB: BusinessSimulation[] = [
     "name": "Groovy Car Wash",
     "nameKey": "games.car_wash.title",
     "category": "Services & E-Commerce",
-    "game_type": "action_rhythm",
+    "game_type": "service_queue",
     "description": "Scrub the cars to the beat! Hit the targets perfectly.",
     "descriptionKey": "games.car_wash.desc",
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#3B82F6", "secondary": "#2563EB", "accent": "#60A5FA", "background": "#EFF6FF" },
-      "icon": "🚗"
+      "icon": "🚗",
+      "image": "/images/arcade/carwash.jpg"
     },
-    "rhythm_config": {
-      "track_name": "Car Wash Disco",
-      "tracks": [
-        { "id": "soap", "color": "#3B82F6", "icon": "🧼", "label": "Soap" },
-        { "id": "rinse", "color": "#60A5FA", "icon": "🚿", "label": "Rinse" },
-        { "id": "wax", "color": "#FBBF24", "icon": "✨", "label": "Wax" }
+    "service_config": {
+      "actions": [
+        { "id": "soap", "color": "#3B82F6", "icon": "🧼", "labelKey": "actions.wash" },
+        { "id": "rinse", "color": "#60A5FA", "icon": "🚿", "labelKey": "actions.rinse" },
+        { "id": "wax", "color": "#FBBF24", "icon": "✨", "labelKey": "actions.wax" }
+      ],
+      "customer_types": [
+        { "id": "sedan", "name": "Sedan", "possible_requests": [["soap", "rinse"]] },
+        { "id": "truck", "name": "Truck", "possible_requests": [["soap", "rinse", "wax"]] }
       ]
     },
     "upgrade_tree": [],
+    "fun_facts": [
+      "🚗 Service businesses are the fastest-growing sector! People pay for time, not just products.",
+      "⭐ A 5-star review is worth 25 new customers on average. Quality = free marketing!",
+      "💎 Repeat customers spend 67% more than first-timers. That's Customer Lifetime Value!",
+      "🔁 It costs 5x more to win a NEW customer than to keep an existing one!"
+    ],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
   },
   {
@@ -213,7 +241,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#A78BFA", "secondary": "#8B5CF6", "accent": "#F472B6", "background": "#F5F3FF" },
-      "icon": "🐩"
+      "icon": "🐩",
+      "image": "/images/arcade/petsalon.jpg"
     },
     "service_config": {
       "actions": [
@@ -249,7 +278,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#22C55E", "secondary": "#15803D", "accent": "#EAB308", "background": "#F0FDF4" },
-      "icon": "🚜"
+      "icon": "🚜",
+      "image": "/images/arcade/lawn.jpg"
     },
     "grid_config": {
       "rows": 8, "cols": 8,
@@ -272,7 +302,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#6366F1", "secondary": "#4F46E5", "accent": "#10B981", "background": "#EEF2FF" },
-      "icon": "📦"
+      "icon": "📦",
+      "image": "/images/arcade/dropship.jpg"
     },
     "clicker_config": {
       "resource_name": "Revenue",
@@ -287,8 +318,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     ],
     "game_mechanics": { "spawn_rate": 1500, "lanes": 3 },
     "upgrade_tree": [
-      { "id": "up_ads", "name": "Social Ads", "effect": "Auto-orders +5/sec", "cost": 200, "modifier_target": "auto_click_rate", "modifier_value": 5 },
-      { "id": "up_supplier", "name": "Fast Supplier", "effect": "Click value +10", "cost": 500, "modifier_target": "click_value", "modifier_value": 10 }
+      { "id": "up_ads", "name": "Social Ads", "nameKey": "games.upgrades.social_ads.name", "effect": "Auto-orders +5/sec", "effectKey": "games.upgrades.social_ads.effect", "cost": 200, "modifier_target": "auto_click_rate", "modifier_value": 5 },
+      { "id": "up_supplier", "name": "Fast Supplier", "nameKey": "games.upgrades.fast_supplier.name", "effect": "Click value +10", "effectKey": "games.upgrades.fast_supplier.effect", "cost": 500, "modifier_target": "click_value", "modifier_value": 10 }
     ],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
   },
@@ -303,7 +334,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#0EA5E9", "secondary": "#0284C7", "accent": "#FACC15", "background": "#F0F9FF" },
-      "icon": "📱"
+      "icon": "📱",
+      "image": "/images/arcade/repair.jpg"
     },
     "repair_config": {
       "bg_color": "#1f2937",
@@ -328,7 +360,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "realistic",
       "colors": { "primary": "#64748B", "secondary": "#475569", "accent": "#F59E0B", "background": "#F1F5F9" },
-      "icon": "🏭"
+      "icon": "🏭",
+      "image": "/images/arcade/factory.jpg"
     },
     "variables": {
       "resources": ["plastic", "paint", "boxes"],
@@ -355,15 +388,17 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#8B5CF6", "secondary": "#7C3AED", "accent": "#C084FC", "background": "#F3E8FF" },
-      "icon": "🖨️"
+      "icon": "🖨️",
+      "image": "/images/arcade/printshop.jpg"
     },
     "entities": [
-      { "id": "red_fil", "type": "resource", "name": "Red", "emoji": "🔴" },
-      { "id": "blue_fil", "type": "resource", "name": "Blue", "emoji": "🔵" },
-      { "id": "green_fil", "type": "resource", "name": "Green", "emoji": "🟢" },
-      { "id": "yellow_fil", "type": "resource", "name": "Yellow", "emoji": "🟡" },
-      { "id": "white_fil", "type": "resource", "name": "White", "emoji": "⚪" },
-      { "id": "black_fil", "type": "resource", "name": "Black", "emoji": "⚫" }
+      { "id": "red_fil", "type": "resource", "name": "Red", "nameKey": "games.print_shop.items.red", "emoji": "🔴" },
+      { "id": "blue_fil", "type": "resource", "name": "Blue", "nameKey": "games.print_shop.items.blue", "emoji": "🔵" },
+      { "id": "green_fil", "type": "resource", "name": "Green", "nameKey": "games.print_shop.items.green", "emoji": "🟢" },
+      { "id": "yellow_fil", "type": "resource", "name": "Yellow", "nameKey": "games.print_shop.items.yellow", "emoji": "🟡" },
+      { "id": "white_fil", "type": "resource", "name": "White", "nameKey": "games.print_shop.items.white", "emoji": "⚪" },
+      { "id": "black_fil", "type": "resource", "name": "Black", "nameKey": "games.print_shop.items.black", "emoji": "⚫" }
+
     ],
     "upgrade_tree": [],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
@@ -379,7 +414,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#713F12", "secondary": "#451a03", "accent": "#FCD34D", "background": "#FFFBEB" },
-      "icon": "📚"
+      "icon": "📚",
+      "image": "/images/arcade/publishing.jpg"
     },
     "variables": {
       "resources": ["paper", "ink", "glue"],
@@ -406,7 +442,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#16A34A", "secondary": "#15803D", "accent": "#22C55E", "background": "#F0FDF4" },
-      "icon": "🔋"
+      "icon": "🔋",
+      "image": "/images/arcade/battery.jpg"
     },
     "variables": {
       "resources": ["lithium", "metal", "plastic"],
@@ -427,7 +464,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "modern",
       "colors": { "primary": "#1E40AF", "secondary": "#1E3A8A", "accent": "#60A5FA", "background": "#EFF6FF" },
-      "icon": "🏢"
+      "icon": "🏢",
+      "image": "/images/arcade/coworking.jpg"
     },
     "office_config": {
       "max_floors": 10,
@@ -460,7 +498,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#C026D3", "secondary": "#A21CAF", "accent": "#E879F9", "background": "#FAE8FF" },
-      "icon": "🎉"
+      "icon": "🎉",
+      "image": "/images/arcade/icecream.jpg"
     },
     "timeline_config": {
       "start_hour": 18, "end_hour": 24,
@@ -491,17 +530,25 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#EF4444", "secondary": "#991B1B", "accent": "#FCA5A5", "background": "#FEF2F2" },
-      "icon": "🎸"
+      "icon": "🎸",
+      "image": "/images/arcade/brand.jpg"
     },
     "rhythm_config": {
       "track_name": "Sold Out Stadium",
+      "track": { "id": "rock_tour", "name": "Sold Out Stadium", "bpm": 130, "duration": 45, "lanes": 4, "notes": [] },
       "tracks": [
-        { "id": "green", "color": "#10B981", "icon": "🟢", "label": "Green" },
-        { "id": "red", "color": "#EF4444", "icon": "🔴", "label": "Red" },
-        { "id": "blue", "color": "#3B82F6", "icon": "🔵", "label": "Blue" },
-        { "id": "yellow", "color": "#FBBF24", "icon": "🟡", "label": "Yellow" }
+        { "id": "green", "color": "#10B981", "icon": "🎸", "label": "G" },
+        { "id": "red", "color": "#EF4444", "icon": "🥁", "label": "R" },
+        { "id": "blue", "color": "#3B82F6", "icon": "🎵", "label": "B" },
+        { "id": "yellow", "color": "#FBBF24", "icon": "🎹", "label": "Y" }
       ]
     },
+    "fun_facts": [
+      "🎵 Taylor Swift's Eras Tour made $1 BILLION. Concerts = the #1 income stream for musicians!",
+      "🎸 Musicians earn from 3 streams: Live Shows 🎤, Merch 👕, and Streaming 🎵. Diversification!",
+      "🏟️ The Rolling Stones' highest-grossing tour made $558M. Business is rock and roll!",
+      "💡 Spotify pays ~$0.003 per stream. That's why artists tour: 1 concert ticket = 10,000 streams!"
+    ],
     "upgrade_tree": [],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
   },
@@ -516,7 +563,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#0F172A", "secondary": "#020617", "accent": "#64748B", "background": "#F1F5F9" },
-      "icon": "🎨"
+      "icon": "🎨",
+      "image": "/images/arcade/marketwars.jpg"
     },
     "trading_config": {
       "initial_budget": 500,
@@ -540,12 +588,14 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#FBBF24", "secondary": "#D97706", "accent": "#FDE68A", "background": "#FFFBEB" },
-      "icon": "🧵"
+      "icon": "🧵",
+      "image": "/images/arcade/printshop.jpg"
     },
     "entities": [
-      { "id": "bead_gold", "name": "Gold Bead", "type": "resource", "emoji": "📿" },
-      { "id": "string", "name": "String", "type": "resource", "emoji": "🧵" },
-      { "id": "gem", "name": "Gem", "type": "resource", "emoji": "💎" }
+      { "id": "bead_gold", "name": "Gold Bead", "nameKey": "games.craft_corner.items.gold_bead", "type": "resource", "emoji": "📿" },
+      { "id": "string", "name": "String", "nameKey": "games.craft_corner.items.string", "type": "resource", "emoji": "🧵" },
+      { "id": "gem", "name": "Gem", "nameKey": "games.craft_corner.items.gem", "type": "resource", "emoji": "💎" }
+
     ],
     "upgrade_tree": [],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
@@ -563,7 +613,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "dark",
       "colors": { "primary": "#3B82F6", "secondary": "#1E3A8A", "accent": "#60A5FA", "background": "#F0F9FF" },
-      "icon": "📱"
+      "icon": "📱",
+      "image": "/images/arcade/communication.jpg"
     },
     "clicker_config": {
       "resource_name": "Code Lines",
@@ -577,7 +628,13 @@ export const GAMES_DB: BusinessSimulation[] = [
     "upgrade_tree": [
       { "id": "upgrade_laptop", "name": "Dual Monitors", "effect": "Click value +5", "cost": 100, "modifier_target": "click_value", "modifier_value": 5 },
       { "id": "upgrade_server", "name": "Cloud Scaling", "effect": "Auto-code +2/sec", "cost": 500, "modifier_target": "auto_click_rate", "modifier_value": 2 },
-      { "id": "upgrade_ai", "name": "AI Assistant", "effect": "Auto-code +10/sec", "cost": 1500, "modifier_target": "auto_click_rate", "modifier_value": 10 }
+      { "id": "upgrade_ai", "name": "AI Assistant", "nameKey": "games.upgrades.ai_copilot.name", "effect": "Auto-code +10/sec", "effectKey": "games.upgrades.ai_copilot.effect", "cost": 1500, "modifier_target": "auto_click_rate", "modifier_value": 10 }
+    ],
+    "fun_facts": [
+      "💻 Mark Zuckerberg coded Facebook from his dorm room. Your app could be next!",
+      "🐛 'Agile Development' means shipping fast and fixing bugs as you go. Real devs always have bugs!",
+      "🚀 The App Store generates $1 TRILLION in developer billings per year. There's GOLD in apps!",
+      "🤖 GitHub Copilot (AI coding assistant) writes ~40% of code for developers who use it. The future is now!"
     ],
     "event_triggers": {
       "positive": { "event_name": "Featured by Store", "effect": "Downloads x2 for 10s", "duration": "10s" },
@@ -595,7 +652,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#10B981", "secondary": "#059669", "accent": "#34D399", "background": "#ECFDF5" },
-      "icon": "🛡️"
+      "icon": "🛡️",
+      "image": "/images/arcade/cyber.jpg"
     },
     "defense_config": {
       "spawn_rate": 1500,
@@ -620,7 +678,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "streamer",
       "colors": { "primary": "#EF4444", "secondary": "#B91C1C", "accent": "#FCA5A5", "background": "#FFF1F2" },
-      "icon": "📹"
+      "icon": "📹",
+      "image": "/images/arcade/marketing.jpg"
     },
     "streamer_config": {
       "actions": [
@@ -632,10 +691,10 @@ export const GAMES_DB: BusinessSimulation[] = [
     },
     "upgrade_tree": [
       { "id": "up_camera", "name": "4K Camera", "effect": "Quality maxed", "cost": 500 },
-      { "id": "up_editor", "name": "Editor Hire", "effect": "Speed +50%", "cost": 300 }
+      { "id": "up_editor", "name": "Editor Hire", "nameKey": "games.upgrades.star_editor.name", "effect": "Speed +50%", "effectKey": "games.upgrades.star_editor.effect", "cost": 300 }
     ],
     "event_triggers": {
-      "positive": { "event_name": "Viral Hit", "effect": "Views x10", "duration": "1d" },
+      "positive": { "event_name": "Viral Hit", "event_nameKey": "games.events.viral_hit.name", "effect": "Views x10", "effectKey": "games.events.viral_hit.effect", "duration": "1d" },
       "negative": { "event_name": "Internet Down", "effect": "No uploads", "duration": "1d" }
     }
   },
@@ -650,7 +709,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#EA580C", "secondary": "#9A3412", "accent": "#FDBA74", "background": "#FFF7ED" },
-      "icon": "🚀"
+      "icon": "🚀",
+      "image": "/images/arcade/space.jpg"
     },
     "variables": {
       "resources": ["oxygen", "water", "potatoes"],
@@ -673,7 +733,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#22C55E", "secondary": "#15803D", "accent": "#EAB308", "background": "#F0FDF4" },
-      "icon": "♻️"
+      "icon": "♻️",
+      "image": "/images/arcade/recycle.jpg"
     },
     "game_mechanics": {
       "spawn_rate": 2000,
@@ -687,6 +748,12 @@ export const GAMES_DB: BusinessSimulation[] = [
     "upgrade_tree": [
       { "id": "upgrade_belt", "name": "Fast Belt", "effect": "Spawn rate +20%", "cost": 200 },
       { "id": "upgrade_scanner", "name": "Auto-Sorter", "effect": "Auto-sorts 10% of trash", "cost": 500 }
+    ],
+    "fun_facts": [
+      "♻️ Only 9% of the world's plastic has EVER been recycled. Every sort matters!",
+      "🌍 Contaminated recycling (wrong bin) can ruin an ENTIRE batch. One wrong item = waste!",
+      "💼 The recycling industry creates 10x more jobs than landfills per ton of material!",
+      "🔋 Recycling 1 aluminum can saves enough energy to run a TV for 3 hours!"
     ],
     "event_triggers": {
       "positive": { "event_name": "City Grant", "effect": "Bonus Points", "duration": "instant" },
@@ -704,7 +771,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#15803D", "secondary": "#14532D", "accent": "#86EFAC", "background": "#ECFDF5" },
-      "icon": "🤝"
+      "icon": "🤝",
+      "image": "/images/arcade/coffee.jpg"
     },
     "trading_config": {
       "initial_budget": 300,
@@ -728,7 +796,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#0D9488", "secondary": "#0F766E", "accent": "#5EEAD4", "background": "#F0FDFA" },
-      "icon": "🚲"
+      "icon": "🚲",
+      "image": "/images/arcade/repair.jpg"
     },
     "repair_config": {
       "bg_color": "#064e3b",
@@ -753,7 +822,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#EAB308", "secondary": "#A16207", "accent": "#FEF08A", "background": "#FFFBEB" },
-      "icon": "🤝"
+      "icon": "🤝",
+      "image": "/images/arcade/boardroom.jpg"
     },
     "upgrade_tree": [],
     "variables": { resources: [], dynamic_factors: [], player_inputs: [] },
@@ -770,7 +840,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "light",
       "colors": { "primary": "#10B981", "secondary": "#047857", "accent": "#34D399", "background": "#ECFDF5" },
-      "icon": "🏷️"
+      "icon": "🏷️",
+      "image": "/images/arcade/pricing.jpg"
     },
     "upgrade_tree": [],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
@@ -786,7 +857,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#8B5CF6", "secondary": "#6D28D9", "accent": "#A78BFA", "background": "#F5F3FF" },
-      "icon": "🎯"
+      "icon": "🎯",
+      "image": "/images/arcade/audience.jpg"
     },
     "upgrade_tree": [],
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
@@ -803,7 +875,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "neon",
       "colors": { "primary": "#EF4444", "secondary": "#991B1B", "accent": "#FEE2E2", "background": "#FEF2F2" },
-      "icon": "🐞"
+      "icon": "🐞",
+      "image": "/images/arcade/bughunter.jpg"
     },
     "upgrade_tree": [],
     "variables": { resources: [], dynamic_factors: [], player_inputs: [] },
@@ -820,7 +893,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "eco",
       "colors": { "primary": "#6366F1", "secondary": "#4338CA", "accent": "#A5B4FC", "background": "#EEF2FF" },
-      "icon": "⚖️"
+      "icon": "⚖️",
+      "image": "/images/arcade/ethics.jpg"
     },
     "upgrade_tree": [],
     "variables": { resources: [], dynamic_factors: [], player_inputs: [] },
@@ -837,7 +911,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "realistic",
       "colors": { "primary": "#10B981", "secondary": "#065F46", "accent": "#6EE7B7", "background": "#ECFDF5" },
-      "icon": "📈"
+      "icon": "📈",
+      "image": "/images/arcade/stockmarket.jpg"
     },
     "upgrade_tree": [],
     "variables": { resources: [], dynamic_factors: [], player_inputs: [] },
@@ -854,7 +929,8 @@ export const GAMES_DB: BusinessSimulation[] = [
     "visual_config": {
       "theme": "pastel",
       "colors": { "primary": "#F59E0B", "secondary": "#B45309", "accent": "#FCD34D", "background": "#FFFBEB" },
-      "icon": "🍔"
+      "icon": "🍔",
+      "image": "/images/arcade/dropship.jpg"
     },
     "upgrade_tree": [],
     "variables": { resources: [], dynamic_factors: [], player_inputs: [] },
@@ -875,5 +951,36 @@ export const GAMES_DB: BusinessSimulation[] = [
     },
     "event_triggers": { positive: { event_name: "", effect: "", duration: "" }, negative: { event_name: "", effect: "", duration: "" } }
   },
-
+  {
+    "business_id": "BIZ_22_RECYCLE",
+    "name": "Recycling Center",
+    "nameKey": "games.recycle.title",
+    "category": "Production & Manufacturing",
+    "game_type": "recycle_game",
+    "description": "Sort the recycling on the conveyor belt before it falls!",
+    "descriptionKey": "games.recycle.desc",
+    "visual_config": {
+      "theme": "eco",
+      "colors": { "primary": "#10B981", "secondary": "#059669", "accent": "#34D399", "background": "#ECFDF5" },
+      "icon": "♻️"
+    },
+    "upgrade_tree": [],
+    "event_triggers": { "positive": { "event_name": "", "effect": "", "duration": "" }, "negative": { "event_name": "", "effect": "", "duration": "" } }
+  },
+  {
+    "business_id": "BIZ_23_FACTORY",
+    "name": "Toy Factory",
+    "nameKey": "games.toy_factory.title",
+    "category": "Production & Manufacturing",
+    "game_type": "production_conveyor",
+    "description": "Manage the assembly line and toss defective parts!",
+    "descriptionKey": "games.toy_factory.desc",
+    "visual_config": {
+      "theme": "industrial",
+      "colors": { "primary": "#6366F1", "secondary": "#4F46E5", "accent": "#818CF8", "background": "#EEF2FF" },
+      "icon": "🏭"
+    },
+    "upgrade_tree": [],
+    "event_triggers": { "positive": { "event_name": "", "effect": "", "duration": "" }, "negative": { "event_name": "", "effect": "", "duration": "" } }
+  }
 ];

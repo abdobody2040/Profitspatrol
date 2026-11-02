@@ -132,7 +132,7 @@ const ProjectSubmitter: React.FC<ProjectSubmitterProps> = ({ lessonId, difficult
 
                     <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-xl mb-8">
                         <p className="text-sm font-bold text-orange-700 dark:text-orange-300">
-                            Tip: Try checking the brief again and adding more details!
+                            {t('project.tip', { defaultValue: 'نصيحة: راجع تفاصيل المهمة مجدداً وأضف المزيد من التفاصيل الذكية!' })}
                         </p>
                     </div>
 
@@ -142,17 +142,17 @@ const ProjectSubmitter: React.FC<ProjectSubmitterProps> = ({ lessonId, difficult
                                 reset(); // Allow re-submission
                                 setStep('SUBMIT');
                             }}
-                            className="flex-1 bg-kid-primary text-white py-4 rounded-2xl font-black text-xl shadow-[0_4px_0_0_rgba(180,83,9,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+                            className="flex-1 bg-kid-primary text-white py-4 rounded-2xl font-black text-xl shadow-[0_4px_0_0_rgba(180,83,9,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
-                            <ArrowLeft size={24} /> {t('project.try_again', { defaultValue: 'Edit & Improve' })}
+                            <ArrowLeft size={24} /> {t('project.try_again', { defaultValue: 'تعديل وتحسين' })}
                         </button>
                         <button
                             onClick={() => {
                                 setStep('BRIEF');
                             }}
-                            className="px-6 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            className="px-6 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                         >
-                            Review Brief
+                            {t('project.review_brief', { defaultValue: 'مراجعة المهمة' })}
                         </button>
                     </div>
                 </div>

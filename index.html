@@ -4,6 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google" content="notranslate" />
+  <script>
+    (function() {
+      try {
+        var lang = localStorage.getItem('app_language') || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description"
     content="Profits Patrol: The gamified business education platform for kids. Learn entrepreneurship, earn rewards, and build your empire!" />
   <meta name="theme-color" content="#FFC800" />
@@ -16,7 +26,11 @@
   <meta property="og:image" content="/pwa-512x512.png" />
 
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' chrome-extension: https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net chrome-extension:; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net chrome-extension:; img-src 'self' data: https: http: chrome-extension:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com https://cdn.jsdelivr.net chrome-extension: https://api.stripe.com; font-src 'self' data: https://fonts.gstatic.com chrome-extension:; media-src 'self' https://assets.mixkit.co; frame-src 'self' https://js.stripe.com https://hooks.stripe.com;" />
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.profitspatrol.com https://*.profitspatrol.com http://localhost:8000 http://127.0.0.1:8000 https://openrouter.ai https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com https://api.stripe.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' https://assets.mixkit.co blob:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://accounts.google.com;" />
+
+  <!-- Critical Resource Preloads (LCP Image & Primary Font) -->
+  <link rel="preload" as="image" href="/images/hero/ollie-hero.webp" type="image/webp" fetchpriority="high" />
+  <link rel="preload" href="/fonts/nunito-700-normal-24.woff2" as="font" type="font/woff2" crossorigin />
 
   <title>Profits Patrol - Future CEO Academy</title>
 
@@ -28,26 +42,27 @@
   <meta name="apple-mobile-web-app-title" content="Profits Patrol" />
   <link rel="manifest" href="/favicon/site.webmanifest" />
 
-  <!-- DNS + TLS preconnect to critical origins — eliminates cold handshake latency -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://js.stripe.com" />
-
-  <!-- Google Fonts: non-blocking load (preload trick) -->
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap" />
-  </noscript>
+  <!-- Self-Hosted Fonts: Zero external DNS / connection overhead -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    #root {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
     body {
       font-family: 'Nunito', sans-serif;
       background-color: #f0fdf4;
       /* Light green bg */
-      overflow-x: hidden;
     }
 
     .dark body {

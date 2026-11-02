@@ -1,6 +1,5 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
-import type { SocialState } from '../socialStore';
+import type { SocialState } from '../socialTypes';
 import { NewsEvent } from '../../types';
 
 export interface NewsSlice {

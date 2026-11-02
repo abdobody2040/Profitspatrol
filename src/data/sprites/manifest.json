@@ -1,0 +1,102 @@
+{
+  "ollie": {
+    "id": "ollie",
+    "src": "/images/characters_clean/ollie_idle.png",
+    "clean_src": {
+      "idle": "/images/characters_clean/ollie_idle.png",
+      "point": "/images/characters_clean/ollie_idle.png",
+      "celebrate": "/images/characters_clean/ollie_idle.png",
+      "think": "/images/characters_clean/ollie_idle.png"
+    },
+    "frame_w": 360,
+    "frame_h": 320,
+    "image_w": 360,
+    "image_h": 320,
+    "clips": {
+      "idle": { "x": 0, "y": 0, "w": 360, "h": 320 },
+      "point": { "x": 0, "y": 0, "w": 360, "h": 320 },
+      "celebrate": { "x": 0, "y": 0, "w": 360, "h": 320 },
+      "think": { "x": 0, "y": 0, "w": 360, "h": 320 }
+    }
+  },
+  "rex": {
+    "id": "rex",
+    "src": "/images/characters_clean/rex_idle.png",
+    "clean_src": {
+      "idle": "/images/characters_clean/rex_idle.png",
+      "point": "/images/characters_clean/rex_idle.png",
+      "celebrate": "/images/characters_clean/rex_idle.png",
+      "think": "/images/characters_clean/rex_reading.png"
+    },
+    "frame_w": 260,
+    "frame_h": 280,
+    "image_w": 260,
+    "image_h": 280,
+    "clips": {
+      "idle": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "point": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "celebrate": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "think": { "x": 0, "y": 0, "w": 155, "h": 165 }
+    }
+  },
+  "reema": {
+    "id": "reema",
+    "src": "/images/characters_clean/reema_idle.png",
+    "clean_src": {
+      "idle": "/images/characters_clean/reema_idle.png",
+      "point": "/images/characters_clean/reema_idle.png",
+      "celebrate": "/images/characters_clean/reema_idle.png",
+      "think": "/images/characters_clean/reema_idle.png"
+    },
+    "frame_w": 260,
+    "frame_h": 280,
+    "image_w": 260,
+    "image_h": 280,
+    "clips": {
+      "idle": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "point": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "celebrate": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "think": { "x": 0, "y": 0, "w": 260, "h": 280 }
+    }
+  },
+  "filo": {
+    "id": "filo",
+    "src": "/images/characters_clean/filo_idle.png",
+    "clean_src": {
+      "idle": "/images/characters_clean/filo_idle.png",
+      "point": "/images/characters_clean/filo_idle.png",
+      "celebrate": "/images/characters_clean/filo_idle.png",
+      "think": "/images/characters_clean/filo_idle.png"
+    },
+    "frame_w": 260,
+    "frame_h": 275,
+    "image_w": 260,
+    "image_h": 275,
+    "clips": {
+      "idle": { "x": 0, "y": 0, "w": 260, "h": 275 },
+      "point": { "x": 0, "y": 0, "w": 260, "h": 275 },
+      "celebrate": { "x": 0, "y": 0, "w": 260, "h": 275 },
+      "think": { "x": 0, "y": 0, "w": 260, "h": 275 }
+    }
+  },
+  "kami": {
+    "id": "kami",
+    "src": "/images/characters_clean/kami_idle.png",
+    "clean_src": {
+      "idle": "/images/characters_clean/kami_idle.png",
+      "point": "/images/characters_clean/kami_idle.png",
+      "celebrate": "/images/characters_clean/kami_idle.png",
+      "think": "/images/characters_clean/kami_idle.png"
+    },
+    "frame_w": 260,
+    "frame_h": 280,
+    "image_w": 260,
+    "image_h": 280,
+    "clips": {
+      "idle": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "point": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "celebrate": { "x": 0, "y": 0, "w": 260, "h": 280 },
+      "think": { "x": 0, "y": 0, "w": 260, "h": 280 }
+    }
+  }
+}

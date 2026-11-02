@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 import { Play, HelpCircle, CheckCircle2 } from 'lucide-react';
 
@@ -19,7 +18,7 @@ const GameTutorialModal: React.FC<GameTutorialModalProps> = ({
   description,
   instructions,
   icon = "🎮",
-  color = "bg-blue-600"
+  color = "#2563EB"
 }) => {
   const { t } = useTranslation();
 
@@ -38,7 +37,7 @@ const GameTutorialModal: React.FC<GameTutorialModalProps> = ({
         className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden relative max-h-[85vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className={`p-6 text-white text-center relative overflow-hidden`} style={{ backgroundColor: color }}>
+        <div className={`p-6 text-white text-center relative overflow-hidden`} style={{ backgroundColor: color, textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
           <div className="absolute inset-0 bg-black/10" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, rgba(255,255,255,0.2) 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
           <div className="relative z-10">
             <div className="text-6xl mb-4 drop-shadow-md animate-bounce">{safeStr(icon)}</div>

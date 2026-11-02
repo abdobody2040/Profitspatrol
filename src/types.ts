@@ -1,3 +1,4 @@
+import React from 'react';
 
 // User & Auth
 export enum UserRole {
@@ -30,15 +31,19 @@ export interface UserCore {
 /** Gameplay progression state — future: user_progression table. */
 export interface UserProgression {
   xp: number;
+  seasonXp?: number;
   level: number;
   streak: number;
   lastActivityDate: string;
-  bizCoins: number;
+  ppTokens: number;
   completedLessonIds: string[];
   badges: string[];
   inventory: string[];
   energy: number;
   lastEnergyRefill: number;
+  unlockedDistricts?: string[];
+  competencyMastery?: Record<string, { level: number; score: number; lastTestedAt: string }>;
+  activeHeroCompanion?: 'ollie' | 'reema' | 'filo' | 'kami';
 }
 
 /** Subscription billing state — future: billing service join. */
@@ -75,8 +80,10 @@ export interface UserSettings {
   dailyGoalMinutes: number;
   soundEnabled: boolean;
   musicEnabled: boolean;
-  themeColor: 'blue' | 'green' | 'purple' | 'orange';
+  themeColor: 'blue' | 'green' | 'purple' | 'orange' | 'indigo';
   themeMode: 'light' | 'dark';
+  ageMode?: 'junior' | 'explorer';
+  hapticsEnabled?: boolean;
 }
 
 export interface BusinessLogo {
@@ -129,16 +136,18 @@ export interface User {
   avatar?: string; // Custom profile avatar
   role: UserRole;
   xp: number;
+  seasonXp?: number;
   level: number;
   age?: number; // User's age for content adaptation
   streak: number;
   lastActivityDate: string; // ISO Date YYYY-MM-DD
-  bizCoins: number;
+  ppTokens: number;
   currentModuleId: string;
   completedLessonIds: string[];
   readBookIds?: string[]; // New: Track books read
   badges: string[];
   inventory: string[]; // IDs of bought items
+  achievements?: any[];
 
   // New Fields for Phase 3
   classId?: string; // Linked Class
@@ -149,7 +158,6 @@ export interface User {
   // Phase 4
   businessLogo?: BusinessLogo;
 
-  // Phase 5: Progression
   hqLevel: string;
   unlockedSkills: string[];
   portfolio: PortfolioItem[];
@@ -157,7 +165,6 @@ export interface User {
   placedItems: PlacedItem[]; // HQ Builder Items
   properties: UserProperty[]; // Real Estate
 
-  // Phase 6: SaaS / Subscription
   subscriptionStatus: 'FREE' | 'PREMIUM';
   subscriptionTier: SubscriptionTier;
   energy: number; // Current energy, max 5
@@ -172,17 +179,14 @@ export interface User {
   bookTaskStreak?: number; // Days in a row completing book tasks
   lastBookTaskDate?: string; // ISO Date YYYY-MM-DD
 
-  // Phase 8: Engagement
   streakShield?: boolean; // Premium perk: 1 free skip per week
   streakShieldUsedDate?: string; // ISO Date — when the shield was last used
   streakLastBonusDate?: string; // ISO Date — last 7-day bonus claimed
 
-  // Phase 9: Referrals
   referralCode?: string;
   referredBy?: string; // UUID of the user who referred them
   totalReferrals?: number;
 
-  // Phase 10: Graduation (Year-End)
   hasGraduated?: boolean;
 
   // Year 2: Daily Spin Wheel
@@ -221,6 +225,119 @@ export interface User {
   streakDays?: number;
   topAchievement?: string;
   linkedKidId?: string; // for PARENT accounts: id of their linked kid
+
+  // World V2 Extensions
+  unlockedCollectibles?: string[]; // Permanent collection logs (e.g., 'col_golden_lemon')
+  activeQuests?: string[];         // Current active NPC quest IDs
+  unlockedDistricts?: string[];    // Unlocked world districts (e.g., ['district_01_money'])
+  competencyMastery?: Record<string, { level: number; score: number; lastTestedAt: string }>;
+  activeHeroCompanion?: 'ollie' | 'reema' | 'filo' | 'kami';
+}
+
+// --- WORLD V2 SYSTEM CONFIG ---
+export type AssetType = 'SVG' | 'WEBP' | 'ANIMATED_WEBP' | 'LOTTIE';
+
+export interface VisualAsset {
+  key: string;
+  type: AssetType;
+  src: string | React.ComponentType<any>;
+  darkSrc?: string | React.ComponentType<any>;
+}
+
+export interface CollectibleConfig {
+  id: string;
+  name: string;
+  arabicName: string;
+  emoji: string;
+  description: string;
+  descriptionAr: string;
+}
+
+export interface DistrictV2Config {
+  id: string;
+  name: string;
+  arabicName: string;
+  themeColor: string;
+  bgGradient: string;
+  landmarkEmoji: string;
+  levelReq: number;
+  moduleTags: string[];
+  audioTheme: 'optimistic' | 'playful' | 'energetic' | 'commercial' | 'futuristic' | 'executive' | 'wealthy' | 'intense' | 'epic';
+  collectible: CollectibleConfig;
+  reward: {
+    ppTokens: number;
+    xp: number;
+    title?: string;
+    titleAr?: string;
+    hqItem?: string;
+    skillCard?: string;
+  };
+  bossScenarioId: string;
+  bossName: string;
+  bossNameAr: string;
+}
+
+export interface NPCQuest {
+  id: string;
+  title: string;
+  titleAr?: string;
+  description: string;
+  descriptionAr?: string;
+  requirementText: string;
+  requirementTextAr?: string;
+  rewardText: string;
+  rewardTextAr?: string;
+  rewardTokens: number;
+  rewardXp: number;
+}
+
+export type NPCLivingEmotion = 'happy' | 'busy' | 'worried' | 'growing' | 'struggling' | 'celebrating' | 'needs_help';
+export type TimeOfDay = 'morning' | 'afternoon' | 'night';
+export type NPCRelationshipTier = 'unknown' | 'introduced' | 'friendly' | 'trusted' | 'partner';
+
+export interface NPCScheduleSlot {
+  timeOfDay: TimeOfDay;
+  districtId: string;
+  locationNameEn: string;
+  locationNameAr: string;
+  activityEn: string;
+  activityAr: string;
+}
+
+export interface NPCConfig {
+  id: string;
+  nameEn?: string;
+  nameAr?: string;
+  role: 'investor' | 'marketer' | 'ceo' | 'driver' | 'entrepreneur';
+  arabicRole?: string;
+  personality: string;
+  arabicPersonality?: string;
+  avatar: string;
+  defaultEmotion?: NPCLivingEmotion;
+  schedule?: NPCScheduleSlot[];
+  stateDialogues?: Partial<Record<NPCLivingEmotion, { en: string[]; ar: string[] }>>;
+  dialoguePool: {
+    idle: string[];
+    advice: string[];
+    questIntro?: string;
+  };
+  dialoguePoolAr?: {
+    idle: string[];
+    advice: string[];
+    questIntro?: string;
+  };
+  quest?: NPCQuest;
+}
+
+export type EmpireCategory = 'BUILDINGS' | 'EMPLOYEES' | 'SKILLS' | 'ACHIEVEMENTS' | 'COLLECTIBLES' | 'SPECIAL';
+
+export interface EmpireShowcaseItem {
+  id: string;
+  category: EmpireCategory;
+  name: string;
+  arabicName: string;
+  icon: string;
+  unlockedAt: string;
 }
 
 // ─── Corporation (Guild) ──────────────────────────────────────────────────────
@@ -252,17 +369,28 @@ export type MissionActionType =
   | 'READ_BOOK'
   | 'COMPLETE_GAME'
   | 'COMPLETE_DEBATE'
-  | 'EARN_COINS';
+  | 'EARN_ppTokens'
+  | 'DISTRICT_LESSON'
+  | 'DISTRICT_CONTRACT'
+  | 'PROTOTYPE_CRAFT'
+  | 'RIVAL_SHOWDOWN'
+  | 'BUSINESS_SALE';
 
 export interface DailyMission {
   id: string;
   icon: string;
   title: string;
+  titleAr?: string;
   description: string;
+  descriptionAr?: string;
   actionType: MissionActionType;
   targetCount: number; // how many times the action must be done
   xpReward: number;
   coinReward: number;
+  districtId?: string; // e.g. 'money', 'builders', 'risk', etc.
+  competencyId?: string; // e.g. 'budgeting', 'pricing', 'prototyping'
+  competencyXpReward?: number;
+  isContract?: boolean; // District Job Board Contract
 }
 
 export interface DailyMissionCompletion {
@@ -275,6 +403,7 @@ export interface DailyMissionCompletion {
 export interface DailyMissionsState {
   date: string; // ISO date YYYY-MM-DD — resets when different from today
   missions: DailyMission[]; // today's 3 missions
+  districtContracts?: DailyMission[]; // today's district job contracts
   completions: DailyMissionCompletion[];
 }
 
@@ -285,7 +414,7 @@ export type WeeklyChallengeType =
   | 'QUIZ_BLITZ'     // Answer 20 quiz questions correctly
   | 'LESSON_SPRINT'  // Complete 10 lessons in the week
   | 'GIG_MARATHON'   // Complete 15 gigs in the week
-  | 'COIN_GRIND';    // Earn 2000 BizCoins in the week
+  | 'COIN_GRIND';    // Earn 2000 P Tokens in the week
 
 export interface WeeklyChallenge {
   id: string;
@@ -320,9 +449,9 @@ export interface WeeklyChallengeState {
 
 export type SeasonalEventType =
   | 'LESSON_MARATHON'   // Complete the most lessons during the event
-  | 'GIG_RUSH'          // Earn the most BizCoins from gigs
+  | 'GIG_RUSH'          // Earn the most P Tokens from gigs
   | 'STREAK_KEEPER'     // Maintain the longest streak during event week
-  | 'COIN_SPRINT';      // Earn the most BizCoins from any source
+  | 'COIN_SPRINT';      // Earn the most P Tokens from any source
 
 export interface SeasonalEvent {
   id: string;
@@ -432,6 +561,9 @@ export interface Submission {
 
   submittedAt: string; // ISO Date
   status: 'PENDING' | 'GRADED' | 'LATE';
+  gradedAt?: string;
+  plagiarismScore?: number;
+  originalityScore?: number;
   content?: string; // Text answer or link
   // Grading & Feedback
   grade?: number; // 0-100 or points
@@ -439,7 +571,7 @@ export interface Submission {
   feedback?: string;
   audioFeedbackUrl?: string; 
   rubricScores?: Record<string, number>; 
-  bizCoinsAwarded?: number;
+  ppTokensAwarded?: number;
   xpGained?: number;
 }
 
@@ -484,7 +616,7 @@ export interface ProjectFeedback {
   audioFeedbackUrl?: string; // URL to audio blob for voice feedback
   rubricScores?: Record<string, number>; // Key: criteriaId, Value: score awarded
   letterGrade?: 'Intern' | 'Founder' | 'Tycoon';
-  bizCoinsAwarded?: number;
+  ppTokensAwarded?: number;
   xpGained?: number;
 }
 
@@ -492,7 +624,7 @@ export interface GradeResult {
   score: number;
   letterGrade: 'Intern' | 'Founder' | 'Tycoon';
   feedback: string;
-  bizCoinsAwarded: number;
+  ppTokensAwarded: number;
   xpGained: number;
   rubricScores?: Record<string, number>;
 }
@@ -565,21 +697,90 @@ export interface Book {
   summary: string;
   /** Optional long-form ~5-minute read summary for Profits Patrol Exclusives */
   fullContent?: string;
-  category: 'Mindset' | 'Finance' | 'Strategy' | 'Biography' | 'Fiction' | 'Creativity' | 'History' | 'Economics' | 'Leadership' | 'Sci-Fi & Dystopian' | 'Real-World Business';
+  category: 'Mindset' | 'Finance' | 'Strategy' | 'Biography' | 'Fiction' | 'Creativity' | 'History' | 'Economics' | 'Leadership' | 'Sci-Fi & Dystopian' | 'Real-World Business' | 'Negotiation';
   keyLessons: string[]; // Array of 3 bullet points
   ageRating: string;
   tasks?: BookTask[]; // Optional for backward compatibility
 }
 
+export type VideoCategory = 'Shorts' | 'Challenge' | 'OllieExplains' | 'Parent' | 'Mindset' | 'Finance' | 'Strategy' | 'CaseStudy' | 'Tutorial';
+
+export interface VideoQuiz {
+  question: string;
+  questionAr?: string;
+  options: string[];
+  optionsAr?: string[];
+  correctIndex: number;
+  explanation: string;
+  explanationAr?: string;
+  xpReward: number;
+  tokenReward: number;
+}
+
+export interface VideoChallenge {
+  id: string;
+  title: string;
+  titleAr?: string;
+  description: string;
+  descriptionAr?: string;
+  instructions: string[];
+  instructionsAr?: string[];
+  rewardXp: number;
+  rewardTokens: number;
+  badgeReward?: string;
+  proofType: 'photo' | 'text' | 'checkbox';
+}
+
+export interface VideoScene {
+  sceneId: number;
+  durationSeconds: number;
+  caption: string;
+  captionAr?: string;
+  mascotMood: 'happy' | 'explaining' | 'excited' | 'thinking' | 'celebrating';
+  visualEmoji: string;
+  visualType: 'chart' | 'coins' | 'piggybank' | 'store' | 'lemonade' | 'stocks' | 'trophy' | 'umbrella';
+  soundEffect?: 'coin' | 'success' | 'click';
+}
+
+export interface VideoAnimationConfig {
+  themeColor: string;
+  bgGradient: string;
+  scenes: VideoScene[];
+}
+
+export interface VideoChallengeSubmission {
+  id: string;
+  videoId: string;
+  userId: string;
+  userName: string;
+  notes: string;
+  proofUrl?: string;
+  status: 'PENDING_APPROVAL' | 'APPROVED';
+  submittedAt: string;
+}
+
 export interface Video {
   id: string;
   title: string;
+  titleAr?: string;
   description: string;
-  youtubeId: string;
-  category: 'Mindset' | 'Finance' | 'Strategy' | 'CaseStudy' | 'Tutorial';
-  duration: string; // e.g. "5:30"
+  descriptionAr?: string;
+  youtubeId?: string;
+  category: VideoCategory;
+  duration: string; // e.g. "0:45"
   thumbnailUrl?: string; // Optional override
+  fullPosterUrl?: string; // High-res 9:16 vertical full-bleed poster/scene art
   tags?: string[];
+  speaker?: string; // e.g. 'Ollie' | 'Reema' | 'Filo' | 'Parent Guide'
+  speakerAvatar?: string;
+  aspectRatio?: '9:16' | '16:9';
+  likesCount?: number;
+  viewsCount?: number;
+  keyTerm?: string;
+  keyTermAr?: string;
+  quiz?: VideoQuiz;
+  challenge?: VideoChallenge;
+  animationConfig?: VideoAnimationConfig;
 }
 
 export interface LiveSession {
@@ -605,6 +806,8 @@ export interface LiveSession {
 export interface NewsEvent {
   id: string;
   headline: string;
+  headlineAr?: string;
+  headlineEn?: string;
   type: 'MARKET' | 'WEATHER' | 'LOCAL' | 'GLOBAL';
   effect?: {
     target: 'LEMONADE' | 'STOCK' | 'ALL';
@@ -754,6 +957,9 @@ export interface UniversalLessonUnit {
   };
   flavor_text: string;
   linkedGameId?: string; // Links to a BusinessSimulation.business_id
+  districtId?: 'money' | 'builders' | 'risk' | 'operations' | 'innovation' | 'leadership' | 'strategy' | 'launch';
+  primaryCompetencyId?: string;
+  secondaryCompetencyIds?: string[];
 }
 
 // --- DYNAMIC GAME ENGINE TYPES ---
@@ -798,10 +1004,10 @@ export type GameType =
   | 'balance_game' | 'office_sim' | 'event_sim' | 'trading_sim' | 'precision_maker'
   | 'clicker_code' | 'defense_tap' | 'sim_creator' | 'resource_balance'
   | 'trading_ethics' | 'repair_sim' | 'design_game' | 'pricing_game'
-  | 'audience_game' | 'quality_control' | 'narrative_choice' | 'stock_sim' | 'sorting_game';
+  | 'audience_game' | 'quality_control' | 'narrative_choice' | 'stock_sim' | 'sorting_game' | 'recycle_game';
 
 export interface VisualConfig {
-  theme: 'eco' | 'neon' | 'pastel' | 'realistic' | 'dark' | 'light' | 'modern' | 'classic' | 'cyber' | 'party' | 'streamer';
+  theme: 'eco' | 'neon' | 'pastel' | 'realistic' | 'dark' | 'light' | 'modern' | 'classic' | 'cyber' | 'party' | 'streamer' | 'industrial';
   colors: {
     primary: string;
     secondary: string;
@@ -810,12 +1016,14 @@ export interface VisualConfig {
   };
   background_type?: 'gradient' | 'image' | 'solid';
   icon?: string;
+  image?: string;
 }
 
 export interface GameEntity {
   id: string;
   type: 'item' | 'obstacle' | 'target' | 'resource';
   name: string;
+  nameKey?: string;
   emoji?: string;
   value?: number;
   behavior?: 'fall' | 'static' | 'move_random';
@@ -830,7 +1038,9 @@ export interface ScoringConfig {
 export interface BusinessUpgrade {
   id: string;
   name: string;
+  nameKey?: string;
   effect: string; // Description
+  effectKey?: string;
   cost: number;
   modifier_target?: string; // e.g., 'click_value', 'revenue_multiplier'
   modifier_value?: number;
@@ -838,7 +1048,9 @@ export interface BusinessUpgrade {
 
 export interface BusinessEvent {
   event_name: string;
+  event_nameKey?: string;
   effect: string;
+  effectKey?: string;
   duration: string;
   modifier_target?: string;
   modifier_value?: number;
@@ -1062,6 +1274,9 @@ export interface BusinessSimulation {
   entities?: GameEntity[];
   scoring?: ScoringConfig;
 
+  // Educational Content
+  fun_facts?: string[];
+
   // Progression
   upgrade_tree: BusinessUpgrade[];
   event_triggers: {
@@ -1101,6 +1316,11 @@ export interface Bounty {
   status: 'OPEN' | 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'COMPLETED' | 'CANCELLED';
   createdAt: string;
   completedAt?: string;
+  // Family Job Board 2.0
+  frequency?: 'ONCE' | 'DAILY' | 'WEEKLY';
+  requiresPhoto?: boolean;
+  photoUrl?: string; // URL to the verification photo
+  lastGeneratedAt?: string; // ISO date of last generation/reset
 }
 
 export interface CMSContent {
@@ -1132,6 +1352,16 @@ export interface CMSContent {
     safetyImage: string;
   };
   customPages: CustomPage[]; // Array of new pages
+}
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+  read: boolean;
+  createdAt: string;
+  actionUrl?: string;
 }
 
 // --- REAL ESTATE TYPES ---

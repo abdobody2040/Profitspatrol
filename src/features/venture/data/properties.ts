@@ -1,5 +1,17 @@
 import { Property } from '../../../types';
 
+export const PROPERTY_IMAGES: Record<string, string> = {
+    prop_lemonade_stand: '/images/properties/prop_lemonade_stand.jpg',
+    prop_garage: '/images/properties/prop_garage.jpg',
+    prop_food_truck: '/images/properties/prop_food_truck.jpg',
+    prop_arcade: '/images/properties/prop_arcade.jpg',
+    prop_tech_office: '/images/properties/prop_tech_office.jpg',
+    prop_factory: '/images/properties/prop_factory.jpg',
+    prop_beach_house: '/images/properties/prop_beach_house.jpg',
+    prop_shopping_mall: '/images/properties/prop_shopping_mall.jpg',
+    prop_tech_campus: '/images/properties/prop_tech_campus.jpg',
+};
+
 export const INITIAL_PROPERTIES: Property[] = [
     {
         id: 'prop_lemonade_stand',
@@ -11,9 +23,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 10,
         incomeGrowthRate: 5,
         maxLevel: 5,
-        image: '🍋',
+        image: '/images/properties/prop_lemonade_stand.jpg',
         reqLevel: 1,
-        renovationSkins: ['🍋', '🧃', '🍹', '🍊']
+        renovationSkins: ['/images/properties/prop_lemonade_stand.jpg', '🧃', '🍹', '🍊']
     },
     {
         id: 'prop_garage',
@@ -25,9 +37,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 40,
         incomeGrowthRate: 15,
         maxLevel: 10,
-        image: '🏠',
+        image: '/images/properties/prop_garage.jpg',
         reqLevel: 2,
-        renovationSkins: ['🏠', '🏡', '🏘️', '🛖']
+        renovationSkins: ['/images/properties/prop_garage.jpg', '🏡', '🏘️', '🛖']
     },
     {
         id: 'prop_food_truck',
@@ -39,9 +51,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 100,
         incomeGrowthRate: 30,
         maxLevel: 10,
-        image: '🚚',
+        image: '/images/properties/prop_food_truck.jpg',
         reqLevel: 3,
-        renovationSkins: ['🚚', '🍕', '🌮', '🍔']
+        renovationSkins: ['/images/properties/prop_food_truck.jpg', '🍕', '🌮', '🍔']
     },
     {
         id: 'prop_arcade',
@@ -53,9 +65,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 300,
         incomeGrowthRate: 80,
         maxLevel: 15,
-        image: '🕹️',
+        image: '/images/properties/prop_arcade.jpg',
         reqLevel: 5,
-        renovationSkins: ['🕹️', '🎮', '👾', '🎯']
+        renovationSkins: ['/images/properties/prop_arcade.jpg', '🎮', '👾', '🎯']
     },
     {
         id: 'prop_tech_office',
@@ -67,9 +79,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 1000,
         incomeGrowthRate: 250,
         maxLevel: 20,
-        image: '🏢',
+        image: '/images/properties/prop_tech_office.jpg',
         reqLevel: 8,
-        renovationSkins: ['🏢', '🏣', '🏦', '🏛️']
+        renovationSkins: ['/images/properties/prop_tech_office.jpg', '🏣', '🏦', '🏛️']
     },
     {
         id: 'prop_factory',
@@ -81,9 +93,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 4000,
         incomeGrowthRate: 1000,
         maxLevel: 20,
-        image: '🏭',
+        image: '/images/properties/prop_factory.jpg',
         reqLevel: 12,
-        renovationSkins: ['🏭', '⚙️', '🔧', '🔩']
+        renovationSkins: ['/images/properties/prop_factory.jpg', '⚙️', '🔧', '🔩']
     },
     {
         id: 'prop_beach_house',
@@ -95,9 +107,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 8000,
         incomeGrowthRate: 2000,
         maxLevel: 20,
-        image: '🏖️',
+        image: '/images/properties/prop_beach_house.jpg',
         reqLevel: 10,
-        renovationSkins: ['🏖️', '🌊', '🏄', '⛱️']
+        renovationSkins: ['/images/properties/prop_beach_house.jpg', '🌊', '🏄', '⛱️']
     },
     {
         id: 'prop_shopping_mall',
@@ -109,9 +121,9 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 25000,
         incomeGrowthRate: 5000,
         maxLevel: 25,
-        image: '🏬',
+        image: '/images/properties/prop_shopping_mall.jpg',
         reqLevel: 15,
-        renovationSkins: ['🏬', '🛍️', '💎', '🌟']
+        renovationSkins: ['/images/properties/prop_shopping_mall.jpg', '🛍️', '💎', '🌟']
     },
     {
         id: 'prop_tech_campus',
@@ -123,8 +135,8 @@ export const INITIAL_PROPERTIES: Property[] = [
         initialIncome: 60000,
         incomeGrowthRate: 12000,
         maxLevel: 25,
-        image: '💻',
+        image: '/images/properties/prop_tech_campus.jpg',
         reqLevel: 18,
-        renovationSkins: ['💻', '🚀', '🤖', '🌐']
+        renovationSkins: ['/images/properties/prop_tech_campus.jpg', '🚀', '🤖', '🌐']
     }
 ];

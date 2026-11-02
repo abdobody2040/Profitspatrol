@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { COURSE_MAP } from '../data/curriculum';
-import { BookOpen, Clock, Star } from 'lucide-react';
+import { BookOpen, Star } from "lucide-react";
 import { motion } from 'framer-motion';
 import PublicNavbar from '../../../components/layout/PublicNavbar';
 import { useTranslation } from 'react-i18next';

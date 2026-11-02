@@ -6,11 +6,11 @@ export const MOCK_USER: User = {
     username: 'leo',
     // password removed: dev mocks use Supabase Auth — no plain-text password stored
     role: UserRole.KID,
-    xp: 1250,
-    level: 5,
-    streak: 3,
+    xp: 0,
+    level: 1,
+    streak: 0,
     lastActivityDate: new Date().toISOString(),
-    bizCoins: 1500,
+    ppTokens: 50,
     currentModuleId: 'mod_1',
     completedLessonIds: [],
     readBookIds: ['rich-dad-poor-dad', 'shoe-dog'],
@@ -35,6 +35,34 @@ export const MOCK_USER: User = {
     lastEnergyRefill: Date.now(),
     classId: 'class_1',
     properties: []
+};
+
+export const MOCK_EXPLORER_USER: User = {
+    ...MOCK_USER,
+    id: 'kid_explorer_10',
+    name: 'Maya (10y)',
+    username: 'maya',
+    age: 10,
+    role: UserRole.KID,
+    xp: 250,
+    level: 3,
+    streak: 4,
+    settings: {
+        dailyGoalMinutes: 20,
+        soundEnabled: true,
+        musicEnabled: true,
+        themeColor: 'indigo',
+        themeMode: 'light',
+        ageMode: 'explorer',
+        hapticsEnabled: true
+    },
+    businessLogo: {
+        companyName: 'Nova Studio',
+        backgroundColor: '#6366F1',
+        icon: 'briefcase',
+        iconColor: '#FFFFFF',
+        shape: 'rounded'
+    }
 };
 
 export const MOCK_PARENT: User = {
@@ -68,6 +96,9 @@ export const MOCK_ADMIN: User = {
     // password removed: dev mocks use Supabase Auth
     role: UserRole.ADMIN,
     name: 'Super Admin',
+    level: 100,
+    xp: 1_000_000,
+    ppTokens: 1_000_000_000,
     subscriptionStatus: 'PREMIUM',
     subscriptionTier: 'tycoon',
 };

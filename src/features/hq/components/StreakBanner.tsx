@@ -68,7 +68,7 @@ export const StreakBanner: React.FC = () => {
                     <div>
                         <p className="text-white font-extrabold text-[15px] m-0">{t('hqStats.milestoneUnlocked', '🏆 Milestone Unlocked!')}</p>
                         <p className="text-white/80 text-xs mt-1">
-                            {t('hqStats.milestoneDesc', { defaultValue: `${streak}-day streak! You earned <strong>+300 XP</strong> & <strong>+200 🪙</strong>`, streak, xp: 300, coins: 200 })}
+                            {t('hqStats.milestoneDesc', { defaultValue: `${streak}-day streak! You earned <strong>+300 XP</strong> & <strong>+200 💰</strong>`, streak, xp: 300, coins: 200 })}
                         </p>
                     </div>
                 ) : (

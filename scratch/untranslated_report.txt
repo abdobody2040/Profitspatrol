@@ -1,0 +1,20 @@
+src/features/hq\components\AdventureMap.tsx:354 [JSX text: "Entrepreneur"]
+   <h3>Entrepreneur</h3>
+src/features/hq\components\AdventureMap.tsx:356 [JSX text: "Chitchat"]
+   <button onClick={() => {}}>Chitchat</button>
+src/features/hq\components\AdventureMap.tsx:357 [JSX text: "Ask Advice"]
+   <button onClick={() => {}}>Ask Advice</button>
+src/features/hq\components\AdventureMap.tsx:491 [Raw headline in template]
+   currentLessonTitle={currentActiveLesson?.lesson_payload?.headline}
+src/features/hq\components\AdventureMap.tsx:545 [Raw headline in template]
+   currentLessonTitle={currentActiveLesson?.lesson_payload?.headline || (isArabic ? 'الدرس القادم' : 'Next Lesson')}
+src/features/hq\components\AdventureMap.tsx:997 [Raw headline in template]
+   ? `ابدأ: ${currentActiveLesson?.lesson_payload?.headline || 'الدرس الحالي'}`
+src/features/hq\components\BusinessCard.tsx:142 [JSX text: "Verified CEO Identity"]
+   <p class="print-subtitle">Verified CEO Identity</p>
+src/features/hq\components\BusinessCard.tsx:265 [JSX text: "profitspatrol.app"]
+   <span style={{ float: 'right' }}>profitspatrol.app</span>
+src/features/hq\components\RoomCustomizer.tsx:56 [JSX text: "Make it your own!"]
+   <p className="text-sm text-purple-100">Make it your own!</p>
+src/components\feedback\ErrorBoundary.tsx:51 [JSX text: "Uh oh! Glitch in the System!"]
+   <h1 className="text-3xl font-black text-gray-800 mb-4">Uh oh! Glitch in the System!</h1>

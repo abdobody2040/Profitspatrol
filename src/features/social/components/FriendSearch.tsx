@@ -1,10 +1,8 @@
-
-
 import React, { useState } from 'react';
-import { useAppStore } from '../../../store';
 import { Search, UserPlus, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSocialStore } from "../../../store/socialStore";
+import { Logger } from '../../../services/logger';
 
 const FriendSearch: React.FC = () => {
     const [query, setQuery] = useState('');
@@ -19,9 +17,13 @@ const FriendSearch: React.FC = () => {
     };
 
     const handleSendRequest = async (userId: string) => {
-        const success = await sendFriendRequest(userId);
-        if (success) {
-            setRequestSent(prev => ({ ...prev, [userId]: true }));
+        try {
+            const success = await sendFriendRequest(userId);
+            if (success) {
+                setRequestSent(prev => ({ ...prev, [userId]: true }));
+            }
+        } catch (err) {
+            Logger.error('Failed to send friend request from search UI', err);
         }
     };
 
@@ -39,12 +41,12 @@ const FriendSearch: React.FC = () => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search for username..."
-                        className="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 ps-12 pe-4 py-4 rounded-xl border-2 border-transparent focus:border-purple-500 outline-none transition-all shadow-sm"
+                        className="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 ps-12 pe-4 py-4 rounded-2xl border-[3px] border-gray-100 dark:border-gray-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 outline-none transition-all shadow-inner font-bold text-lg"
                         // ✅ SECURITY FIX: Cap at 30 chars (username registration limit)
                         // prevents oversized queries from hitting Supabase ilike scan
                         maxLength={30}
                     />
-                    <Search className="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <Search className="absolute start-4 top-1/2 -translate-y-1/2 text-purple-400" size={24} />
                     {query.length > 0 && (
                         <button
                             type="button"
@@ -76,13 +78,14 @@ const FriendSearch: React.FC = () => {
                                 return (
                                     <motion.div
                                         key={user.id}
-                                        initial={{ opacity: 0, y: 10 }}
+                                        initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm flex items-center justify-between"
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        className="bg-white dark:bg-gray-800 p-5 rounded-[24px] shadow-lg border-b-[6px] border-gray-200 dark:border-gray-700 flex items-center justify-between"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-xl">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-black text-2xl shadow-inner border-2 border-white dark:border-gray-700">
                                                 {user.avatar_url ? (
                                                     <img src={user.avatar_url} alt={user.username} className="w-full h-full rounded-full object-cover" />
                                                 ) : (
@@ -107,9 +110,9 @@ const FriendSearch: React.FC = () => {
                                             ) : (
                                                 <button
                                                     onClick={() => handleSendRequest(user.id)}
-                                                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors"
+                                                    className="btn-juicy btn-juicy-primary px-5 py-2.5 rounded-2xl flex items-center gap-2"
                                                 >
-                                                    <UserPlus size={16} /> Add
+                                                    <UserPlus size={18} /> Add
                                                 </button>
                                             )}
                                         </div>

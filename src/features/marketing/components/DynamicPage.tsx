@@ -1,7 +1,6 @@
 import React from 'react';
 import { CustomPage, ContentBlock } from '../../../types';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface DynamicPageProps {
     page: CustomPage;

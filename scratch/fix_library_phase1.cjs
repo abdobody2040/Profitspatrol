@@ -28,7 +28,6 @@ for (const [id, author] of Object.entries(authorFixes)) {
   );
   src = src.replace(re, (m, pre) => `${pre}author: '${author}'`);
 }
-console.log('✅ 1.1 Author fixes applied');
 
 // ── 1.2 Fix Cover URLs ───────────────────────────────────────────────────────
 // Using Open Library Covers API with known ISBNs
@@ -62,7 +61,6 @@ for (const [id, newUrl] of Object.entries(coverFixes)) {
   );
   src = src.replace(re, (m, pre) => `${pre}coverUrl: '${newUrl}'`);
 }
-console.log('✅ 1.2 Cover URL fixes applied');
 
 // ── 1.3 Add real fullContent for top 5 classic books ────────────────────────
 const fullContents = {
@@ -320,7 +318,6 @@ for (const [id, content] of Object.entries(fullContents)) {
   const escaped = content.replace(/`/g, '\\`').replace(/\${/g, '\\${');
   src = src.replace(re, (m, pre) => `${pre}fullContent: \`${escaped}\`,`);
 }
-console.log('✅ 1.3 Real fullContent added for top 5 books');
 
 // ── 1.4 Unique quiz questions for top 5 books ────────────────────────────────
 const uniqueQuizzes = {
@@ -435,9 +432,6 @@ for (const [bookId, quizData] of Object.entries(uniqueQuizzes)) {
   }).join(',\n') + '\n          ';
   src = src.replace(taskQuizRe, (m, pre, post) => `${pre}${questionsStr}${post}`);
 }
-console.log('✅ 1.4 Unique quiz questions added for top 5 books');
 
 // Write output
 fs.writeFileSync(CLASSIC_PATH, src, 'utf8');
-console.log('✅ classicBooks.ts saved successfully');
-console.log('Total size:', fs.statSync(CLASSIC_PATH).size, 'bytes');

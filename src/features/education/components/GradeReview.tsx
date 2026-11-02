@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Submission, GradeResult } from '../../../types';
+import { Submission } from "../../../types";
 import { useTranslation } from 'react-i18next';
-import { Check, X, Star, Edit3, Save } from 'lucide-react';
+import { X, Star, Edit3, Save } from "lucide-react";
 import ProjectResultCard from './ProjectResultCard'; // Reuse display logic? Or custom
 import { Logger } from '../../../services/logger';
 // Actually ProjectResultCard uses global store. Better to make a dumb component for display.
@@ -19,7 +19,7 @@ const MOCK_SUBMISSIONS: Submission[] = [
         grade: 85,
         letterGrade: 'Founder',
         feedback: "Great margin analysis! Make sure to check competitor prices.",
-        bizCoinsAwarded: 850,
+        ppTokensAwarded: 850,
         xpGained: 425
     },
     {

@@ -1,10 +1,11 @@
 import { SentryService } from './sentry';
 
 export enum LogLevel {
+    DEBUG = 'DEBUG',
     INFO = 'INFO',
     WARN = 'WARN',
     ERROR = 'ERROR',
-    DEBUG = 'DEBUG'
+    FATAL = 'FATAL'
 }
 
 /**
@@ -13,23 +14,16 @@ export enum LogLevel {
  * @returns Sanitized data safe for logging
  */
 function sanitizeForLog(data: unknown): unknown {
-    // ✅ SECURITY FIX (HIGH-01): Use a Set of EXACT key names for redaction.
-    // The previous implementation used Array.includes() + lowerKey.includes(sensitive),
-    // which caused over-redaction of safe fields whose key CONTAINS a sensitive word
-    // (e.g. { storeName: 'Leo Corp' } was redacted because key contains 'name').
-    // Using Set.has() with exact lowercase match prevents over-redaction while still
-    // catching all real PII keys.
     const SENSITIVE_KEYS = new Set([
-        'password', 'token', 'secret', 'apikey', 'api_key',
-        'authorization', 'creditcard', 'credit_card', 'ssn',
+        'password', 'password_confirmation', 'token', 'secret', 'apikey', 'api_key',
+        'authorization', 'creditcard', 'credit_card', 'cvv', 'cvc', 'ssn', 'national_id',
         // Child PII — COPPA requires these never appear in logs
-        'email', 'parentemail', 'name', 'username', 'displayname',
-        'firstname', 'lastname', 'fullname', 'parentname', 'childname',
-        'parentid', 'phone', 'phonenumber', 'avatarurl', 'photourl',
+        'email', 'parentemail', 'phone', 'phonenumber', 'avatarurl', 'photourl',
     ]);
 
     if (typeof data === 'string') {
-        return data;
+        // Redact email addresses in strings
+        return data.replace(/([a-zA-Z0-9_.+-])[a-zA-Z0-9_.+-]*(@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)/g, '$1***$2');
     }
 
     if (Array.isArray(data)) {
@@ -40,7 +34,6 @@ function sanitizeForLog(data: unknown): unknown {
         const sanitized: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(data)) {
             const lowerKey = key.toLowerCase();
-            // Exact match only — 'storeName' → 'storename' does NOT match 'name'
             if (SENSITIVE_KEYS.has(lowerKey)) {
                 sanitized[key] = '[REDACTED]';
             } else {
@@ -55,18 +48,57 @@ function sanitizeForLog(data: unknown): unknown {
 
 class LoggerService {
     private isDev: boolean;
+    private service: string = 'profits-patrol-web';
+    private env: string;
+    private version: string;
 
     constructor() {
         this.isDev = import.meta.env.DEV;
+        this.env = import.meta.env.MODE || (this.isDev ? 'development' : 'production');
+        this.version = import.meta.env.VITE_APP_VERSION || '6d0375d';
+
+        if (typeof window !== 'undefined') {
+            this.initGlobalHandlers();
+        }
     }
 
-    private formatMessage(level: LogLevel, message: string, context?: Record<string, unknown>) {
+    private initGlobalHandlers(): void {
+        window.addEventListener('error', (event) => {
+            this.error('app.uncaught_exception', {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                stack: event.error?.stack,
+            });
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            const reason = event.reason;
+            this.error('app.unhandled_promise_rejection', {
+                message: reason instanceof Error ? reason.message : String(reason),
+                stack: reason instanceof Error ? reason.stack : undefined,
+            });
+        });
+    }
+
+    private formatMessage(level: LogLevel, eventOrMessage: string, context?: Record<string, unknown>) {
         const timestamp = new Date().toISOString();
+        const event = context?.event ? String(context.event) : eventOrMessage;
+        const message = context?.event ? eventOrMessage : eventOrMessage;
+        const cleanContext = { ...(context || {}) };
+        delete cleanContext.event;
+
         return {
             timestamp,
             level,
+            service: this.service,
+            env: this.env,
+            version: this.version,
+            event,
             message,
-            context: sanitizeForLog(context),
+            request_id: cleanContext.request_id || undefined,
+            context: sanitizeForLog(cleanContext),
             userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
             url: typeof window !== 'undefined' ? window.location.href : 'unknown'
         };
@@ -76,10 +108,9 @@ class LoggerService {
         const log = this.formatMessage(LogLevel.INFO, message, context);
 
         if (this.isDev) {
-            console.info(`[${LogLevel.INFO}] ${message}`, log.context || '');
+            console.info(`[${log.timestamp}] [${LogLevel.INFO}] [${log.event}] ${message}`, log.context || '');
         }
 
-        // In production, send to remote logging service
         if (!this.isDev) {
             this.sendToRemote(log);
         }
@@ -89,45 +120,54 @@ class LoggerService {
         const log = this.formatMessage(LogLevel.WARN, message, context);
 
         if (this.isDev) {
-            console.warn(`[${LogLevel.WARN}] ${message}`, log.context || '');
+            console.warn(`[${log.timestamp}] [${LogLevel.WARN}] [${log.event}] ${message}`, log.context || '');
         }
 
-        // Always log warnings to remote in production
         if (!this.isDev) {
             this.sendToRemote(log);
         }
     }
 
-    error(message: string, error?: unknown) {
-        const errorContext = error instanceof Error
-            ? { message: error.message, name: error.name } // ✅ SECURITY FIX: Omit stack trace from console; send to remote only
-            : { detail: String(error) };
-        const log = this.formatMessage(LogLevel.ERROR, message, errorContext as Record<string, unknown>);
+    error(message: string, errorOrContext?: unknown) {
+        const errorContext = errorOrContext instanceof Error
+            ? { message: errorOrContext.message, name: errorOrContext.name, stack: errorOrContext.stack }
+            : (typeof errorOrContext === 'object' && errorOrContext !== null ? errorOrContext as Record<string, unknown> : { detail: String(errorOrContext) });
 
-        // ✅ SECURITY FIX: Log structured sanitized object — never the raw error which may contain PII
+        const log = this.formatMessage(LogLevel.ERROR, message, errorContext);
+
         if (this.isDev) {
-            console.error(`[${LogLevel.ERROR}] ${message}`, errorContext);
+            console.error(`[${log.timestamp}] [${LogLevel.ERROR}] [${log.event}] ${message}`, errorContext);
         }
 
-        // In production: send full details (incl. stack) to remote only — never to browser console
         if (!this.isDev) {
-            const remoteLog = {
-                ...log,
-                stack: error instanceof Error ? error.stack : undefined,
-            };
-            // ✅ AUDIT FIX: Capture the original Error object so Sentry records the full stack trace
-            if (error instanceof Error) {
-                void SentryService.captureException(error, log.context);
+            if (errorOrContext instanceof Error) {
+                void SentryService.captureException(errorOrContext, log.context as Record<string, unknown>);
             } else {
-                this.sendToRemote(remoteLog);
+                this.sendToRemote(log);
             }
+        }
+    }
+
+    fatal(message: string, errorOrContext?: unknown) {
+        const errorContext = errorOrContext instanceof Error
+            ? { message: errorOrContext.message, name: errorOrContext.name, stack: errorOrContext.stack }
+            : (typeof errorOrContext === 'object' && errorOrContext !== null ? errorOrContext as Record<string, unknown> : { detail: String(errorOrContext) });
+
+        const log = this.formatMessage(LogLevel.FATAL, message, errorContext);
+
+        if (this.isDev) {
+            console.error(`[${log.timestamp}] [${LogLevel.FATAL}] [${log.event}] ${message}`, errorContext);
+        }
+
+        if (!this.isDev) {
+            this.sendToRemote(log);
         }
     }
 
     debug(message: string, context?: Record<string, unknown>) {
         if (this.isDev) {
             const log = this.formatMessage(LogLevel.DEBUG, message, context);
-            console.debug(`[${LogLevel.DEBUG}] ${message}`, log.context || '');
+            console.debug(`[${log.timestamp}] [${LogLevel.DEBUG}] [${log.event}] ${message}`, log.context || '');
         }
     }
 

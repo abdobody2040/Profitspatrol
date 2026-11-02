@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RoomType, ROOM_NAMES, ROOM_ICONS } from '../data/themes';
+import { RoomType, ROOM_ICONS } from "../data/themes";
 import { WallPattern, FloorPattern, getWallStyle, getFloorStyle } from '../data/patterns';
 import { Settings, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

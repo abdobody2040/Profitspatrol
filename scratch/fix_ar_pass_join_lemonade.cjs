@@ -47,4 +47,3 @@ Object.keys(t).forEach(eng => {
 });
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('Join Class and Lemonade Tycoon Arabic translation pass complete.');

@@ -5,9 +5,10 @@ import { Send, X, Minimize2, Lock, Crown, Sparkles } from 'lucide-react';
 import { chatWithOllie, ChatMessage } from '../../../lib/gemini';
 import { useAppStore } from '../../../store';
 import { useGameStore } from '../../../store/gameStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { sanitizePrompt } from '../../../utils/promptSanitizer';
+import { DISTRICT_V2_DEFINITIONS } from '../../hq/data/worldConfig';
 
 const OllieChat: React.FC = () => {
   const { user, hasAiAccess, upgradeSubscription } = useAppStore();
@@ -17,8 +18,54 @@ const OllieChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imgError, setImgError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMapPage = location.pathname === '/map';
+  const [showCoaching, setShowCoaching] = useState(true);
+
+  useEffect(() => {
+    setShowCoaching(true);
+  }, [user?.completedLessonIds, location.pathname]);
+
+  // Listen for header button trigger
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener('ollie:open', handler);
+    return () => window.removeEventListener('ollie:open', handler);
+  }, []);
+
+  const getOllieCoachingDialog = () => {
+    if (!user) return "";
+    const isAr = i18n.language === 'ar';
+    if (user.streak === 0) {
+      return t('coaching.low_streak', { defaultValue: "Welcome back! A successful tycoon shows up every day. Keep your daily streak hot! 🔥" });
+    }
+    if (user.ppTokens > 2000 && (!user.unlockedSkills || user.unlockedSkills.length === 0)) {
+      return t('coaching.no_skills', { defaultValue: "Hey boss! You've got quite a bit of cash. Reinvesting in your Skills at the HQ will boost your efficiency and passive income! 🧠" });
+    }
+    if (!user.properties || user.properties.length === 0) {
+      return t('coaching.no_properties', { defaultValue: "Real estate is the path to wealth! Go to Venture and buy your first property to start earning passive rent! 🏠" });
+    }
+
+    const activeDistrict = DISTRICT_V2_DEFINITIONS.find(d => {
+      const bossId = `${d.id}_BOSS`;
+      return !user.completedLessonIds?.includes(bossId);
+    }) || DISTRICT_V2_DEFINITIONS[0];
+
+    const districtName = isAr ? (activeDistrict.arabicName || activeDistrict.name) : activeDistrict.name;
+    const bossName = isAr ? (activeDistrict.bossNameAr || activeDistrict.bossName) : activeDistrict.bossName;
+
+    return t('coaching.active_district', {
+      name: districtName,
+      bossName: bossName,
+      defaultValue: `Welcome to ${activeDistrict.name}! Let's master the lessons and defeat Boss ${activeDistrict.bossName} to claim the district completion rewards! 🏆`
+    });
+  };
+
+  const handleContinueLearning = () => {
+    window.dispatchEvent(new CustomEvent('trigger-continue-learning'));
+  };
 
   // Paywall State - Persisted to prevent refresh exploit
   const [freeMessageUsed, setFreeMessageUsed] = useState(() => {
@@ -126,7 +173,8 @@ const OllieChat: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-24 end-4 md:bottom-6 md:end-6 z-[150] flex flex-col items-end pointer-events-none">
+      <div className={`fixed end-4 md:end-6 ${isOpen ? 'z-[210] bottom-4 md:bottom-6' : 'z-[140] bottom-20 md:bottom-8'} flex flex-col items-end pointer-events-none transition-all duration-300 ease-in-out`}>
+
 
         <AnimatePresence>
           {isOpen && (
@@ -150,7 +198,7 @@ const OllieChat: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-black text-lg leading-none flex items-center gap-2">
-                      {t('chat.ollie_name')}
+                       {t('chat.ollie_name')}
                       {isTycoon && <Crown size={16} className="text-yellow-400 fill-yellow-400" />}
                     </h3>
                     <p className={`text-xs font-bold flex items-center gap-1 ${isTycoon ? 'text-yellow-400' : 'opacity-80'}`}>
@@ -245,11 +293,8 @@ const OllieChat: React.FC = () => {
                       placeholder={hasAccess ? (isTycoon ? t('chat.placeholder_vip') : t('chat.placeholder_paid')) : t('chat.placeholder_free')}
                       className="flex-1 bg-transparent border-none outline-none p-2 text-sm font-bold text-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-400"
                       disabled={isLoading}
-                      // ✅ SECURITY FIX: maxLength prevents oversized payload injection
-                      // that could flood Gemini API with 100KB+ inputs or bypass sanitizer
                       maxLength={500}
                     />
-                    {/* Character counter — shown when nearing limit */}
                     {input.length > 400 && (
                       <span className="text-xs text-orange-500 font-bold pe-1">
                         {500 - input.length}
@@ -270,14 +315,48 @@ const OllieChat: React.FC = () => {
               </div>
             </motion.div>
           )}
+
+          {!isOpen && isMapPage && showCoaching && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, x: 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: 20 }}
+              className="hidden sm:flex bg-white dark:bg-gray-800 rounded-2xl border-2 border-yellow-400 shadow-2xl p-3.5 w-64 sm:w-72 text-start absolute bottom-0 end-[76px] sm:end-[84px] pointer-events-auto flex-col z-[140]"
+            >
+              {/* Small indicator arrow pointing towards Ollie button */}
+              <div className="absolute bottom-5 -end-1.5 w-3 h-3 bg-white dark:bg-gray-800 border-t-2 border-r-2 border-yellow-400 rotate-45 transform"></div>
+              
+              <button
+                onClick={() => setShowCoaching(false)}
+                className="absolute top-2 end-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer p-0.5"
+                title="إغلاق"
+              >
+                <X size={14} />
+              </button>
+              
+              <p className="text-xs font-bold text-gray-800 dark:text-gray-100 leading-relaxed mt-0.5 pe-4">
+                "{getOllieCoachingDialog()}"
+              </p>
+              
+              <div className="mt-2.5 flex justify-start">
+                <button
+                  onClick={handleContinueLearning}
+                  className="bg-yellow-400 text-yellow-950 text-xs font-black px-3 py-1.5 rounded-xl uppercase tracking-wide cursor-pointer hover:bg-yellow-500 transition-colors shadow-sm flex items-center gap-1"
+                >
+                  {t('map.ollie_cta', { defaultValue: "Let's Go! 🚀" })}
+                </button>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Floating Button */}
         <motion.button
+          id="ollie-chat-fab"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-16 h-16 rounded-full shadow-[0_4px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center border-4 transition-colors relative overflow-hidden pointer-events-auto
+          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-[0_4px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center border-4 transition-colors relative overflow-hidden pointer-events-auto
           ${isOpen
               ? 'bg-gray-200 dark:bg-gray-600 border-white dark:border-gray-700 text-gray-500 dark:text-gray-300'
               : isTycoon
@@ -290,6 +369,10 @@ const OllieChat: React.FC = () => {
           ) : (
             <>
               {renderOllieAvatar("w-full h-full")}
+              {/* Pulsing ring if on map and coaching is visible */}
+              {isMapPage && showCoaching && (
+                <div className="absolute inset-0 rounded-full border-4 border-yellow-300 animate-ping opacity-40 pointer-events-none" />
+              )}
               {/* Notification Badge */}
               {!hasAccess && !freeMessageUsed && (
                 <span className="absolute top-0 end-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>

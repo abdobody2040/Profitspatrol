@@ -1,7 +1,7 @@
 
 # Profits Patrol - Future CEO Academy 🚀
 
-**Profits Patrol** is the world's #1 gamified business academy for kids. We turn screen time into real-world skills like entrepreneurship, financial literacy, and leadership through addictive mini-games, an RPG-style progression system, and AI-powered tutoring.
+**Profits Patrol** is a gamified business academy for kids. We turn screen time into real-world skills like entrepreneurship, financial literacy, and leadership through addictive mini-games, an RPG-style progression system, and AI-powered tutoring.
 
 ![KidCap HQ Banner](https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80)
 
@@ -11,7 +11,7 @@
 
 ### 🎓 Interactive Learning Engine
 *   **Universal Lesson System**: 100+ gamified lessons covering Money Basics, Crypto, AI, and Global Trade.
-*   **Ollie (AI Tutor)**: Powered by **Google Gemini 2.5**, Ollie provides real-time homework help, business advice, and cheeky bird puns.
+*   **Ollie (AI Tutor)**: Powered by **Google Gemini**, Ollie provides real-time homework help, business advice, and cheeky bird puns.
 *   **Book Library**: Read summaries of business classics like *Rich Dad Poor Dad* and *Shoe Dog* to earn XP. AI-powered summary generation for admins.
 
 ### 🎮 The Universal Business Arcade
@@ -20,10 +20,18 @@ Runs on our custom `GameEngine.tsx` supporting multiple genres:
 *   **Action/Arcade**: Pizza Rush (Phaser-based driving), Rhythm Car Wash.
 *   **Puzzle/Logic**: Recycling Sorter, Fair Trade Matcher.
 *   **Clicker/Idle**: App Developer, Dropship Empire.
-*   **Negotiation Battles**: A high-stakes dialogue game exclusive to Tycoon subscribers.
+*   **The Tank**: Pitching, Negotiation, Valuation (AI-powered) redesigned with a **3-judge panel** and full Arabic support.
+*   **Production & Manufacturing**: Toy Factory and Recycling Center using our new `ConveyorTemplate.tsx`.
+*   **Real Estate Tycoon**: Buy, upgrade, and manage a property empire with automated daily passive income and background progression.
+*   **Real-World Missions**: 5 offline family learning missions with structured reflection and parent signature approval.
+*   **Grand Entrepreneurship Capstone**: 7-step guided venture creator with dynamic advice, leading to a printable graduation diploma.
+*   **Mobile-First Design**: Optimized for touch with **Bottom Sheet** modals, horizontal snapping carousels, and enhanced navigation feedback.
+*   **PWA Optimized**: Installable on iOS/Android for a native, standalone app experience with offline support and safe-area compatibility.
 
 ### 🌍 Localization & Accessibility
-*   **Multi-Language Support**: Full **English** and **Arabic (RTL)** support via `i18next`.
+*   **Multi-Language Support**: 100% parity for **English** and **Arabic (RTL)** across all features, lessons, and games.
+*   **Debate Arena**: AI-powered debate simulator featuring a **Logical Fallacy Detector** to improve critical thinking.
+*   **Headquarters (HQ)**: Persistent player base with both **2D Dollhouse** and **3D Isometric Builder** views, featuring wandering **NPC Employees**.
 *   **Accessible Design**: High-contrast modes, screen-reader friendly structure, and intuitive UI for kids.
 
 ### 🏫 Education & Management
@@ -41,13 +49,13 @@ Runs on our custom `GameEngine.tsx` supporting multiple genres:
     *   **Board Member**: Family plans, parent dashboard.
     *   **Tycoon**: AI Consultant (Ollie) unlocked, exclusive "Negotiation" games.
 *   **Energy Mechanics**: Robust hook-based system preventing infinite play for free users.
-*   **BizStore**: Spend earned "BizCoins" on avatars, outfits, and power-ups.
+*   **BizStore**: Spend earned **PP Tokens** on avatars, outfits, and power-ups. Features a rich **Avatar Wardrobe Modal** supporting tiered gating, district/hero perks, and layered previews.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
-KidCap HQ is built as a robust **Client-Side Single Page Application (SPA)** using the latest modern web technologies.
+Profits Patrol is built as a robust **Client-Side Single Page Application (SPA)** using the latest modern web technologies.
 
 | Category | Technology |
 | :--- | :--- |
@@ -63,6 +71,10 @@ KidCap HQ is built as a robust **Client-Side Single Page Application (SPA)** usi
 Recent audits have fortified the codebase against common exploits and crashes:
 *   **Infinite Energy Exploit**: Fixed timestamp validation logic in `useEnergy.ts`.
 *   **Save Corruption**: Implemented robust `NaN` and date parsing guards in `store.ts`.
+*   **Registration Hang**: Resolved race condition in `UserSlice` using `isRegistering` guard during sign-up.
+*   **Unauthorized Admin Access**: Implemented `isAuthLoading` to block redirects based on stale `localStorage` data before session validation.
+*   **Test Suite Failures**: Stabilized the Vitest core by resolving routing context issues and store slice mismatches, ensuring 100% pass rate for content gating and addition pipelines.
+*   **Type Hardening (May 2026)**: Resolved critical TypeScript mismatches in `GameType` (added `recycle_game`), `VisualConfig` themes (added `industrial`), and `DebateResult` schema (enforced `fallaciesDetected`).
 *   **Runtime Crashes**: Added fallback rendering for invalid asset IDs in `Headquarters.tsx`.
 
 ---
@@ -77,8 +89,8 @@ Recent audits have fortified the codebase against common exploits and crashes:
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/your-username/kidcap-hq.git
-    cd kidcap-hq
+    git clone https://github.com/your-username/profitspatrol.git
+    cd profitspatrol
     ```
 
 2.  **Install dependencies**
@@ -87,11 +99,14 @@ Recent audits have fortified the codebase against common exploits and crashes:
     ```
 
 3.  **Configure Environment**
-    Create a `.env` file in the root directory:
+    Create a `.env` file in the root directory (see `.env.example` for all keys):
     ```env
-    API_KEY=your_google_gemini_api_key_here
+    GEMINI_API_KEY=your_google_gemini_api_key_here
+    VITE_AI_PROVIDER=openrouter
+    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
     ```
-    *Note: The app is configured to read `process.env.API_KEY`. Vite handles this automatically if prefixed with `VITE_` or configured in `vite.config.ts`.*
 
 4.  **Run Development Server**
     ```bash
@@ -109,25 +124,25 @@ Recent audits have fortified the codebase against common exploits and crashes:
 ## ✏️ How to Edit & Customize
 
 ### 1. Game Logic & Configuration
-*   **Add/Edit Games**: Modify `data/games.ts`. This file contains the JSON definitions for all arcade games (pricing, visuals, upgrade trees).
-*   **Game Templates**: The logic for specific game types (e.g., `simulation_tycoon`, `clicker_idle`) resides in `components/game-templates/`. Editing `SimulationTemplate.tsx` changes the behavior for *all* tycoon games.
+*   **Add/Edit Games**: Modify `src/features/game/data/games.ts`. This file contains the JSON definitions for all arcade games (pricing, visuals, upgrade trees).
+*   **Game Templates**: The logic for specific game types (e.g., `simulation_tycoon`, `clicker_idle`) resides in `src/features/game/components/game-templates/`. Editing `SimulationTemplate.tsx` changes the behavior for *all* tycoon games.
 
 ### 2. Curriculum & Content
-*   **Lessons**: Edit `data/curriculum.ts`. Each lesson follows the `UniversalLessonUnit` schema.
-*   **Books**: Edit `data/libraryBooks.ts` to change the default library. In production, use the **Admin Dashboard** to add books dynamically.
+*   **Lessons**: Edit `src/features/education/data/curriculum.ts`. Each lesson follows the `UniversalLessonUnit` schema.
+*   **Books**: Edit `src/features/library/data/libraryBooks.ts` to change the default library. In production, use the **Admin Dashboard** to add books dynamically.
 
 ### 3. Ads & Monetization
 The application uses a simulated ad banner and paywall system.
 
 *   **Ad Banner**:
-    *   Located in `components/Layout.tsx`.
+    *   Located in `src/components/layout/Layout.tsx`.
     *   Controlled by the `isIntern` check: `const isIntern = user.subscriptionTier === 'intern';`.
     *   **To Remove/Edit**: Search for `{isIntern && (` in `Layout.tsx`. You can change the text or styling of the footer banner there.
 
 *   **Paywalls (Investor Pitch)**:
     *   The `InvestorPitchModal.tsx` component is the upgrade screen.
     *   It is triggered in various places (e.g., `UniversalBusinessGame.tsx` when energy runs out, `GameMenu.tsx` for locked games).
-    *   **To Edit Pricing/Plans**: Modify `SUBSCRIPTION_PLANS` in `store.ts`.
+    *   **To Edit Pricing/Plans**: Modify `SUBSCRIPTION_PLANS` in `src/data/constants.ts`.
 
 ### 4. Admin Panel
 *   Access the Admin Dashboard by logging in with a user possessing the `ADMIN` role.

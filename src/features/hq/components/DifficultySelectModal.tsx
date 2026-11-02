@@ -25,28 +25,34 @@ const DifficultySelectModal: React.FC<DifficultySelectModalProps> = ({ isOpen, o
             id: 'EASY',
             label: t('difficulty_modal.rookie.label', { defaultValue: 'Rookie' }),
             color: 'bg-green-500',
-            desc: type === 'BOSS' ? t('difficulty_modal.rookie.desc', { defaultValue: 'More Cash, Slower Burn' }) : 'Simple Feedback, Lenient Grading',
+            desc: type === 'BOSS' 
+                ? t('difficulty_modal.rookie.desc', { defaultValue: 'More Cash, Slower Burn' }) 
+                : t('difficulty_modal.rookie.project_desc', { defaultValue: 'Simple Feedback, Lenient Grading' }),
             icon: Star
         },
         {
             id: 'MEDIUM',
             label: t('difficulty_modal.founder.label', { defaultValue: 'Founder' }),
             color: 'bg-blue-500',
-            desc: type === 'BOSS' ? t('difficulty_modal.founder.desc', { defaultValue: 'Standard Challenge' }) : 'Standard Expectations',
+            desc: type === 'BOSS' 
+                ? t('difficulty_modal.founder.desc', { defaultValue: 'Standard Challenge' }) 
+                : t('difficulty_modal.founder.project_desc', { defaultValue: 'Standard Expectations' }),
             icon: Briefcase
         },
         {
             id: 'HARD',
             label: t('difficulty_modal.tycoon.label', { defaultValue: 'Tycoon' }),
             color: 'bg-red-500',
-            desc: type === 'BOSS' ? t('difficulty_modal.tycoon.desc', { defaultValue: 'Less Cash, Fast Burn!' }) : 'Strict Grading, CEO Level!',
+            desc: type === 'BOSS' 
+                ? t('difficulty_modal.tycoon.desc', { defaultValue: 'Less Cash, Fast Burn!' }) 
+                : t('difficulty_modal.tycoon.project_desc', { defaultValue: 'Strict Grading, CEO Level!' }),
             icon: Zap
         }
     ];
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}

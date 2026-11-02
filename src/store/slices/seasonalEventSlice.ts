@@ -30,7 +30,7 @@ const EVENT_POOL: SeasonalEvent[] = [
     id: 'eid_entrepreneur_challenge',
     icon: '🌙',
     title: 'Eid Entrepreneur Challenge',
-    description: 'Earn the most BizCoins from gigs to win the golden crescent badge + HQ mosque lamp!',
+    description: 'Earn the most P Tokens from gigs to win the golden crescent badge + HQ mosque lamp!',
     theme: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #92400e 100%)',
     type: 'GIG_RUSH',
     startDate: '',
@@ -56,7 +56,7 @@ const EVENT_POOL: SeasonalEvent[] = [
     id: 'summer_hustle_championship',
     icon: '☀️',
     title: 'Summer Hustle Championship',
-    description: 'Earn the most total BizCoins from ANY source. Top earners win the Summer CEO trophy!',
+    description: 'Earn the most total P Tokens from ANY source. Top earners win the Summer CEO trophy!',
     theme: 'linear-gradient(135deg, #f97316 0%, #ef4444 50%, #dc2626 100%)',
     type: 'COIN_SPRINT',
     startDate: '',
@@ -65,6 +65,19 @@ const EVENT_POOL: SeasonalEvent[] = [
     coinReward: 3000,
     exclusiveItems: ['avatar_summer_ceo_crown', 'hq_gold_desk', 'hq_yacht_poster'],
     bossId: 'boss_startup_crunch',
+  },
+  {
+    id: 'annual_ceo_championship',
+    icon: '🏆',
+    title: 'Annual CEO Championship',
+    description: 'The ultimate business showdown! Earn the most XP this week to win the Golden Tycoon Trophy.',
+    theme: 'linear-gradient(135deg, #4f2f00 0%, #b8860b 50%, #daa520 100%)',
+    type: 'COIN_SPRINT', // We use COIN_SPRINT or another type to count XP. Wait, there's no XP_SPRINT type, but we can reuse COIN_SPRINT for now or STREAK_KEEPER. Let's use COIN_SPRINT.
+    startDate: '',
+    endDate: '',
+    xpReward: 2500,
+    coinReward: 5000,
+    exclusiveItems: ['avatar_golden_tycoon_trophy', 'hq_golden_desk'],
   },
 ];
 
@@ -153,6 +166,19 @@ export const createSeasonalEventSlice: StateCreator<AppState, [], [], SeasonalEv
     const leaderboard = generateMockLeaderboard(event.id, myScore, user?.name ?? 'You');
     const myRank = leaderboard.find(e => e.userId === 'me')?.rank ?? null;
 
+    // Avoid infinite loop / redundant state updates
+    if (
+      seasonalEvent.activeEvent?.id === event.id &&
+      seasonalEvent.myScore === myScore &&
+      seasonalEvent.myRank === myRank &&
+      seasonalEvent.joined === joined &&
+      seasonalEvent.rewardClaimed === rewardClaimed &&
+      seasonalEvent.leaderboard.length === leaderboard.length &&
+      seasonalEvent.leaderboard.every((entry, i) => entry.userId === leaderboard[i].userId && entry.score === leaderboard[i].score)
+    ) {
+      return;
+    }
+
     set({
       seasonalEvent: {
         activeEvent: event,
@@ -184,7 +210,7 @@ export const createSeasonalEventSlice: StateCreator<AppState, [], [], SeasonalEv
     const updatedUser = {
       ...user,
       xp: user.xp + xpReward,
-      bizCoins: user.bizCoins + coinReward,
+      ppTokens: user.ppTokens + coinReward,
       inventory: [...user.inventory, ...exclusiveItems],
     };
     const updatedUsers = get().users.map(u => u.id === user.id ? updatedUser : u);

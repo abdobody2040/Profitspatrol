@@ -278,7 +278,74 @@ const RAW_DATA = [
   { "id": "NEG_200", "topic_tag": "Negotiation & Persuasion", "difficulty": 3, "lesson_payload": { "headline": "Mastery Complete: The Negotiator", "body_text": "🎓 You've unlocked one of the rarest superpowers in business: the ability to negotiate and persuade. From BATNA to anchoring, win-win deals to Cialdini's principles — you now have a complete toolkit. The greatest business leaders — Buffett, Jobs, Musk — are all masterful negotiators. Now go use your skills to build something extraordinary. **The world is waiting.**", "key_term": "Negotiation Mastery", "image_url": "/images/lessons/NEG_200.jpg" }, "challenge_payload": { "question_text": "Which negotiation technique involves understanding the other party's true underlying interests, not just their stated position?", "correct_answer": "Active listening and asking probing questions", "distractors": ["Anchoring with a high number", "Breaking off the negotiation", "Using scarcity to pressure them"] }, "game_rewards": { "base_xp": 200, "currency_value": 200 }, "flavor_text": "🏆 MASTERY COMPLETE! You are now a certified Negotiation Champion. The Profits Patrol board gives you a standing ovation." },
 ];
 
-export const ALL_LESSONS: UniversalLessonUnit[] = RAW_DATA as UniversalLessonUnit[];
+import { getDistrictForLesson } from "../../../domain/world/districts";
+
+function resolvePrimaryCompetency(lessonId: string, _topicTag: string, keyTerm?: string): string {
+  const prefix = lessonId.split('_')[0];
+  const termLower = (keyTerm || '').toLowerCase();
+
+  if (prefix === 'MB') {
+    if (termLower.includes('budget') || termLower.includes('piggy') || termLower.includes('saving')) return 'saving_budgeting';
+    if (termLower.includes('need') || termLower.includes('want')) return 'needs_vs_wants';
+    if (termLower.includes('bank') || termLower.includes('interest')) return 'banking_interest';
+    return 'cash_currency';
+  }
+  if (prefix === 'ENT') {
+    if (termLower.includes('cost') || termLower.includes('profit') || termLower.includes('price')) return 'cost_pricing';
+    if (termLower.includes('customer')) return 'customer_service';
+    if (termLower.includes('logo') || termLower.includes('brand')) return 'branding';
+    return 'business_basics';
+  }
+  if (prefix === 'INV') {
+    if (termLower.includes('risk') || termLower.includes('diversif')) return 'risk_management';
+    return 'banking_interest';
+  }
+  if (prefix === 'MKT') {
+    if (termLower.includes('logo') || termLower.includes('brand')) return 'branding';
+    if (termLower.includes('sale') || termLower.includes('pitch')) return 'sales_pitching';
+    return 'advertising';
+  }
+  if (prefix === 'LDR') {
+    if (termLower.includes('negotiat') || termLower.includes('deal')) return 'negotiation';
+    return 'teamwork';
+  }
+  if (prefix === 'ECO') {
+    if (termLower.includes('supply') || termLower.includes('chain') || termLower.includes('trade')) return 'operations_supply';
+    return 'cost_pricing';
+  }
+  if (prefix === 'TECH') {
+    if (termLower.includes('ai') || termLower.includes('robot') || termLower.includes('code')) return 'future_tech';
+    return 'ideation_prototyping';
+  }
+  if (prefix === 'SOC') return 'ethics_responsibility';
+  if (prefix === 'GLO') return 'corporate_strategy';
+  if (prefix === 'FIN') {
+    if (termLower.includes('scam') || termLower.includes('fraud') || termLower.includes('password') || termLower.includes('phishing')) return 'scam_safety';
+    return 'saving_budgeting';
+  }
+  if (prefix === 'CRYPTO') return 'future_tech';
+  if (prefix === 'AIJOB') return 'future_tech';
+  if (prefix === 'SUST') return 'ethics_responsibility';
+  if (prefix === 'VC') return 'corporate_strategy';
+  if (prefix === 'CORP') return 'corporate_strategy';
+  if (prefix === 'GLOB') return 'operations_supply';
+  if (prefix === 'FMD') return 'cost_pricing';
+  if (prefix === 'BRAND') return 'branding';
+  if (prefix === 'FUTURE') return 'future_tech';
+  if (prefix === 'NEG') return 'negotiation';
+
+  return 'business_basics';
+}
+
+export const ALL_LESSONS: UniversalLessonUnit[] = (RAW_DATA as any[]).map(item => {
+  const district = getDistrictForLesson(item.id);
+  const primaryCompetency = resolvePrimaryCompetency(item.id, item.topic_tag, item.lesson_payload?.key_term);
+  return {
+    ...item,
+    districtId: district?.id || 'money',
+    primaryCompetencyId: primaryCompetency
+  } as UniversalLessonUnit;
+});
 
 // Course Structure Helper
 export const COURSE_MAP = [

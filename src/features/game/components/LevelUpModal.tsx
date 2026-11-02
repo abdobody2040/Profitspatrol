@@ -1,11 +1,13 @@
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../../store';
-import { Star, X } from 'lucide-react';
+import { Star } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const LevelUpModal: React.FC = () => {
   const { showLevelUpModal, levelUpData, closeLevelUpModal } = useAppStore();
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language?.startsWith('ar');
 
   if (!showLevelUpModal || !levelUpData) return null;
 
@@ -16,10 +18,10 @@ const LevelUpModal: React.FC = () => {
                 initial={{ scale: 0.5, opacity: 0, rotate: -10 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
                 exit={{ scale: 0.5, opacity: 0 }}
-                className="bg-white rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl"
+                className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl border-4 border-yellow-400"
             >
                 {/* Background Rays */}
-                <div className="absolute inset-0 bg-yellow-50 z-0" />
+                <div className="absolute inset-0 bg-yellow-50 dark:bg-yellow-950/20 z-0" />
                 <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
@@ -33,7 +35,7 @@ const LevelUpModal: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-kid-secondary font-black text-2xl uppercase tracking-widest mb-2"
                     >
-                        Level Up!
+                        {t('level_up.title', { defaultValue: 'ترقية المستوى!' })}
                     </motion.div>
 
                     <div className="relative w-32 h-32 mx-auto mb-6">
@@ -55,15 +57,15 @@ const LevelUpModal: React.FC = () => {
                         </motion.div>
                     </div>
 
-                    <h3 className="text-gray-800 font-bold text-lg mb-6">
-                        You're now a Level {levelUpData.level} Entrepreneur!
+                    <h3 className="text-gray-800 dark:text-white font-bold text-lg mb-6">
+                        {t('level_up.subtitle', { level: levelUpData.level, defaultValue: isArabic ? `أنت الآن رائد أعمال من المستوى ${levelUpData.level}!` : `You're now a Level ${levelUpData.level} Entrepreneur!` })}
                     </h3>
 
                     <button 
                         onClick={closeLevelUpModal}
                         className="w-full bg-kid-secondary hover:bg-green-600 text-white font-black py-3 rounded-2xl shadow-[0_4px_0_0_rgba(21,128,61,1)] btn-juicy"
                     >
-                        Awesome!
+                        {t('level_up.btn', { defaultValue: isArabic ? 'رائع جداً!' : 'Awesome!' })}
                     </button>
                 </div>
             </motion.div>

@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DEBATE_TOPICS, DebateTopic } from '../data/topics';
 import { GeminiService, DebateResult } from '../../../lib/gemini';
-import { Mic, Send, Bot, Star, ArrowLeft, Trophy } from 'lucide-react';
+import { Send, Bot, Star, ArrowLeft, Trophy, Lock, AlertTriangle } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../store';
+import { useEducationStore } from '../../../store/educationStore';
+import { hasSchoolBypass } from '../../../utils/premiumAccess';
+import InvestorPitchModal from '../../game/components/InvestorPitchModal';
 
 const DebateArena: React.FC = () => {
     const [selectedTopic, setSelectedTopic] = useState<DebateTopic | null>(null);
@@ -12,8 +15,16 @@ const DebateArena: React.FC = () => {
     const [inputText, setInputText] = useState('');
     const [isEvaluating, setIsEvaluating] = useState(false);
     const [lastResult, setLastResult] = useState<DebateResult | null>(null);
+    const [showPaywall, setShowPaywall] = useState(false);
 
     const { t } = useTranslation();
+    const { user } = useAppStore();
+    const classrooms = useEducationStore(state => state.classrooms);
+    const users = useAppStore(state => state.users);
+
+    const isAdmin = user?.role === 'ADMIN';
+    const activeSchoolBypass = hasSchoolBypass(user, classrooms, users);
+    const isInternLocked = !isAdmin && !activeSchoolBypass && user?.subscriptionTier === 'intern';
 
     const handleSelectTopic = (topic: DebateTopic) => {
         setSelectedTopic(topic);
@@ -69,31 +80,59 @@ const DebateArena: React.FC = () => {
     // --- SELECTION SCREEN ---
     if (!selectedTopic) {
         return (
-            <div className="p-6 h-full flex flex-col items-center justify-center">
-                <h2 className="text-4xl font-black text-gray-800 dark:text-white mb-2 flex items-center gap-3">
-                    <Bot className="text-purple-600" size={40} /> {t('debate.title')}
+            <div className="p-6 min-h-full py-12 flex flex-col items-center relative">
+                <InvestorPitchModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
+                
+                <h2 className="text-4xl font-black text-[var(--color-text)] mb-2 flex items-center gap-3">
+                    <Bot className="text-[var(--color-primary)]" size={40} /> {t('debate.title')}
                 </h2>
-                <p className="text-gray-500 mb-8 text-lg font-medium">{t('debate.subtitle')}</p>
+                <p className="text-[var(--color-text-muted)] mb-8 text-lg font-bold">{t('debate.subtitle')}</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-                    {DEBATE_TOPICS.map(topic => (
+                    {DEBATE_TOPICS.map((topic, index) => {
+                        const isLocked = isInternLocked && index > 0;
+                        
+                        return (
                         <motion.div
                             key={topic.id}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleSelectTopic(topic)}
-                            className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl border-4 border-transparent hover:border-purple-400 cursor-pointer text-center flex flex-col items-center group"
+                            whileHover={!isLocked ? { y: -4 } : {}}
+                            whileTap={!isLocked ? { scale: 0.98 } : {}}
+                            onClick={() => {
+                                if (isLocked) {
+                                    setShowPaywall(true);
+                                } else {
+                                    handleSelectTopic(topic);
+                                }
+                            }}
+                            className={`card p-6 text-center flex flex-col items-center group relative overflow-hidden transition-all cursor-pointer ${
+                                isLocked ? 'grayscale opacity-75' : ''
+                            }`}
                         >
-                            <div className="text-6xl mb-4 group-hover:animate-bounce">{topic.icon}</div>
-                            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{t(`debate.topics.${topic.id}.title` as any)}</h3>
-                            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider
-                                ${topic.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                                    topic.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}
-                            `}>
+                            {isLocked && (
+                                <div className="absolute top-0 end-0 bg-gray-900 text-white text-xs font-black px-3 py-1 rounded-es-xl z-20 flex items-center gap-1">
+                                    <Lock size={12} /> {t('arcade.locked', { defaultValue: 'Locked' })}
+                                </div>
+                            )}
+                            {topic.image ? (
+                                <div className="w-full h-40 mb-4 rounded-2xl overflow-hidden bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm relative group-hover:shadow-md transition-shadow">
+                                    <img
+                                        src={topic.image}
+                                        alt={topic.title}
+                                        className={`w-full h-full object-cover transition-transform duration-500 ${!isLocked ? 'group-hover:scale-105' : ''}`}
+                                    />
+                                </div>
+                            ) : (
+                                <div className={`text-6xl mb-4 ${!isLocked ? 'group-hover:animate-bounce' : ''}`}>{topic.icon}</div>
+                            )}
+                            <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">{t(`debate.topics.${topic.id}.title` as any)}</h3>
+                            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+                                topic.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' :
+                                topic.difficulty === 'Medium' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                            }`}>
                                 {t(`engine.level_${topic.difficulty.toLowerCase()}` as any)}
                             </span>
                         </motion.div>
-                    ))}
+                    )})}
                 </div>
             </div>
         );
@@ -101,17 +140,22 @@ const DebateArena: React.FC = () => {
 
     // --- CHAT ARENA ---
     return (
-        <div className="h-[calc(100vh-100px)] flex flex-col md:flex-row gap-6 p-4 md:p-8 max-w-7xl mx-auto">
+        <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-6 p-2 md:p-6 max-w-7xl mx-auto">
             {/* Left: Chat */}
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden border-2 border-gray-100 dark:border-gray-700">
+            <div className="card flex-1 flex flex-col overflow-hidden p-0">
                 {/* Header */}
-                <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-4 bg-gray-50 dark:bg-gray-900/50">
-                    <button onClick={() => setSelectedTopic(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                <div className="p-4 border-b border-[var(--color-border)] flex items-center gap-4 bg-[var(--color-surface)]">
+                    <button onClick={() => setSelectedTopic(null)} className="btn--ghost p-2 cursor-pointer">
                         <ArrowLeft size={20} />
                     </button>
+                    {selectedTopic.image ? (
+                        <img src={selectedTopic.image} alt={selectedTopic.title} className="w-10 h-10 rounded-xl object-cover shadow-sm border border-[var(--color-border)]" />
+                    ) : (
+                        <span className="text-2xl">{selectedTopic.icon}</span>
+                    )}
                     <div>
-                        <h3 className="font-bold text-lg dark:text-white">{t(`debate.topics.${selectedTopic.id}.title` as any)}</h3>
-                        <div className="text-xs text-gray-500">{t('debate.argue_case')}</div>
+                        <h3 className="font-bold text-lg text-[var(--color-text)]">{t(`debate.topics.${selectedTopic.id}.title` as any)}</h3>
+                        <div className="text-xs text-[var(--color-text-muted)]">{t('debate.argue_case')}</div>
                     </div>
                 </div>
 
@@ -124,16 +168,16 @@ const DebateArena: React.FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
                         >
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm flex-shrink-0
-                                ${msg.sender === 'ollie' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}
-                            `}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm flex-shrink-0 ${
+                                msg.sender === 'ollie' ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-primary)]' : 'bg-[var(--color-primary)] text-white'
+                            }`}>
                                 {msg.sender === 'ollie' ? '🤖' : '👤'}
                             </div>
-                            <div className={`p-4 rounded-2xl max-w-[80%] text-sm font-medium leading-relaxed
-                                ${msg.sender === 'ollie'
-                                    ? 'bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-ss-none'
-                                    : 'bg-blue-500 text-white rounded-se-none shadow-md'}
-                            `}>
+                            <div className={`p-4 rounded-2xl max-w-[80%] text-sm font-medium leading-relaxed ${
+                                msg.sender === 'ollie'
+                                    ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] rounded-ss-none'
+                                    : 'bg-[var(--color-primary)] text-white rounded-se-none shadow-sm'
+                            }`}>
                                 {msg.text.includes('**') ?
                                     <strong className="block text-lg">{msg.text.replace(/\*\*/g, '')}</strong>
                                     : msg.text
@@ -144,7 +188,7 @@ const DebateArena: React.FC = () => {
                 </div>
 
                 {/* Input */}
-                <div className="p-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700">
+                <div className="p-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
                     <div className="flex gap-2">
                         <input
                             type="text"
@@ -153,12 +197,12 @@ const DebateArena: React.FC = () => {
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                             placeholder={t('debate.type_placeholder')}
                             disabled={isEvaluating}
-                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 outline-none transition-shadow"
+                            className="flex-1 px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] outline-none focus:border-[var(--color-primary)] transition-colors"
                         />
                         <button
                             onClick={handleSend}
                             disabled={!inputText.trim() || isEvaluating}
-                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white p-3 rounded-xl transition-colors shadow-lg"
+                            className="btn p-3 cursor-pointer disabled:opacity-50"
                         >
                             <Send size={20} />
                         </button>
@@ -173,54 +217,70 @@ const DebateArena: React.FC = () => {
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 50 }}
-                        className="w-full md:w-80 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-2xl flex flex-col justify-center"
+                        className="card w-full md:w-80 p-6 flex flex-col justify-center"
                     >
-                        <h3 className="text-2xl font-black mb-6 text-center text-white/90">{t('debate.results')}</h3>
+                        <h3 className="text-2xl font-black mb-6 text-center text-[var(--color-text)]">{t('debate.results')}</h3>
 
                         <div className="space-y-6">
                             <div>
-                                <div className="flex justify-between text-sm font-bold mb-1 opacity-90">
+                                <div className="flex justify-between text-sm font-bold mb-1 text-[var(--color-text)]">
                                     <span>⚖️ {t('debate.ethics')}</span>
                                     <span>{lastResult.ethicsScore}/100</span>
                                 </div>
-                                <div className="h-4 bg-black/20 rounded-full overflow-hidden">
+                                <div className="h-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${lastResult.ethicsScore}%` }}
                                         transition={{ duration: 1, ease: 'easeOut' }}
-                                        className={`h-full ${lastResult.ethicsScore > 80 ? 'bg-green-400' : 'bg-yellow-400'}`}
+                                        className={`h-full ${lastResult.ethicsScore > 80 ? 'bg-[var(--color-success)]' : 'bg-amber-400'}`}
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <div className="flex justify-between text-sm font-bold mb-1 opacity-90">
+                                <div className="flex justify-between text-sm font-bold mb-1 text-[var(--color-text)]">
                                     <span>🧠 {t('debate.logic')}</span>
                                     <span>{lastResult.logicScore}/100</span>
                                 </div>
-                                <div className="h-4 bg-black/20 rounded-full overflow-hidden">
+                                <div className="h-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${lastResult.logicScore}%` }}
                                         transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
-                                        className={`h-full ${lastResult.logicScore > 80 ? 'bg-blue-400' : 'bg-orange-400'}`}
+                                        className={`h-full ${lastResult.logicScore > 80 ? 'bg-[var(--color-primary)]' : 'bg-amber-400'}`}
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-                            <div className="flex items-center gap-2 mb-2 text-yellow-300 font-bold">
+                        <div className="mt-8 p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl">
+                            <div className="flex items-center gap-2 mb-2 text-amber-500 font-bold">
                                 <Star size={18} fill="currentColor" />
                                 <span>{t('debate.verdict')}</span>
                             </div>
-                            <p className="text-sm leading-relaxed opacity-90 italic">
+                            <p className="text-sm leading-relaxed text-[var(--color-text-muted)] italic">
                                 "{lastResult.feedback}"
                             </p>
                         </div>
 
+                        {lastResult.fallaciesDetected && lastResult.fallaciesDetected.length > 0 && (
+                            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl">
+                                <div className="flex items-center gap-2 mb-2 text-red-600 dark:text-red-400 font-bold">
+                                    <AlertTriangle size={18} />
+                                    <span>Fallacies Detected</span>
+                                </div>
+                                <ul className="space-y-2">
+                                    {lastResult.fallaciesDetected.map((f, i) => (
+                                        <li key={i} className="text-xs text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/40 p-2 rounded-lg">
+                                            {f}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
                         {(lastResult.ethicsScore + lastResult.logicScore) / 2 >= 70 && (
-                            <div className="mt-4 p-4 bg-yellow-400 text-yellow-900 rounded-2xl flex items-center gap-3 shadow-lg animate-pulse">
+                            <div className="mt-4 p-4 bg-amber-400 text-amber-950 rounded-2xl flex items-center gap-3 shadow-md animate-pulse">
                                 <Trophy size={24} />
                                 <div>
                                     <div className="font-black uppercase text-xs">{t('debate.victory')}</div>

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
-import { TrendingUp, TrendingDown, Coins, X, BarChart2, RefreshCw, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { X, BarChart2, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useAppStore } from '../../../store';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 // ─── Stock Definitions ────────────────────────────────────────────────────────
 export interface Stock {
@@ -117,7 +118,7 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
     }, [priceHistory, minuteSeed]);
 
     const holdings: StockHolding[] = (user?.stockPortfolio ?? []);
-    const bizCoins = user?.bizCoins ?? 0;
+    const ppTokens = user?.ppTokens ?? 0;
 
     const portfolioValue = useMemo(() => holdings.reduce((sum, h) => {
         return sum + (currentPrices[h.stockId] ?? 0) * h.shares;
@@ -135,22 +136,22 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
         const cost = price * tradeQty;
 
         if (tradeMode === 'buy') {
-            if (cost > bizCoins) { setFeedMsg('❌ Not enough BizCoins!'); setTimeout(() => setFeedMsg(null), 2000); return; }
+            if (cost > ppTokens) { setFeedMsg('❌ Not enough ppTokens!'); setTimeout(() => setFeedMsg(null), 2000); return; }
             buyStock(selectedStock.id, tradeQty, price);
-            setFeedMsg(`✅ Bought ${tradeQty} ${selectedStock.ticker} for ${cost.toFixed(0)} 🪙`);
+            setFeedMsg(`✅ Bought ${tradeQty} ${selectedStock.ticker} for ${cost.toFixed(0)} 💰`);
             confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
         } else {
             const holding = holdings.find(h => h.stockId === selectedStock.id);
             if (!holding || holding.shares < tradeQty) { setFeedMsg('❌ Not enough shares!'); setTimeout(() => setFeedMsg(null), 2000); return; }
             sellStock(selectedStock.id, tradeQty, price);
             const profit = (price - holding.avgBuyPrice) * tradeQty;
-            setFeedMsg(`✅ Sold ${tradeQty} ${selectedStock.ticker} | P/L: ${profit >= 0 ? '+' : ''}${profit.toFixed(0)} 🪙`);
+            setFeedMsg(`✅ Sold ${tradeQty} ${selectedStock.ticker} | P/L: ${profit >= 0 ? '+' : ''}${profit.toFixed(0)} 💰`);
             if (profit > 0) confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
         }
         setTimeout(() => setFeedMsg(null), 3000);
         setSelectedStock(null);
         setTradeQty(1);
-    }, [selectedStock, tradeQty, tradeMode, currentPrices, bizCoins, holdings, buyStock, sellStock]);
+    }, [selectedStock, tradeQty, tradeMode, currentPrices, ppTokens, holdings, buyStock, sellStock]);
 
     return (
         <div className="flex flex-col gap-4 max-w-sm w-full mx-auto">
@@ -168,13 +169,13 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
 
             {/* Portfolio Summary */}
             <div className="grid grid-cols-3 gap-2">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-2.5 text-center">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-2.5 text-center flex flex-col justify-center items-center">
                     <p className="text-xs text-gray-400">Wallet</p>
-                    <p className="font-black text-sm text-yellow-500">🪙 {bizCoins.toLocaleString()}</p>
+                    <p className="font-black text-sm text-yellow-500 flex items-center gap-1 justify-center"><CoinIcon size={14} /> {ppTokens.toLocaleString()}</p>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-2.5 text-center">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-2.5 text-center flex flex-col justify-center items-center">
                     <p className="text-xs text-gray-400">Portfolio</p>
-                    <p className="font-black text-sm text-indigo-500">🪙 {portfolioValue.toFixed(0)}</p>
+                    <p className="font-black text-sm text-indigo-500 flex items-center gap-1 justify-center"><CoinIcon size={14} /> {portfolioValue.toFixed(0)}</p>
                 </div>
                 <div className={`rounded-xl p-2.5 text-center ${portfolioGain >= 0 ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                     <p className="text-xs text-gray-400">P/L</p>
@@ -232,7 +233,7 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
                                 </div>
                                 <Sparkline history={hist} color={isUp ? '#10B981' : '#EF4444'} />
                                 <div className="text-end shrink-0">
-                                    <p className="font-black text-sm text-gray-800 dark:text-white">🪙{price.toFixed(0)}</p>
+                                    <p className="font-black text-sm text-gray-800 dark:text-white flex items-center gap-0.5 justify-end"><CoinIcon size={12} />{price.toFixed(0)}</p>
                                     <p className={`text-xs font-bold flex items-center gap-0.5 justify-end ${isUp ? 'text-green-500' : 'text-red-500'}`}>
                                         {isUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
                                         {isUp ? '+' : ''}{changePct}%
@@ -262,10 +263,10 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-1">
                                         <span className="font-black text-sm text-gray-800 dark:text-white">{stock.ticker}</span>
-                                        <span className="text-xs text-gray-400">{h.shares}sh @ 🪙{h.avgBuyPrice.toFixed(0)}</span>
+                                        <span className="text-xs text-gray-400 flex items-center gap-0.5">{h.shares}sh @ <CoinIcon size={10} />{h.avgBuyPrice.toFixed(0)}</span>
                                     </div>
                                     <p className={`text-xs font-bold ${isUp ? 'text-green-600' : 'text-red-500'}`}>
-                                        {isUp ? '+' : ''}{gain.toFixed(0)} 🪙 ({isUp ? '+' : ''}{gainPct}%)
+                                        <span className="inline-flex items-center gap-0.5">{isUp ? '+' : ''}{gain.toFixed(0)} <CoinIcon size={11} /> ({isUp ? '+' : ''}{gainPct}%)</span>
                                     </p>
                                 </div>
                                 <button onClick={() => { setSelectedStock(stock); setTradeMode('sell'); setTradeQty(1); setTab('market'); }}
@@ -311,7 +312,7 @@ export const StockMarket: React.FC<StockMarketProps> = ({ onClose }) => {
                             <button onClick={() => setTradeQty(q => Math.max(1, q - 1))} className="w-9 h-9 rounded-xl bg-white dark:bg-gray-700 font-black text-gray-600 dark:text-gray-300 shadow hover:bg-gray-100 transition-colors">−</button>
                             <div className="flex-1 text-center">
                                 <p className="font-black text-xl text-gray-800 dark:text-white">{tradeQty} share{tradeQty !== 1 ? 's' : ''}</p>
-                                <p className="text-xs text-gray-500">Cost: 🪙{(currentPrices[selectedStock.id] * tradeQty).toFixed(0)}</p>
+                                <p className="text-xs text-gray-500 flex items-center gap-0.5 justify-center">Cost: <CoinIcon size={10} />{(currentPrices[selectedStock.id] * tradeQty).toFixed(0)}</p>
                             </div>
                             <button onClick={() => setTradeQty(q => q + 1)} className="w-9 h-9 rounded-xl bg-white dark:bg-gray-700 font-black text-gray-600 dark:text-gray-300 shadow hover:bg-gray-100 transition-colors">+</button>
                         </div>

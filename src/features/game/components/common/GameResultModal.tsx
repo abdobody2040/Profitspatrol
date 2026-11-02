@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RotateCcw, Home, Star, Share2 } from 'lucide-react';
+import { Trophy, RotateCcw, Home, Star } from "lucide-react";
 import confetti from 'canvas-confetti';
 
 interface GameResultModalProps {

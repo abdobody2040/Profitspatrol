@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 interface AlertPayload {
@@ -10,7 +11,6 @@ interface AlertPayload {
 }
 
 serve(async (req) => {
-    // Handle CORS
     if (req.method === 'OPTIONS') {
         return new Response(null, {
             headers: {
@@ -33,7 +33,6 @@ serve(async (req) => {
             });
         }
 
-        // Get Slack webhook URL from environment
         const slackWebhookUrl = Deno.env.get('SLACK_WEBHOOK_URL');
 
         if (!slackWebhookUrl) {
@@ -54,7 +53,6 @@ serve(async (req) => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
 
-        // Create Slack message
         const slackMessage = {
             text: `${emoji} ${severity.toUpperCase()} Security Alert`,
             attachments: [{

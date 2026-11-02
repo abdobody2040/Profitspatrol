@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Copy, ArrowRight, Mic, ThumbsUp, XCircle, RotateCcw, Handshake, Check, Zap, Crown } from 'lucide-react';
+import { Users, Copy, ArrowRight, RotateCcw, Handshake } from "lucide-react";
 import { useAppStore } from '../../../store';
 import { TheTankEngine } from '../../tank/logic/TheTankEngine';
 import confetti from 'canvas-confetti';
 import { useTranslation } from 'react-i18next';
+import { CoinIcon } from '../../../components/ui/CoinIcon';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -796,7 +797,9 @@ const CoopPitchMode: React.FC = () => {
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontSize: 40 }}>{myEmoji}</div>
                                 <div style={{ fontSize: 14, fontWeight: 800 }}>{myName}</div>
-                                <div style={{ fontSize: 11, color: '#86efac', marginTop: 4 }}>+250 🪙</div>
+                                <div style={{ fontSize: 11, color: '#86efac', marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
+                                    +250 <CoinIcon size={12} />
+                                </div>
                             </div>
                             <div style={{
                                 fontSize: 28, width: 44, height: 44, borderRadius: '50%',
@@ -806,7 +809,9 @@ const CoopPitchMode: React.FC = () => {
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontSize: 40 }}>{partner?.emoji ?? '👥'}</div>
                                 <div style={{ fontSize: 14, fontWeight: 800 }}>{partner?.name ?? 'Partner'}</div>
-                                <div style={{ fontSize: 11, color: '#86efac', marginTop: 4 }}>+250 🪙</div>
+                                <div style={{ fontSize: 11, color: '#86efac', marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
+                                    +250 <CoinIcon size={12} />
+                                </div>
                             </div>
                         </div>
 

@@ -1,5 +1,6 @@
 import { Difficulty } from '../../hq/components/DifficultySelectModal';
 import { SCENARIOS } from '../data/scenarios';
+import { DISTRICT_DEFINITIONS } from '../../hq/data/modules';
 import { Logger } from '../../../services/logger';
 
 /**
@@ -10,15 +11,21 @@ export const launchBossScenario = (
     difficulty: Difficulty = 'MEDIUM',
     startScenarioAction: (scenario: any) => void
 ) => {
-    // 1. Determine which Scenario to load based on Section Index
-    // nodeId format: SEC_0_BOSS, SEC_1_BOSS etc.
+    // 1. Determine which Scenario to load
+    // nodeId format: SEC_0_BOSS, SEC_1_BOSS etc. or district name like dist_startup_street_BOSS
     const sectionIndexParts = nodeId.split('_');
     const sectionIndex = parseInt(sectionIndexParts[1]) || 0; // Default to 0 if NaN
 
-    const baseScenario = SCENARIOS[sectionIndex % SCENARIOS.length];
+    // Look up by district first
+    const district = DISTRICT_DEFINITIONS.find(d => nodeId.startsWith(d.id));
+    const targetScenarioId = district?.bossScenarioId;
+
+    const baseScenario = targetScenarioId 
+        ? SCENARIOS.find(s => s.id === targetScenarioId) || SCENARIOS[sectionIndex % SCENARIOS.length]
+        : SCENARIOS[sectionIndex % SCENARIOS.length];
 
     if (!baseScenario) {
-        Logger.error('bossLauncher: No scenario found for section index', { nodeId, sectionIndex });
+        Logger.error('bossLauncher: No scenario found for node', { nodeId, sectionIndex });
         return;
     }
 

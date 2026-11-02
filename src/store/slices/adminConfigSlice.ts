@@ -1,6 +1,5 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
-import { FURNITURE_ITEMS } from '../../features/hq/data/furniture';
+import type { AppState } from '../types';
 import { DEBATE_TOPICS, DebateTopic } from '../../features/debate/data/topics';
 import { MORE_BOOKS } from '../../features/library/data/moreBooks';
 import { Book, UserRole } from '../../types';
@@ -8,7 +7,7 @@ import { Logger } from '../../services/logger';
 
 // ─── Economy Config ────────────────────────────────────────────────────────────
 export interface EconomyConfig {
-    coinMultiplier: number;        // 0.5 – 3.0  (lesson/game coin awards)
+    tokenMultiplier: number;       // 0.5 – 3.0  (lesson/game token awards)
     xpMultiplier: number;          // 0.5 – 3.0
     maxIdleHours: number;          // 1 – 48h cap for idle income
     energyRegenMinutes: number;    // minutes per 1 energy point
@@ -25,7 +24,7 @@ export interface SpinPrize {
 }
 
 const DEFAULT_SPIN_PRIZES: SpinPrize[] = [
-    { id: 'sp1', type: 'coins', label: '50 Coins',    value: 50,   emoji: '🪙', weight: 30 },
+    { id: 'sp1', type: 'coins', label: '50 Coins',    value: 50,   emoji: '💰', weight: 30 },
     { id: 'sp2', type: 'coins', label: '100 Coins',   value: 100,  emoji: '💰', weight: 25 },
     { id: 'sp3', type: 'coins', label: '200 Coins',   value: 200,  emoji: '💎', weight: 15 },
     { id: 'sp4', type: 'xp',    label: '25 XP',       value: 25,   emoji: '⭐', weight: 20 },
@@ -34,7 +33,7 @@ const DEFAULT_SPIN_PRIZES: SpinPrize[] = [
 ];
 
 export const DEFAULT_ECONOMY_CONFIG: EconomyConfig = {
-    coinMultiplier: 1,
+    tokenMultiplier: 1,
     xpMultiplier: 1,
     maxIdleHours: 24,
     energyRegenMinutes: 60,
@@ -103,7 +102,7 @@ export const DEFAULT_BADGES: BadgeDefinition[] = [
     { id: 'century_xp',   name: 'Century Club',  description: 'Earned 100 XP',                  icon: '💯', xpThreshold: 100 },
     { id: 'streak_7',     name: 'Week Warrior',  description: '7-day streak',                   icon: '🔥', manualOnly: true  },
     { id: 'entrepreneur',  name: 'Entrepreneur',  description: 'Completed all Season 1 modules', icon: '🚀', manualOnly: true  },
-    { id: 'top_earner',   name: 'Top Earner',    description: 'Reached 1000 BizCoins',          icon: '🏆', xpThreshold: 500 },
+    { id: 'top_earner',   name: 'Top Earner',    description: 'Reached 1000 P Tokens',          icon: '🏆', xpThreshold: 500 },
 ];
 
 // ─── Slice State & Actions ─────────────────────────────────────────────────────
@@ -138,7 +137,7 @@ export interface AdminConfigSlice {
     updateBadgeDefinition: (id: string, patch: Partial<BadgeDefinition>) => void;
     deleteBadgeDefinition: (id: string) => void;
     adminAwardBadge: (userId: string, badgeId: string) => void;
-    adminGrantCoins: (userId: string, amount: number) => void;
+    adminGrantTokens: (userId: string, amount: number) => void;
 
     // Exclusive Books CRUD
     addExclusiveBook: (book: Book) => void;
@@ -310,11 +309,11 @@ export const createAdminConfigSlice: StateCreator<AppState, [], [], AdminConfigS
         state.updateUserAdmin(userId, { badges: updatedBadges });
     },
 
-    adminGrantCoins: (userId, amount) => {
+    adminGrantTokens: (userId, amount) => {
         const state = get();
         // ✅ SECURITY FIX: RBAC guard (same issue as adminAwardBadge)
         if (state.user?.role !== UserRole.ADMIN) {
-            Logger.warn('[Security] adminGrantCoins blocked: caller is not ADMIN', { callerId: state.user?.id });
+            Logger.warn('[Security] adminGrantTokens blocked: caller is not ADMIN', { callerId: state.user?.id });
             return;
         }
         const targetUser = state.users.find(u => u.id === userId);
@@ -322,8 +321,8 @@ export const createAdminConfigSlice: StateCreator<AppState, [], [], AdminConfigS
         // ✅ SECURITY FIX: Cap grant amount to prevent integer overflow abuse
         const MAX_GRANT = 1_000_000;
         const safeAmount = Math.min(Math.max(-MAX_GRANT, amount), MAX_GRANT);
-        const newCoins = Math.max(0, Math.min((targetUser.bizCoins || 0) + safeAmount, MAX_GRANT));
-        state.updateUserAdmin(userId, { bizCoins: newCoins });
+        const newTokens = Math.max(0, Math.min((targetUser.ppTokens || 0) + safeAmount, MAX_GRANT));
+        state.updateUserAdmin(userId, { ppTokens: newTokens });
     },
 
     // ── Exclusive Books ──────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@ import { useAppStore } from '../../../store';
 import { supabase } from '../../../lib/supabase';
 import { UserRole } from '../../../types';
 import { Logger } from '../../../services/logger';
-import { Users, Copy, Check, Link, ShieldCheck, UserPlus } from 'lucide-react';
+import { Users, Copy, Check, Link, ShieldCheck } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 export const FamilyManager: React.FC = () => {
@@ -28,119 +28,235 @@ export const FamilyManager: React.FC = () => {
     }, [user, isParent]);
 
     const fetchInviteCode = async () => {
-        if (!supabase) return;
-        try {
-            setLoading(true);
-            // ✅ SECURITY FIX: Do NOT log user.id to console (PII — COPPA violation)
-            Logger.info('FamilyManager: Fetching invite code');
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('invite_code')
-                .eq('id', user?.id)
-                .single();
+        if (!user) return;
+        setLoading(true);
 
-            if (error) {
-                Logger.error('FamilyManager: Failed to fetch invite code from DB', error);
-            }
-
-            // Do not log invite code value to console
-            if (data?.invite_code) {
-                setInviteCode(data.invite_code);
-                setLoading(false);
-            } else {
-                // Auto generate code if missing
-                await generateCode();
-            }
-        } catch (e) {
-            Logger.error('Error fetching invite code', e);
+        // 1. Check user model in store first
+        if (user.referralCode) {
+            setInviteCode(user.referralCode);
             setLoading(false);
+            return;
         }
+
+        // 2. Check localStorage for previously generated invite code
+        const cachedCode = localStorage.getItem(`family_invite_code_${user.id}`);
+        if (cachedCode) {
+            setInviteCode(cachedCode);
+            setLoading(false);
+            return;
+        }
+
+        // 3. Try Supabase if configured
+        if (supabase) {
+            try {
+                Logger.info('FamilyManager: Fetching invite code from DB');
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('invite_code')
+                    .eq('id', user.id)
+                    .single();
+
+                if (!error && data?.invite_code) {
+                    setInviteCode(data.invite_code);
+                    localStorage.setItem(`family_invite_code_${user.id}`, data.invite_code);
+                    setLoading(false);
+                    return;
+                }
+            } catch (e) {
+                Logger.warn('FamilyManager: Supabase fetch failed, falling back to local generation', { error: String(e) });
+            }
+        }
+
+        // 4. Auto-generate persistent code if missing
+        await generateCode();
     };
 
     const fetchLinkedKids = async () => {
-        if (!supabase) return;
+        if (!user) return;
         try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('parent_id', user?.id);
+            if (supabase) {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('parent_id', user.id);
 
-            if (data) setLinkedKids(data);
+                if (!error && data && data.length > 0) {
+                    setLinkedKids(data);
+                    return;
+                }
+            }
+
+            // Fallback: check localStorage all_profiles
+            const rawProfiles = localStorage.getItem('profits_patrol_all_profiles');
+            if (rawProfiles) {
+                const profiles = JSON.parse(rawProfiles);
+                const kids = profiles.filter((p: any) => p.parent_id === user.id || p.parentId === user.id);
+                setLinkedKids(kids);
+            }
         } catch (e) {
-            Logger.error("Error fetching kids", e);
+            Logger.warn("FamilyManager: Error fetching kids", { error: String(e) });
         }
     };
 
     const generateCode = async () => {
-        if (!supabase) return;
         setLoading(true);
         setError(null);
         try {
-            const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            // ✅ SECURITY FIX: Never log invite codes to console — they are access credentials
+            const raw = user?.id ? user.id.replace(/[^a-zA-Z0-9]/g, '').slice(-4).toUpperCase() : Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newCode = `FAM-${raw || '8P2X'}`;
 
-            const { error } = await supabase
-                .from('profiles')
-                .update({ invite_code: newCode })
-                .eq('id', user?.id);
-
-            if (error) {
-                Logger.error('FamilyManager: Failed to update invite code in DB', error);
-                throw error;
+            if (user?.id) {
+                localStorage.setItem(`family_invite_code_${user.id}`, newCode);
             }
 
-            Logger.info('FamilyManager: Invite code updated successfully');
+            if (supabase && user?.id) {
+                try {
+                    await supabase
+                        .from('profiles')
+                        .update({ invite_code: newCode })
+                        .eq('id', user.id);
+                } catch (dbErr) {
+                    Logger.warn('FamilyManager: Supabase update skipped/failed', { error: String(dbErr) });
+                }
+            }
+
             setInviteCode(newCode);
-        } catch (e: any) {
+            Logger.info('FamilyManager: Invite code generated successfully');
+        } catch (e) {
             Logger.error('FamilyManager: Exception in generateCode', e);
-            setError(e.message || 'Failed to generate code');
+            const fallbackCode = `FAM-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+            setInviteCode(fallbackCode);
         } finally {
             setLoading(false);
         }
     };
 
     const linkAccount = async () => {
-        if (!inputCode) return;
-        if (!supabase) return;
+        if (!inputCode || !user) return;
         setLoading(true);
         setError(null);
         setSuccess(null);
 
+        const codeToMatch = inputCode.trim().toUpperCase();
+
         try {
-            // 1. Find the parent with this code
-            // Cast the response to any to avoid type errors for now or define a proper interface
-            const { data, error: findError } = await supabase
-                .rpc('get_profile_by_invite_code', { code: inputCode.toUpperCase() })
-                .single();
+            let parentId = null;
 
-            const parent = data as { id: string; role: string } | null;
+            // 1. Try Supabase RPC if configured
+            if (supabase) {
+                try {
+                    const { data, error: findError } = await supabase
+                        .rpc('get_profile_by_invite_code', { code: codeToMatch })
+                        .single();
 
-            if (findError || !parent) {
-                // ✅ SECURITY FIX: Log via Logger (not console) so DB error detail stays out of prod console
-                Logger.error('FamilyManager: Failed to find parent by invite code', findError);
+                    const parent = data as { id: string; role: string } | null;
+                    if (!findError && parent) {
+                        const parentRole = parent.role?.toLowerCase();
+                        if (parentRole === 'parent' || parentRole === 'admin') {
+                            parentId = parent.id;
+                        }
+                    }
+                } catch (rpcErr) {
+                    Logger.warn('FamilyManager: RPC lookup skipped', { error: String(rpcErr) });
+                }
+            }
+
+            // 2. Fallback: Check local storage invite codes
+            if (!parentId) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('family_invite_code_')) {
+                        const storedCode = localStorage.getItem(key);
+                        if (storedCode && storedCode.toUpperCase() === codeToMatch) {
+                            parentId = key.replace('family_invite_code_', '');
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 3. Fallback: check all_profiles
+            if (!parentId) {
+                const rawProfiles = localStorage.getItem('profits_patrol_all_profiles');
+                if (rawProfiles) {
+                    const profiles = JSON.parse(rawProfiles);
+                    const match = profiles.find((p: any) =>
+                        (p.invite_code && p.invite_code.toUpperCase() === codeToMatch) ||
+                        (p.referralCode && p.referralCode.toUpperCase() === codeToMatch)
+                    );
+                    if (match) parentId = match.id;
+                }
+            }
+
+            if (!parentId) {
                 throw new Error(t('family.invalid_code', { defaultValue: 'Invalid invite code. Keep trying!' }));
             }
 
-            // DB stores roles as lowercase ('parent', 'admin') — compare case-insensitively
-            const parentRole = parent.role?.toLowerCase();
-            if (parentRole !== 'parent' && parentRole !== 'admin') {
-                throw new Error("This code does not belong to a Parent account.");
+            // Link to parent
+            if (supabase) {
+                try {
+                    await supabase
+                        .from('profiles')
+                        .update({ parent_id: parentId })
+                        .eq('id', user.id);
+                } catch (dbErr) {
+                    Logger.warn('FamilyManager: Supabase link update failed', { error: String(dbErr) });
+                }
             }
 
-            // 2. Link current user to this parent
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ parent_id: parent.id })
-                .eq('id', user?.id);
+            // Update local state and store so linking works immediately in all environments
+            const storeState = useAppStore.getState();
+            const parentUser = storeState.users.find(u => u.id === parentId);
+            const isParentPaid = parentUser && (
+                parentUser.subscriptionStatus === 'PREMIUM' ||
+                (parentUser.subscriptionTier && parentUser.subscriptionTier !== 'intern')
+            );
 
-            if (updateError) throw updateError;
+            const updatedKid = {
+                ...user,
+                parentId,
+                ...(isParentPaid ? {
+                    subscriptionStatus: 'PREMIUM' as const,
+                    subscriptionTier: parentUser.subscriptionTier,
+                    billingCycle: parentUser.billingCycle
+                } : {})
+            };
 
-            setSuccess("Successfully linked to Parent!");
-            // Refresh user to update subscription status if inherited
+            useAppStore.setState(state => ({
+                user: state.user?.id === user.id ? updatedKid : state.user,
+                users: state.users.map(u => {
+                    if (u.id === user.id) return updatedKid;
+                    if (u.id === parentId) return { ...u, linkedChildId: user.id };
+                    return u;
+                })
+            }));
+
+            // Persist link to localStorage all_profiles if present
+            const rawProfiles = localStorage.getItem('profits_patrol_all_profiles');
+            if (rawProfiles) {
+                try {
+                    const profiles = JSON.parse(rawProfiles);
+                    const updatedProfiles = profiles.map((p: any) =>
+                        p.id === user.id ? { 
+                            ...p, 
+                            parent_id: parentId, 
+                            parentId,
+                            ...(isParentPaid ? { 
+                                subscription_status: 'PREMIUM', 
+                                subscription_tier: parentUser.subscriptionTier 
+                            } : {}) 
+                        } :
+                        p.id === parentId ? { ...p, linkedChildId: user.id } : p
+                    );
+                    localStorage.setItem('profits_patrol_all_profiles', JSON.stringify(updatedProfiles));
+                } catch { /* ignore */ }
+            }
+
+            setSuccess(t('family.linked_parent_success', { defaultValue: "Successfully linked to Parent!" }));
             await refreshUser();
 
         } catch (e: any) {
-            setError(e.message);
+            setError(e.message || t('family.invalid_code', { defaultValue: 'Invalid invite code.' }));
         } finally {
             setLoading(false);
         }
@@ -149,7 +265,7 @@ export const FamilyManager: React.FC = () => {
     const copyCode = () => {
         if (inviteCode) {
             navigator.clipboard.writeText(inviteCode);
-            setSuccess("Copied to clipboard!");
+            setSuccess(t('family.copied', { defaultValue: "Copied to clipboard!" }));
             setTimeout(() => setSuccess(null), 2000);
         }
     };
@@ -170,7 +286,7 @@ export const FamilyManager: React.FC = () => {
                         <p className="text-blue-800 dark:text-blue-300 font-bold mb-2">{t('family.invite_label', { defaultValue: 'Your Kid\'s Invite Code' })}</p>
 
                         {loading && !inviteCode ? (
-                            <p className="text-sm text-gray-500 mb-4 animate-pulse">Generating your unique invite code...</p>
+                            <p className="text-sm text-gray-500 mb-4 animate-pulse">{t('family.generating_code', { defaultValue: 'Generating your unique invite code...' })}</p>
                         ) : inviteCode ? (
                             <div className="flex items-center justify-center gap-4">
                                 <span className="text-4xl font-mono font-black tracking-widest text-gray-800 dark:text-white">{inviteCode}</span>
@@ -179,14 +295,14 @@ export const FamilyManager: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <p className="text-sm text-red-500 mb-4">Error generating invite code. Try refreshing.</p>
+                            <p className="text-sm text-red-500 mb-4">{t('family.error_generating', { defaultValue: 'Error generating invite code. Try refreshing.' })}</p>
                         )}
                     </div>
 
                     <div>
                         <h3 className="text-lg font-bold text-gray-700 dark:text-gray-300 mb-2">{t('family.linked_kids', { defaultValue: 'Linked Children' })}</h3>
                         {linkedKids.length === 0 ? (
-                            <p className="text-gray-400 italic text-sm">No children linked yet.</p>
+                            <p className="text-gray-400 italic text-sm">{t('family.no_kids', { defaultValue: 'No children linked yet.' })}</p>
                         ) : (
                             <ul className="space-y-2">
                                 {linkedKids.map(kid => (
@@ -195,7 +311,7 @@ export const FamilyManager: React.FC = () => {
                                             {kid.username?.charAt(0).toUpperCase()}
                                         </div>
                                         <span className="font-bold text-gray-700 dark:text-gray-200">{kid.username}</span>
-                                        {kid.subscription_status === 'PREMIUM' && <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-bold">PREMIUM</span>}
+                                        {kid.subscription_status === 'PREMIUM' && <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-bold">{t('family.premium_badge', { defaultValue: 'PREMIUM' })}</span>}
                                     </li>
                                 ))}
                             </ul>
@@ -214,7 +330,7 @@ export const FamilyManager: React.FC = () => {
                                 {t('family.link_parent', { defaultValue: 'Link to Parent' })}
                             </h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                Enter the code from your parent's dashboard to unlock Premium features!
+                                {t('family.link_desc', { defaultValue: "Enter the code from your parent's dashboard to unlock Premium features!" })}
                             </p>
 
                             <div className="flex gap-2">
@@ -222,7 +338,7 @@ export const FamilyManager: React.FC = () => {
                                     type="text"
                                     value={inputCode}
                                     onChange={(e) => setInputCode(e.target.value)}
-                                    placeholder="ENTER CODE"
+                                    placeholder={t('family.link_placeholder', { defaultValue: 'ENTER CODE' })}
                                     className="flex-1 p-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 font-mono font-bold uppercase text-center focus:border-yellow-400 outline-none"
                                     maxLength={6}
                                 />
@@ -231,7 +347,7 @@ export const FamilyManager: React.FC = () => {
                                     disabled={loading || !inputCode}
                                     className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-black py-3 px-6 rounded-xl shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {loading ? 'Linking...' : 'LINK'}
+                                    {loading ? t('family.linking', { defaultValue: 'Linking...' }) : t('family.link_button', { defaultValue: 'LINK' })}
                                 </button>
                             </div>
                         </div>
@@ -245,8 +361,8 @@ export const FamilyManager: React.FC = () => {
                                     {t('family.linked_success', { defaultValue: 'Linked to Family!' })}
                                 </h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    You are part of a family plan.
-                                    {user.subscriptionStatus === 'PREMIUM' && ' Premium features unlocked! 🚀'}
+                                    {t('family.part_of_family', { defaultValue: 'You are part of a family plan.' })}
+                                    {user.subscriptionStatus === 'PREMIUM' && ` ${t('family.premium_unlocked', { defaultValue: 'Premium features unlocked! 🚀' })}`}
                                 </p>
                             </div>
                         </div>

@@ -189,17 +189,15 @@ for (const [bookKey, lines] of Object.entries(arabicFullContents)) {
   // Find the book block and inject after keyLessons closing ]
   const bookStart = `      ${bookKey}: {`;
   const idx = src.indexOf(bookStart);
-  if (idx === -1) { console.log('❌ Not found:', bookKey); continue; }
+  if (idx === -1) { console.error('❌ Not found:', bookKey); continue; }
   
   // Find the closing brace of this book's keyLessons array
   const bookSlice = src.slice(idx);
   const closingBrace = bookSlice.indexOf('\n      },');
-  if (closingBrace === -1) { console.log('❌ No closing brace for:', bookKey); continue; }
   
   // Check if fullContent already exists
   const existingContent = bookSlice.slice(0, closingBrace);
   if (existingContent.includes('fullContent')) {
-    console.log('  SKIP (exists):', bookKey);
     continue;
   }
 
@@ -207,13 +205,10 @@ for (const [bookKey, lines] of Object.entries(arabicFullContents)) {
   const insertAt = idx + closingBrace;
   src = src.slice(0, insertAt) + '\n' + content + src.slice(insertAt);
   changes++;
-  console.log('  ✅ Injected fullContent for:', bookKey);
 }
 
 fs.writeFileSync(AR_PATH, src, 'utf8');
-console.log(`\nTotal changes: ${changes}`);
 
 // Syntax check
 const js = src.replace('export const ar', 'const ar').replace('} as const;', '}');
-try { new Function(js); console.log('✅ ar.ts syntax OK'); }
 catch(e) { console.error('❌ SYNTAX ERROR:', e.message); }

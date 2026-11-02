@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@14.0.0?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -38,7 +39,6 @@ serve(async (req) => {
         'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     };
 
-    // Handle CORS preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers });
     }
@@ -57,7 +57,6 @@ serve(async (req) => {
             );
         }
 
-        // Extract JWT token
         const token = authHeader.replace('Bearer ', '');
         console.log('[DEBUG] Token extracted, length:', token.length);
 
@@ -76,7 +75,6 @@ serve(async (req) => {
 
         const { planId, userId } = await req.json();
 
-        // Validate required fields
         if (!planId || !userId) {
             return new Response(
                 JSON.stringify({ error: 'Missing required fields: planId, userId' }),
@@ -93,7 +91,6 @@ serve(async (req) => {
             );
         }
 
-        // Validate plan exists
         if (!TIER_PRICING[planId]) {
             return new Response(
                 JSON.stringify({ error: 'Invalid plan ID' }),
@@ -111,7 +108,6 @@ serve(async (req) => {
             );
         }
 
-        // Create Stripe checkout session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [

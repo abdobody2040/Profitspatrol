@@ -1,150 +1,100 @@
-# Hostinger VPS Deployment Guide for KidCapHQ
+# دليل رفع وتشغيل Profits Patrol على Hostinger (hPanel)
+# Profits Patrol - Hostinger Deployment Guide
 
-This guide outlines the easiest and most robust way to deploy, host, and update the **KidCapHQ** React/Vite application on a Hostinger Linux VPS (Ubuntu 22.04 or similar).
-
-## Prerequisites
-
-1.  **A Hostinger VPS** running Ubuntu (20.04 or 22.04).
-2.  **SSH Access** to your VPS.
-3.  **A Domain Name** pointed to your VPS's IP Address (e.g., via A Record).
-4.  **GitHub Account** with your KidCapHQ repository pushed to it.
+هذا الدليل يشرح أسهل طريقة لرفع وتشغيل مشروع **Profits Patrol** (الواجهة React + الباك إند Laravel) على استضافة هوستنجر العادية والسحابية (**Web / Cloud Hosting عبر hPanel**) بالماوس وبدون أي أوامر معقدة.
 
 ---
 
-## Part 1: Initial VPS Setup (One-Time)
+## 📦 الملفات الجاهزة للرفع فوراً
 
-Log in to your server via SSH:
-```bash
-ssh root@YOUR_VPS_IP
-```
+تم تجهيز وضغط ملفات المشروع بالكامل في مجلد:
+📁 `deploy_hostinger/`
 
-### 1. Install Node.js & Nginx
-You need Node.js to build the app, and Nginx to serve the fast, compiled static files.
-```bash
-sudo apt update && sudo apt upgrade -y
-# Install Nginx
-sudo apt install nginx -y
-
-# Install Node.js (Latest LTS)
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-### 2. Clone Your Repository
-We will place your app in the `/var/www/` directory.
-
-```bash
-cd /var/www
-# Replace with your actual repo URL
-git clone https://github.com/yourusername/kidcaphq.git
-cd kidcaphq
-```
-
-### 3. Configure Environment Variables
-Copy your local `.env` values to the server.
-```bash
-cp .env.example .env
-nano .env
-# Paste your Supabase URL, Anon Key, and other variables here, then save (Ctrl+O, Enter, Ctrl+X).
-```
-
-### 4. Install Dependencies & Build
-```bash
-npm ci
-npm run build
-```
-*(This creates a `dist` folder containing your optimized production app).*
+1. **`1_frontend_public_html.zip`**: ملفات الواجهة الأمامية والموقع بالكامل مع ملف التوجيه `.htaccess`.
+2. **`2_backend_api.zip`**: ملفات الباك إند (Laravel API) مدمج بها مكتبات الـ Vendor ورابط تسطيب الداتابيز التلقائي.
 
 ---
 
-## Part 2: Configuring Nginx to Serve the App
+## 🚀 خطوات الرفع خطوة بخطوة (في 5 دقائق)
 
-We need to tell Nginx to serve the files from the `dist` folder and handle React Router's client-side routing.
+### الخطوة 1: رفع الواجهة (Frontend)
+1. سجّل الدخول إلى لوحة تحكم هوستنجر (**hPanel**) وافتح **File Manager** (مدير الملفات).
+2. افتح مجلد **`public_html`**.
+   *(تنبيه هام: إذا كان مجلد `public_html` يحتوي على ملفات قديمة أو ملفات بأسمائها علامة `\` مثل `assets\...`، حدد كل المحتويات واحذفها أولاً للحصول على تثبيت نظيف 100%).*
+3. اضغط على زر **Upload** وارفع الملف الأول: `1_frontend_public_html.zip` (من مجلد `deploy_hostinger`).
+4. اضغط كليك يمين على الملف واختار **Extract** (فك الضغط في نفس المكان).
+5. بعد فك الضغط، احذف ملف الـ `.zip` لتوفير المساحة.
+> ✅ **النتيجة**: واجهة الموقع والصفحات والألعاب أصبحت تعمل مباشرة على دومينك: `https://profitspatrol.com`.
 
-1. Create a new Nginx configuration file:
-   ```bash
-   nano /etc/nginx/sites-available/kidcaphq
+---
+
+### الخطوة 2: رفع الباك إند (Laravel API)
+1. في نفس صفحة **File Manager**، اضغط على زر الرجوع للخلف لتخرج خارج مجلد `public_html` إلى المجلد الرئيسي لموقعك.
+2. اضغط على **New Folder** (مجلد جديد) وسمّه بالظبط:
+   ```text
+   api_backend
    ```
+3. افتح مجلد `api_backend` وارفع جواه الملف الثاني: `2_backend_api.zip`.
+4. اضغط كليك يمين عليه واختار **Extract**، ثم احذف ملف الـ `.zip`.
+5. **تفعيل النطاق الفرعي (Subdomain)**:
+   - ارجع للشاشة الرئيسية في **hPanel** وابحث عن **Subdomains** (النطاقات الفرعية).
+   - في خانة الاسم اكتب: `api`
+   - ضع علامة صح (✓) على **Custom folder for subdomain**.
+   - في المستطيل اكتب بالظبط:
+     ```text
+     api_backend/public
+     ```
+   - اضغط على زر **Create**.
+> ✅ **النتيجة**: أصبح لديك دومين فرعي آمن وسريع `https://api.profitspatrol.com` يخدم واجهة البرمجة (API).
 
-2. Paste the following configuration (replace `yourdomain.com` with your actual domain):
-   ```nginx
-   server {
-       listen 80;
-       server_name yourdomain.com www.yourdomain.com;
-       
-       # Point this to your Vite build output folder:
-       root /var/www/kidcaphq/dist;
-       index index.html;
+---
 
-       location / {
-           # This handles React Router paths properly
-           try_files $uri $uri/ /index.html;
-       }
+### الخطوة 3: إنشاء قاعدة البيانات وربطها (Database)
+1. من لوحة تحكم **hPanel**، اضغط على **Databases** -> **MySQL Databases**.
+2. أنشئ قاعدة بيانات جديدة:
+   - اكتب اسم قاعدة البيانات (مثال: `profitspatrol_db`).
+   - اكتب اسم المستخدم وكلمة مرور قوية، ثم اضغط **Create**.
+3. ارجع إلى **File Manager** وادخل إلى مجلد `api_backend`.
+4. افتح ملف **`.env`** (تأكد من تفعيل عرض الملفات المخفية Show Hidden Files)، وعدّل الأسطر التالية ببيانات الداتابيز:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=اسم_قاعدة_البيانات_الكامل
+   DB_USERNAME=اسم_المستخدم_الكامل
+   DB_PASSWORD=كلمة_المرور_التي_اخترتها
+   ```
+5. اضغط **Save** لحفظ الملف.
 
-       # Optional: Cache static assets (images, css, js)
-       location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|webp)$ {
-           expires 30d;
-           add_header Cache-Control "public, max-age=2592000";
-       }
+---
+
+### الخطوة 4: تسطيب الجداول والبيانات (بنقرة واحدة من المتصفح!)
+بدلاً من كتابة أوامر في الشاشات السوداء، تم تضمين رابط تشغيل مباشر:
+
+1. افتح متصفحك وادخل على الرابط التالي:
+   👉 **`https://api.profitspatrol.com/api/v1/setup-database`**
+
+2. ستظهر لك رسالة نجاح بصيغة JSON تؤكد إنشاء جميع الجداول والبيانات التأسيسية:
+   ```json
+   {
+     "success": true,
+     "message": "Database tables and initial seeds created successfully!"
    }
    ```
+> ✅ **النتيجة**: تم تسطيب جميع الجداول (المستخدمين، الشركات، الأسهم، التحديات، والإعدادات) بنجاح 100%!
 
-3. Enable the site and restart Nginx:
-   ```bash
-   ln -s /etc/nginx/sites-available/kidcaphq /etc/nginx/sites-enabled/
-   # Remove the default Nginx page
-   rm /etc/nginx/sites-enabled/default
-   # Test config
-   nginx -t
-   # Restart Nginx
-   systemctl restart nginx
-   ```
-
-### 5. Secure with Free SSL (HTTPS)
-Install Certbot to get a free SSL certificate from Let's Encrypt.
-```bash
-sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
-```
-
-Your app is now live and secure!
+*(اختياري: لو حابب تسطبها من سطر الأوامر عبر SSH في هوستنجر، افتح الـ Terminal واكتب: `cd api_backend && php artisan migrate --seed --force`).*
 
 ---
 
-## Part 3: Easiest Way to Update Your App (Routine Updates)
+## 🔄 كيفية تحديث الموقع مستقبلاً (Updating The Site)
 
-Whenever you make changes to your codebase locally, you should push them to GitHub. Then, run these simple commands on your VPS to instantly pull the new changes and rebuild the site.
+كلما قمت بتعديل كود المشروع محلياً على جهازك وأردت تحديث الموقع على هوستنجر:
 
-### The "Update Command"
-Connect via SSH and run:
-```bash
-cd /var/www/kidcaphq
-git pull origin main
-npm ci
-npm run build
-```
-*(Because Nginx serves static files, you don't even need to restart Nginx! As soon as `npm run build` finishes replacing the `dist` folder, your users will see the new version upon refreshing).*
-
----
-
-### Pro-Tip: Creating a 1-Click Update Script
-To make updates even easier, create a bash script on your VPS:
-
-1. `cd ~`
-2. `nano update-app.sh`
-3. Paste the following:
-   ```bash
-   #!/bin/bash
-   echo "Starting Update Process..."
-   cd /var/www/kidcaphq
-   git pull origin main
-   npm ci
+1. شغّل السكربت المخصص في الـ Terminal:
+   ```powershell
    npm run build
-   echo "App Successfully Updated!"
+   powershell -ExecutionPolicy Bypass -File scripts/package-hostinger.ps1
    ```
-4. Make it executable: `chmod +x update-app.sh`
-
-Now, whenever you want to update the live site, just SSH into your server and type:
-```bash
-./update-app.sh
-```
+2. سيتم إعادة تجهيز وضغط الملفات تلقائياً في مجلد `deploy_hostinger/`.
+3. ارفع الملف الجديد واستبدل القديم في هوستنجر بضغطة زر.

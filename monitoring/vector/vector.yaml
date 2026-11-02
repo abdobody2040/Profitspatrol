@@ -1,0 +1,69 @@
+# Vector Production Logging Pipeline for Profits Patrol
+# Ingests stdout/JSON logs, buffers on disk, and ships to Grafana Loki
+
+data_dir: /var/lib/vector
+
+sources:
+  # Ingest from Docker container stdout
+  docker_containers:
+    type: docker_logs
+    exclude_units: ["vector", "loki", "grafana"]
+
+  # Ingest from HTTP endpoint (for serverless/remote forwarders or direct POST)
+  http_logs:
+    type: http_server
+    address: 0.0.0.0:8088
+    encoding: json
+
+  # Ingest from local log files (for standalone VPS without Docker)
+  app_files:
+    type: file
+    include:
+      - /var/log/profitspatrol/*.log
+      - /var/www/profitspatrol/backend/storage/logs/*.log
+    read_from: beginning
+
+transforms:
+  parse_and_label:
+    type: remap
+    inputs:
+      - docker_containers
+      - http_logs
+      - app_files
+    source: |
+      # If message is JSON, decode it
+      parsed, err = parse_json(.message)
+      if err == null {
+        . = merge(., parsed)
+      }
+
+      # Ensure required low-cardinality labels exist
+      .service = string!(.service || "profits-patrol-api")
+      .env = string!(.env || get_env_var("APP_ENV") || "production")
+      .level = upcase(string!(.level || "INFO"))
+
+      # Ensure timestamp format is UTC ISO-8601
+      if !exists(.timestamp) {
+        .timestamp = now()
+      }
+
+      # Keep high-cardinality items (request_id, user_id, event) strictly in JSON payload!
+
+sinks:
+  loki_sink:
+    type: loki
+    inputs:
+      - parse_and_label
+    endpoint: ${LOKI_ENDPOINT:-http://loki:3100}
+    encoding:
+      codec: json
+    labels:
+      service: "{{ service }}"
+      env: "{{ env }}"
+      level: "{{ level }}"
+    buffer:
+      type: disk
+      max_size: 1073741824 # 1 GiB disk buffer for reliability
+      when_full: block
+    healthcheck:
+      enabled: true

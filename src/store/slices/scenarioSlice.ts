@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { TurnaroundScenario } from '../../types';
 import { COURSE_MAP } from '../../features/education/data/curriculum';
 
@@ -46,7 +46,7 @@ export const createScenarioSlice: StateCreator<AppState, [], [], ScenarioSlice> 
                 user: {
                     ...state.user,
                     xp: (state.user.xp || 0) + 500,
-                    bizCoins: (state.user.bizCoins || 0) + 1000,
+                    ppTokens: (state.user.ppTokens || 0) + 1000,
                     completedLessonIds: newCompletedIds,
                 },
                 activeScenario: null,

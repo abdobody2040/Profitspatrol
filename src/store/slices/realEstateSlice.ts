@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
-import { useAppStore } from '../index';
-import type { EconomyState } from '../economyStore';
+import { useAppStore } from '../useAppStore';
+import type { EconomyState } from '../economyTypes';
 import { Property, UserProperty, TenantEvent } from '../../types';
 import { INITIAL_PROPERTIES } from '../../features/venture/data/properties';
 
@@ -10,8 +10,13 @@ export function calculatePropertyIncome(
     level: number,
     renovationLevel = 0
 ): number {
-    const base = baseProp.initialIncome + baseProp.incomeGrowthRate * (level - 1);
-    return Math.floor(base * (1 + renovationLevel * 0.10));
+    if (!baseProp) return 0;
+    const initial = typeof baseProp.initialIncome === 'number' ? baseProp.initialIncome : 0;
+    const growth = typeof baseProp.incomeGrowthRate === 'number' ? baseProp.incomeGrowthRate : 0;
+    const lvl = typeof level === 'number' ? level : 1;
+    const rLvl = typeof renovationLevel === 'number' ? renovationLevel : 0;
+    const base = initial + growth * (lvl - 1);
+    return Math.floor(base * (1 + rLvl * 0.10));
 }
 
 // ─── Date helper (pure, mockable) ────────────────────────────────────────────
@@ -62,7 +67,7 @@ export interface RealEstateSlice {
     buyProperty: (id: string) => ActionResult;
     upgradeProperty: (id: string) => ActionResult;
     collectRent: (id: string) => ActionResult;
-    collectAllRent: () => void;
+    collectAllRent: () => number;
     sellProperty: (id: string) => ActionResult;
     renovateProperty: (id: string) => ActionResult;
     toggleInsurance: (id: string) => ActionResult;
@@ -82,8 +87,8 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
         if (!property) return { success: false, error: `Property "${id}" not found` };
         if (user.properties?.some(p => p.propertyId === id))
             return { success: false, error: 'Already owned' };
-        if (user.bizCoins < property.cost)
-            return { success: false, error: `Need $${(property.cost - user.bizCoins).toLocaleString()} more BizCoins` };
+        if (user.ppTokens < property.cost)
+            return { success: false, error: `Need $${(property.cost - user.ppTokens).toLocaleString()} more P Tokens` };
 
         const newProperty: UserProperty = {
             propertyId: id,
@@ -96,7 +101,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
         useAppStore.setState(state => ({
             user: state.user ? {
                 ...state.user,
-                bizCoins: state.user.bizCoins - property.cost,
+                ppTokens: state.user.ppTokens - property.cost,
                 properties: [...(state.user.properties ?? []), newProperty],
             } : null,
         }));
@@ -117,8 +122,8 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
             return { success: false, error: 'Already at max level' };
 
         const upgradeCost = Math.floor(baseProp.cost * 0.5 * userProp.level);
-        if (user.bizCoins < upgradeCost)
-            return { success: false, error: `Need $${(upgradeCost - user.bizCoins).toLocaleString()} more BizCoins` };
+        if (user.ppTokens < upgradeCost)
+            return { success: false, error: `Need $${(upgradeCost - user.ppTokens).toLocaleString()} more P Tokens` };
 
         const reachedMax = userProp.level + 1 >= baseProp.maxLevel;
 
@@ -126,7 +131,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
             if (!state.user) return {};
             const props = [...state.user.properties!];
             props[userPropIndex] = { ...userProp, level: userProp.level + 1 };
-            return { user: { ...state.user, bizCoins: state.user.bizCoins - upgradeCost, properties: props } };
+            return { user: { ...state.user, ppTokens: state.user.ppTokens - upgradeCost, properties: props } };
         });
 
         return { success: true };
@@ -157,7 +162,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
             if (!state.user) return {};
             const props = [...state.user.properties!];
             props[userPropIndex] = { ...userProp, lastCollected: new Date().toISOString() };
-            return { user: { ...state.user, bizCoins: state.user.bizCoins + earned, properties: props } };
+            return { user: { ...state.user, ppTokens: state.user.ppTokens + earned, properties: props } };
         });
         return { success: true };
     },
@@ -165,7 +170,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
     // ✅ FIX: Atomic collectAllRent — single set() call instead of N calls
     collectAllRent: () => {
         const { availableProperties } = get(); const user = useAppStore.getState().user;
-        if (!user?.properties?.length) return;
+        if (!user?.properties?.length) return 0;
 
         const now = Date.now();
         let totalEarned = 0;
@@ -186,8 +191,9 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
         });
 
         if (totalEarned > 0) {
-            useAppStore.setState({ user: { ...user, bizCoins: user.bizCoins + totalEarned, properties: updatedProps } });
+            useAppStore.setState({ user: { ...user, ppTokens: user.ppTokens + totalEarned, properties: updatedProps } });
         }
+        return totalEarned;
     },
 
     sellProperty: (id) => {
@@ -203,7 +209,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
         useAppStore.setState(state => ({
             user: state.user ? {
                 ...state.user,
-                bizCoins: state.user.bizCoins + refund,
+                ppTokens: state.user.ppTokens + refund,
                 properties: (state.user.properties ?? []).filter(p => p.propertyId !== id),
             } : null,
         }));
@@ -228,14 +234,14 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
             return { success: false, error: 'Already fully renovated' };
 
         const renovCost = Math.floor(baseProp.cost * 0.2);
-        if (user.bizCoins < renovCost)
-            return { success: false, error: `Need $${(renovCost - user.bizCoins).toLocaleString()} more BizCoins` };
+        if (user.ppTokens < renovCost)
+            return { success: false, error: `Need $${(renovCost - user.ppTokens).toLocaleString()} more P Tokens` };
 
         useAppStore.setState(state => {
             if (!state.user) return {};
             const props = [...state.user.properties!];
             props[userPropIndex] = { ...userProp, renovationLevel: currentLevel + 1 };
-            return { user: { ...state.user, bizCoins: state.user.bizCoins - renovCost, properties: props } };
+            return { user: { ...state.user, ppTokens: state.user.ppTokens - renovCost, properties: props } };
         });
         return { success: true };
     },
@@ -255,14 +261,14 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
 
         if (!alreadyInsured) {
             const insuranceCost = Math.floor(baseProp.cost * 0.15);
-            if (user.bizCoins < insuranceCost)
-                return { success: false, error: `Need $${(insuranceCost - user.bizCoins).toLocaleString()} more BizCoins` };
+            if (user.ppTokens < insuranceCost)
+                return { success: false, error: `Need $${(insuranceCost - user.ppTokens).toLocaleString()} more P Tokens` };
 
             useAppStore.setState(state => {
                 if (!state.user) return {};
                 const props = [...state.user.properties!];
                 props[userPropIndex] = { ...userProp, hasInsurance: true };
-                return { user: { ...state.user, bizCoins: state.user.bizCoins - insuranceCost, properties: props } };
+                return { user: { ...state.user, ppTokens: state.user.ppTokens - insuranceCost, properties: props } };
             });
         } else {
             useAppStore.setState(state => {
@@ -287,7 +293,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
         if (userProp.tenantEvent?.date === today) return; // Already applied today
 
         const event = rollTenantEvent(userProp.hasInsurance ?? false);
-        const coinsDelta = event.type === 'BONUS' ? event.amount : -event.amount;
+        const tokensDelta = event.type === 'BONUS' ? event.amount : -event.amount;
 
         useAppStore.setState(state => {
             if (!state.user) return {};
@@ -296,7 +302,7 @@ export const createRealEstateSlice: StateCreator<EconomyState, [], [], RealEstat
             return {
                 user: {
                     ...state.user,
-                    bizCoins: Math.max(0, state.user.bizCoins + coinsDelta),
+                    ppTokens: Math.max(0, state.user.ppTokens + tokensDelta),
                     properties: props,
                 },
             };

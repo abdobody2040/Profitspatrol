@@ -4,11 +4,11 @@ const exclusive = ['the-little-engine-that-could','kidpreneurs','rich-dad-poor-d
 exclusive.forEach(id => {
   const re = new RegExp('id:\\s*["\']' + id + '["\'][\\s\\S]{0,300}?coverUrl:\\s*["\']([^"\']+)["\']');
   const m = src.match(re);
-  console.log(id + ': ' + (m ? m[1] : 'NOT FOUND'));
+  console.error(id + ': ' + (m ? m[1] : 'NOT FOUND'));
 });
 // Also verify local files exist
 const booksDir = 'public/images/books';
 exclusive.forEach(id => {
   const exists = fs.existsSync(booksDir + '/' + id + '.jpg') || fs.existsSync(booksDir + '/' + id + '.png');
-  console.log('  file ' + id + '.jpg: ' + (exists ? 'EXISTS' : 'MISSING'));
+  console.error('  file ' + id + '.jpg: ' + (exists ? 'EXISTS' : 'MISSING'));
 });

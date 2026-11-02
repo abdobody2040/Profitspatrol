@@ -1,0 +1,24 @@
+# Temporary scratch directories and scripts
+scratch/
+scripts/
+*.cjs
+*.mjs
+*.ps1
+test-output*.txt
+test-results*.json
+tests_output.txt
+tests_results.json
+tsc_output.txt
+vitest_output.txt
+missing_ids.json
+user_books_ids.json
+testTooltip.cjs
+
+# Backend (separate Laravel service)
+backend/
+
+# Supabase backend functions and migrations
+supabase/
+
+# Static localization dictionaries (avoid false positives on password translation labels)
+src/locales/

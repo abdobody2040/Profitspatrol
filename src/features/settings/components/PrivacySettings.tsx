@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Download, Trash2, AlertCircle, CheckCircle, Shield } from 'lucide-react';
 import { DataExportService } from '../../../services/DataExportService';
 import { AccountDeletionService } from '../../../services/AccountDeletionService';
 import { useAppStore } from '../../../store';
@@ -114,38 +114,43 @@ export const PrivacySettings: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-8 max-w-3xl">
             {/* Data Export Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 mb-4">
-                    <Download className="text-blue-600" size={24} />
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                        Export Your Data
-                    </h3>
+            <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 shadow-2xl border-4 border-gray-100 dark:border-gray-700 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 dark:bg-blue-900/30 rounded-bl-full opacity-20 group-hover:scale-110 transition-transform"></div>
+                <div className="flex items-center gap-4 mb-6 relative z-10">
+                    <div className="p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl">
+                        <Download className="text-blue-600 dark:text-blue-400" size={28} />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">
+                            Export Your Data
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 font-bold mt-1">
+                            Download all your personal data in JSON or CSV format.
+                        </p>
+                    </div>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Download all your personal data in JSON or CSV format. This includes your profile, progress, and settings.
-                </p>
 
                 {exportSuccess && (
-                    <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-lg mb-4">
-                        <CheckCircle size={20} />
-                        <span className="font-bold">Export successful!</span>
+                    <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-4 rounded-2xl mb-6 border-2 border-green-200 dark:border-green-800 shadow-sm relative z-10">
+                        <CheckCircle size={24} className="animate-bounce" />
+                        <span className="font-black">Export successful! Check your downloads.</span>
                     </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-4 relative z-10">
                     <button
                         onClick={handleExportJSON}
                         disabled={isExporting}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="btn-juicy bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-[0_4px_0_0_#2563eb] hover:shadow-[0_2px_0_0_#2563eb] hover:translate-y-[2px] disabled:opacity-50 disabled:translate-y-[4px] disabled:shadow-none transition-all"
                     >
                         {isExporting ? 'Exporting...' : 'Export as JSON'}
                     </button>
                     <button
                         onClick={handleExportCSV}
                         disabled={isExporting}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="btn-juicy bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-[0_4px_0_0_#16a34a] hover:shadow-[0_2px_0_0_#16a34a] hover:translate-y-[2px] disabled:opacity-50 disabled:translate-y-[4px] disabled:shadow-none transition-all"
                     >
                         {isExporting ? 'Exporting...' : 'Export as CSV'}
                     </button>
@@ -153,29 +158,32 @@ export const PrivacySettings: React.FC = () => {
             </div>
 
             {/* Account Deletion Section */}
-            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 border-2 border-red-200 dark:border-red-800">
-                <div className="flex items-center gap-3 mb-4">
-                    <Trash2 className="text-red-600 dark:text-red-400" size={24} />
-                    <h3 className="text-xl font-bold text-red-800 dark:text-red-300">
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-[32px] p-8 border-4 border-red-200 dark:border-red-800 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-200 dark:bg-red-800/50 rounded-bl-full opacity-20 group-hover:scale-110 transition-transform"></div>
+                <div className="flex items-center gap-4 mb-6 relative z-10">
+                    <div className="p-4 bg-red-100 dark:bg-red-900/50 rounded-2xl">
+                        <Trash2 className="text-red-600 dark:text-red-400" size={28} />
+                    </div>
+                    <h3 className="text-2xl font-black text-red-800 dark:text-red-300 tracking-tight">
                         Delete Account
                     </h3>
                 </div>
 
                 {deletionInfo.isScheduled ? (
-                    <div className="space-y-4">
-                        <div className="flex items-start gap-3 bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-                            <AlertCircle className="text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" size={20} />
+                    <div className="space-y-6 relative z-10">
+                        <div className="flex items-start gap-4 bg-orange-50 dark:bg-orange-900/30 p-6 rounded-[24px] border-4 border-orange-200 dark:border-orange-800 shadow-sm">
+                            <AlertCircle className="text-orange-600 dark:text-orange-400 flex-shrink-0 mt-1 animate-pulse" size={28} />
                             <div>
-                                <p className="font-bold text-orange-800 dark:text-orange-300 mb-1">
+                                <p className="font-black text-orange-800 dark:text-orange-300 mb-2 text-lg">
                                     Account Deletion Scheduled
                                 </p>
-                                <p className="text-orange-700 dark:text-orange-400 text-sm">
+                                <p className="text-orange-700 dark:text-orange-400 font-bold">
                                     Your account will be permanently deleted in{' '}
-                                    <span className="font-bold">{deletionInfo.daysRemaining} days</span>.
+                                    <span className="font-black text-orange-900 dark:text-orange-200">{deletionInfo.daysRemaining} days</span>.
                                     You can cancel this request at any time before then.
                                 </p>
                                 {deletionInfo.scheduledFor && (
-                                    <p className="text-orange-600 dark:text-orange-500 text-xs mt-2">
+                                    <p className="text-orange-600 dark:text-orange-500 font-bold text-sm mt-3 bg-orange-100 dark:bg-orange-900/50 inline-block px-3 py-1 rounded-lg">
                                         Scheduled for: {new Date(deletionInfo.scheduledFor).toLocaleDateString()}
                                     </p>
                                 )}
@@ -183,14 +191,14 @@ export const PrivacySettings: React.FC = () => {
                         </div>
                         <button
                             onClick={handleCancelDeletion}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors"
+                            className="btn-juicy bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-[0_4px_0_0_#16a34a] hover:shadow-[0_2px_0_0_#16a34a] hover:translate-y-[2px] transition-all"
                         >
                             Cancel Deletion Request
                         </button>
                     </div>
                 ) : (
-                    <>
-                        <p className="text-red-700 dark:text-red-400 mb-4">
+                    <div className="relative z-10">
+                        <p className="text-red-700 dark:text-red-400 mb-6 font-bold text-lg">
                             Request permanent account deletion. Your data will be deleted after a 30-day grace period.
                             This action cannot be undone after the grace period expires.
                         </p>
@@ -198,50 +206,54 @@ export const PrivacySettings: React.FC = () => {
                         {!showDeleteConfirm ? (
                             <button
                                 onClick={() => setShowDeleteConfirm(true)}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
+                                className="btn-juicy bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-[0_4px_0_0_#dc2626] hover:shadow-[0_2px_0_0_#dc2626] hover:translate-y-[2px] transition-all"
                             >
                                 Request Deletion
                             </button>
                         ) : (
-                            <div className="space-y-4 bg-white dark:bg-gray-800 p-4 rounded-lg border-2 border-red-300 dark:border-red-700">
-                                <p className="font-bold text-gray-800 dark:text-white">
-                                    Are you sure you want to delete your account?
+                            <div className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-[24px] border-4 border-red-300 dark:border-red-700 shadow-xl">
+                                <p className="font-black text-gray-800 dark:text-white text-lg">
+                                    Are you absolutely sure you want to delete your account?
                                 </p>
                                 <textarea
                                     value={deleteReason}
                                     onChange={(e) => setDeleteReason(e.target.value)}
                                     placeholder="Optional: Tell us why you're leaving (helps us improve)"
-                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none dark:bg-gray-700 dark:text-white"
+                                    className="w-full p-4 border-4 border-gray-200 dark:border-gray-600 rounded-2xl resize-none dark:bg-gray-700 dark:text-white font-bold focus:border-red-400 focus:ring-4 focus:ring-red-400/20 outline-none transition-all"
                                     rows={3}
                                 />
-                                <div className="flex gap-3">
+                                <div className="flex gap-4">
                                     <button
                                         onClick={() => {
                                             setShowDeleteConfirm(false);
                                             setDeleteReason('');
                                         }}
-                                        className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                        className="flex-1 btn-juicy bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:text-white px-6 py-3 rounded-2xl font-black flex items-center justify-center gap-2 shadow-[0_4px_0_0_#d1d5db] dark:shadow-[0_4px_0_0_#374151] hover:shadow-[0_2px_0_0_#d1d5db] dark:hover:shadow-[0_2px_0_0_#374151] hover:translate-y-[2px] transition-all"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleRequestDeletion}
                                         disabled={isDeleting}
-                                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="flex-1 btn-juicy bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-2xl font-black flex items-center justify-center gap-2 shadow-[0_4px_0_0_#dc2626] hover:shadow-[0_2px_0_0_#dc2626] hover:translate-y-[2px] disabled:opacity-50 disabled:translate-y-[4px] disabled:shadow-none transition-all"
                                     >
                                         {isDeleting ? 'Processing...' : 'Confirm Deletion'}
                                     </button>
                                 </div>
                             </div>
                         )}
-                    </>
+                    </div>
                 )}
             </div>
 
             {/* GDPR Notice */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                    <strong>Your Privacy Rights:</strong> Under GDPR and COPPA regulations, you have the right to access,
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[24px] p-6 border-4 border-blue-200 dark:border-blue-800 flex items-center gap-4">
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0">
+                    <Shield className="text-blue-600 dark:text-blue-400" size={24} />
+                </div>
+                <p className="text-sm font-bold text-blue-800 dark:text-blue-300 leading-relaxed">
+                    <strong className="font-black text-base block mb-1">Your Privacy Rights:</strong> 
+                    Under GDPR and COPPA regulations, you have the right to access,
                     export, and delete your personal data. We take your privacy seriously and are committed to protecting
                     your information.
                 </p>

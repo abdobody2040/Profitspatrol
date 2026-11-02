@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" width="400" height="520">
+  <!-- Background glow -->
+  <circle cx="200" cy="260" r="180" fill="#6366F1" opacity="0.1" />
+  
+  <!-- Shadow under character -->
+  <ellipse cx="200" cy="495" rx="110" ry="16" fill="black" opacity="0.25" />
+
+  <!-- Layer 1: Neck -->
+  <image href="/images/personal%20profile/PNG/Skin/Tint%201/tint1_neck.png" x="152" y="175" width="96" height="37" />
+
+  <!-- Layer 2: Legs -->
+  <!-- Left Leg (mirrored: bounding box x: 108..219 -> flip around 219) -->
+  <g transform="translate(219, 0) scale(-1, 1)">
+    <image href="/images/personal%20profile/PNG/Pants/Light%20Blue/pantsLightBlue_long.png" x="0" y="305" width="111" height="166" />
+  </g>
+  <!-- Right Leg (normal) -->
+  <image href="/images/personal%20profile/PNG/Pants/Light%20Blue/pantsLightBlue_long.png" x="182" y="305" width="111" height="166" />
+
+  <!-- Layer 3: Shoes -->
+  <!-- Left Shoe (mirrored: bounding box x: 88..182 -> flip around 182) -->
+  <g transform="translate(182, 0) scale(-1, 1)">
+    <image href="/images/personal%20profile/PNG/Shoes/Brown%201/brownShoe5.png" x="0" y="442" width="94" height="42" />
+  </g>
+  <!-- Right Shoe (normal) -->
+  <image href="/images/personal%20profile/PNG/Shoes/Brown%201/brownShoe5.png" x="218" y="442" width="94" height="42" />
+
+  <!-- Layer 4: Pants Waist -->
+  <image href="/images/personal%20profile/PNG/Pants/Light%20Blue/pantsLightBlue3.png" x="123" y="290" width="153" height="47" />
+
+  <!-- Layer 5: Torso Shirt -->
+  <image href="/images/personal%20profile/PNG/Shirts/Red/redShirt1.png" x="123" y="155" width="153" height="174" />
+
+  <!-- Layer 6: Arms and Hands -->
+  <!-- Left Arm (mirrored: bounding box x: 12..183 -> flip around 183) -->
+  <g transform="translate(183, 0) scale(-1, 1)">
+    <image href="/images/personal%20profile/PNG/Shirts/Red/redArm_long.png" x="0" y="175" width="171" height="142" />
+  </g>
+  <!-- Left Hand (normal) -->
+  <image href="/images/personal%20profile/PNG/Skin/Tint%201/tint1_hand.png" x="0" y="260" width="61" height="71" />
+
+  <!-- Right Arm (normal) -->
+  <image href="/images/personal%20profile/PNG/Shirts/Red/redArm_long.png" x="217" y="175" width="171" height="142" />
+  <!-- Right Hand (mirrored: bounding box x: 338..399 -> flip around 399) -->
+  <g transform="translate(399, 0) scale(-1, 1)">
+    <image href="/images/personal%20profile/PNG/Skin/Tint%201/tint1_hand.png" x="0" y="260" width="61" height="71" />
+  </g>
+
+  <!-- Layer 7: Head -->
+  <image href="/images/personal%20profile/PNG/Skin/Tint%201/tint1_head.png" x="113" y="40" width="173" height="168" />
+
+  <!-- Layer 8: Face -->
+  <image href="/images/personal%20profile/PNG/Face/Completes/face1.png" x="150" y="75" width="100" height="101" />
+
+  <!-- Layer 9: Hair -->
+  <image href="/images/personal%20profile/PNG/Hair/Brown%202/brown2Man5.png" x="121" y="20" width="158" height="119" />
+</svg>

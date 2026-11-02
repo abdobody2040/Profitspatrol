@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, Trash2, PackageCheck } from 'lucide-react';
+import { AnimatePresence } from "framer-motion";
+import { CheckCircle, XCircle, AlertTriangle, PackageCheck } from "lucide-react";
+import { secureRandom } from '../../../../utils/cryptoUtils';
 
 // GAME CONFIG
 const GAME_DURATION = 60; // seconds
@@ -82,13 +83,13 @@ const QualityControlTemplate: React.FC<QualityControlTemplateProps> = ({ onCompl
     };
 
     const spawnItem = () => {
-        const type = ITEM_TYPES[Math.floor(Math.random() * ITEM_TYPES.length)];
-        const isDefective = Math.random() < 0.3; // 30% chance of defect
+        const type = ITEM_TYPES[Math.floor(secureRandom() * ITEM_TYPES.length)];
+        const isDefective = secureRandom() < 0.3; // 30% chance of defect
 
         const containerWidth = containerRef.current?.clientWidth || 800;
 
         const newItem: Item = {
-            id: Math.random().toString(36).substr(2, 9),
+            id: secureRandom().toString(36).substr(2, 9),
             typeId: type.id,
             isDefective,
             x: containerWidth + 50, // Start off-screen right
@@ -216,7 +217,7 @@ const QualityControlTemplate: React.FC<QualityControlTemplateProps> = ({ onCompl
             {/* CONVEYOR BELT AREA */}
             <div
                 ref={containerRef}
-                className="flex-1 relative flex items-center justify-center bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] bg-slate-200 dark:bg-slate-800"
+                className="flex-1 relative flex items-center justify-center bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px] bg-slate-200 dark:bg-slate-800"
             >
                 {/* TRACK VISUAL */}
                 <div className="absolute w-full h-32 bg-slate-300 dark:bg-slate-700 border-y-4 border-slate-400 flex items-center">

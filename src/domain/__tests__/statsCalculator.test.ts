@@ -54,21 +54,21 @@ const makePortfolio = (...levels: number[]): PortfolioItem[] =>
 describe('calculateNetWorth', () => {
     it('returns correct total for a user with coins, inventory, and portfolio', () => {
         const subject = {
-            bizCoins: 1000,
+            ppTokens: 1000,
             inventory: ['item_hat', 'item_crown'],   // (80 + 500) * 0.5 = 290
             portfolio: makePortfolio(2, 3),           // 2000 + 3000 = 5000
         };
 
         const result = calculateNetWorth(subject, MOCK_SHOP_MAP);
 
-        expect(result.bizCoins).toBe(1000);
+        expect(result.ppTokens).toBe(1000);
         expect(result.inventoryValue).toBe(290);
         expect(result.businessValue).toBe(5000);
         expect(result.total).toBe(6290);
     });
 
     it('handles empty inventory and portfolio', () => {
-        const subject = { bizCoins: 500, inventory: [], portfolio: EMPTY_PORTFOLIO };
+        const subject = { ppTokens: 500, inventory: [], portfolio: EMPTY_PORTFOLIO };
         const result = calculateNetWorth(subject, MOCK_SHOP_MAP);
 
         expect(result.total).toBe(500);
@@ -78,7 +78,7 @@ describe('calculateNetWorth', () => {
 
     it('gracefully skips unknown item IDs (O(1) Map miss returns undefined)', () => {
         const subject = {
-            bizCoins: 100,
+            ppTokens: 100,
             inventory: ['unknown_item_id'],
             portfolio: EMPTY_PORTFOLIO,
         };

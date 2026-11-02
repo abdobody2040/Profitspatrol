@@ -12,6 +12,9 @@ const SkillTree: React.FC = () => {
 
     if (!user) return null;
 
+    const safeTokens = typeof user.ppTokens === 'number' ? user.ppTokens : (((user as any).coins as number) ?? 0);
+    const unlockedSkills = Array.isArray(user.unlockedSkills) ? user.unlockedSkills : [];
+
     const categories = ['CHARISMA', 'EFFICIENCY', 'WISDOM'];
     const icons: Record<string, any> = { CHARISMA: Smile, EFFICIENCY: Zap, WISDOM: Brain };
     const themeColors: Record<string, string> = {
@@ -47,11 +50,11 @@ const SkillTree: React.FC = () => {
                             {/* Skills Column */}
                             <div className="flex flex-col items-center w-full">
                                 {categorySkills.map((skill, index) => {
-                                    const isUnlocked = user.unlockedSkills.includes(skill.id);
+                                    const isUnlocked = unlockedSkills.includes(skill.id);
                                     const previousSkill = index > 0 ? categorySkills[index - 1] : null;
                                     // The first skill is always "unlockable" if we consider the category header as the start
                                     // Admins can unlock anything
-                                    const isPreviousUnlocked = !previousSkill || user.unlockedSkills.includes(previousSkill.id) || user.role === 'ADMIN';
+                                    const isPreviousUnlocked = !previousSkill || unlockedSkills.includes(previousSkill.id) || user.role === 'ADMIN';
 
                                     const isAvailable = !isUnlocked && isPreviousUnlocked;
                                     const isLocked = !isUnlocked && !isPreviousUnlocked;
@@ -103,23 +106,23 @@ const SkillTree: React.FC = () => {
                                                 ) : (
                                                     <button
                                                         onClick={() => unlockSkill(skill.id)}
-                                                        disabled={!isAvailable || user.bizCoins < skill.cost}
+                                                        disabled={!isAvailable || safeTokens < skill.cost}
                                                         aria-label={isAvailable ? `Unlock ${skill.name}` : `Locked: Complete previous skill first`}
-                                                        aria-disabled={!isAvailable || user.bizCoins < skill.cost}
+                                                        aria-disabled={!isAvailable || safeTokens < skill.cost}
                                                         className={`w-full py-3 rounded-xl font-black flex items-center justify-center gap-2 text-sm transition-all
                                                     ${isAvailable
-                                                                ? user.bizCoins >= skill.cost
+                                                                ? safeTokens >= skill.cost
                                                                     ? 'bg-kid-primary text-yellow-900 shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy hover:bg-yellow-400'
                                                                     : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                                                                 : 'bg-transparent text-gray-400 dark:text-gray-600 cursor-not-allowed border-2 border-gray-200 dark:border-gray-700'}
-                                                 `}
+                                                  `}
                                                     >
                                                         {isAvailable ? (
-                                                            user.bizCoins >= skill.cost
+                                                            safeTokens >= skill.cost
                                                                 ? <>{t('skills.unlock')} <span className="bg-black/10 px-1.5 rounded text-xs py-0.5">${skill.cost}</span></>
                                                                 : <>{t('skills.need')} ${skill.cost}</>
                                                         ) : (
-                                                            <span className="flex items-center gap-1"><Lock size={12} /> {t('skills.locked')}</span>
+                                                             <span className="flex items-center gap-1"><Lock size={12} /> {t('skills.locked')}</span>
                                                         )}
                                                     </button>
                                                 )}

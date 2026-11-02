@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, ArrowLeft, RotateCcw, ThumbsUp, ThumbsDown, MessageCircle, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Briefcase, ArrowLeft, RotateCcw, ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
 import GameTutorialModal from '../../game/components/common/GameTutorialModal';
 
 interface Props {

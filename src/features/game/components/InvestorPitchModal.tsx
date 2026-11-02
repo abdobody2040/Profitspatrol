@@ -211,7 +211,7 @@ const InvestorPitchModal: React.FC<Props> = ({ isOpen, onClose }) => {
                                                     {featureKeys.map((key, idx) => (
                                                         <div key={idx} className="flex items-start gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
                                                             <Check size={16} className="text-green-600 shrink-0 mt-0.5" strokeWidth={4} />
-                                                            <span className="leading-tight">{t(`pricing_page.${key}` as any)}</span>
+                                                            <span className="leading-tight">{t(`pricing_page.${key}` as any, { defaultValue: key.replace(/^feat_/, '').replace(/_/g, ' ') })}</span>
                                                         </div>
                                                     ))}
                                                 </div>

@@ -19,13 +19,13 @@ export interface SpinPrize {
 }
 
 const PRIZES: SpinPrize[] = [
-    { id: 'coins_50', label: '50 🪙', type: 'coins', value: 50, color: '#FFDE00', bgColor: '#FFF7C0', emoji: '🪙', weight: 25 },
+    { id: 'coins_50', label: '50 💰', type: 'coins', value: 50, color: '#FFDE00', bgColor: '#FFF7C0', emoji: '💰', weight: 25 },
     { id: 'xp_50', label: '50 ⚡', type: 'xp', value: 50, color: '#58CC02', bgColor: '#D7F5BE', emoji: '⚡', weight: 25 },
-    { id: 'coins_100', label: '100 🪙', type: 'coins', value: 100, color: '#FF9500', bgColor: '#FFE8C0', emoji: '🪙', weight: 18 },
+    { id: 'coins_100', label: '100 💰', type: 'coins', value: 100, color: '#FF9500', bgColor: '#FFE8C0', emoji: '💰', weight: 18 },
     { id: 'xp_100', label: '100 ⚡', type: 'xp', value: 100, color: '#1CB0F6', bgColor: '#C3EEFF', emoji: '⚡', weight: 18 },
-    { id: 'coins_200', label: '200 🪙', type: 'coins', value: 200, color: '#CE82FF', bgColor: '#F0D9FF', emoji: '🪙', weight: 8 },
+    { id: 'coins_200', label: '200 💰', type: 'coins', value: 200, color: '#CE82FF', bgColor: '#F0D9FF', emoji: '💰', weight: 8 },
     { id: 'shield', label: 'Shield 🛡️', type: 'shield', value: 1, color: '#FF4B4B', bgColor: '#FFD6D6', emoji: '🛡️', weight: 4 },
-    { id: 'coins_500', label: '500 🪙', type: 'coins', value: 500, color: '#FF6B35', bgColor: '#FFE4D9', emoji: '💰', weight: 1 }, // Jackpot
+    { id: 'coins_500', label: '500 💎', type: 'coins', value: 500, color: '#FF6B35', bgColor: '#FFE4D9', emoji: '💎', weight: 1 }, // Jackpot
     { id: 'xp_200', label: '200 ⚡', type: 'xp', value: 200, color: '#843FA1', bgColor: '#E8D5F5', emoji: '⚡', weight: 1 },
 ];
 
@@ -275,7 +275,9 @@ export const DailySpinWheel: React.FC<DailySpinWheelProps> = ({ onClose }) => {
                             className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 flex flex-col items-center gap-4 max-w-xs w-full mx-4"
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="text-6xl">{wonPrize.emoji}</div>
+                            <div className="flex justify-center items-center mb-2">
+                                <PrizeIcon prize={wonPrize} size={64} />
+                            </div>
                             <h3 className="text-2xl font-black" style={{ color: wonPrize.color }}>
                                 {wonPrize.value >= 500 ? '🎉 JACKPOT! 🎉' : t('spin.you_won')}
                             </h3>

@@ -4,6 +4,7 @@ import { FURNITURE_ITEMS } from '../../hq/data/furniture';
 import { Lock, ShoppingBag, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 interface FurnitureShopProps {
     onClose: () => void;
@@ -16,7 +17,7 @@ const FurnitureShop: React.FC<FurnitureShopProps> = ({ onClose }) => {
     if (!user) return null;
 
     const handleBuy = (item: any) => {
-        if (user.bizCoins >= item.cost) {
+        if (user.ppTokens >= item.cost) {
             buyFurniture(item);
         }
     };
@@ -28,7 +29,7 @@ const FurnitureShop: React.FC<FurnitureShopProps> = ({ onClose }) => {
                     <ShoppingBag className="text-purple-500" /> {t('hq.furniture_shop')}
                 </h3>
                 <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-xl font-black flex items-center gap-2">
-                    <DollarSign size={16} /> {user.bizCoins.toLocaleString()}
+                    <DollarSign size={16} /> {(user.ppTokens ?? 0).toLocaleString()}
                 </div>
             </div>
 
@@ -38,7 +39,7 @@ const FurnitureShop: React.FC<FurnitureShopProps> = ({ onClose }) => {
                     // Better lock logic: Check if reqHqLevel index > current index. For now just check if req exists and isn't current.
                     // Actually, let's just say if you have the HQ or better. 
                     // Simplifying: If item needs 'hq_office' and you are 'hq_garage', locked.
-                    const canAfford = user.bizCoins >= item.cost;
+                    const canAfford = (user.ppTokens ?? 0) >= item.cost;
                     const inventoryCount = user.inventory.filter(id => id === item.id).length;
 
                     return (
@@ -71,7 +72,7 @@ const FurnitureShop: React.FC<FurnitureShopProps> = ({ onClose }) => {
                                         ${canAfford ? 'bg-kid-primary text-yellow-900 hover:bg-yellow-400' : 'bg-gray-200 text-gray-400'}
                                     `}
                                 >
-                                    {item.cost} <span className="text-[10px]">🪙</span>
+                                    {item.cost} <CoinIcon size={10} />
                                 </button>
                             )}
                         </motion.div>

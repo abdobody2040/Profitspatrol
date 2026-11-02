@@ -89,7 +89,7 @@ export const useGradingStore = create<GradingState>((set, get) => ({
                     feedback: `[AI Suggestion] ${result.feedback}`,
                     rubricScores: result.rubricScores,
                     letterGrade: undefined,
-                    bizCoinsAwarded: 0,
+                    ppTokensAwarded: 0,
                     xpGained: 0,
                 };
                 educationStore.addSubmission(newSubmission);

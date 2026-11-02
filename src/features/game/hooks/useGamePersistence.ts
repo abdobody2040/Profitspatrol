@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef } from 'react';
 import { Logger } from '../../../services/logger';
 import { BusinessSimulation, User } from '../../../types';
@@ -15,6 +14,34 @@ interface UseGamePersistenceProps {
     gameId: string;
     user: User | null;
     gameData: BusinessSimulation | undefined;
+}
+
+function sanitizeSavedSliders(
+    savedSliders: Record<string, number> | undefined,
+    playerInputs: (string | number)[] | undefined
+): Record<string, number> {
+    const sanitized: Record<string, number> = {};
+    const defaults: Record<string, number> = {};
+
+    playerInputs?.forEach(input => {
+        defaults[String(input)] = 50;
+    });
+
+    if (savedSliders) {
+        for (const [key, val] of Object.entries(savedSliders)) {
+            if (typeof val === 'number') {
+                sanitized[key] = val;
+            }
+        }
+    }
+
+    for (const [key, val] of Object.entries(defaults)) {
+        if (sanitized[key] === undefined) {
+            sanitized[key] = val;
+        }
+    }
+
+    return sanitized;
 }
 
 export const useGamePersistence = ({ gameId, user, gameData }: UseGamePersistenceProps) => {
@@ -38,44 +65,15 @@ export const useGamePersistence = ({ gameId, user, gameData }: UseGamePersistenc
 
             // Validate save data structure
             if (typeof saved.day !== 'number' || typeof saved.funds !== 'number') {
-                // ✅ SECURITY FIX: Route through structured Logger (was bare console.warn)
                 Logger.warn('useGamePersistence: Corrupted save data detected, ignoring', { gameId });
                 return null;
             }
 
-            // Sanitize sliderValues
-            const sanitizedSliders: Record<string, number> = {};
-
-            // Merge saved sliders with defaults to ensure all keys exist
-            const defaultSliders: Record<string, number> = {};
-            gameData.variables?.player_inputs?.forEach(input => {
-                defaultSliders[String(input)] = 50;
-            });
-
-            // If we have saved sliders, respect them, otherwise use default
-            if (saved.sliderValues) {
-                Object.keys(saved.sliderValues).forEach(key => {
-                    const val = saved.sliderValues[key];
-                    if (typeof val === 'number') {
-                        sanitizedSliders[key] = val;
-                    }
-                });
-            }
-
-            // Fill in any missing keys from defaults
-            // (This handles cases where game config changed/added new sliders)
-            Object.keys(defaultSliders).forEach(key => {
-                if (sanitizedSliders[key] === undefined) {
-                    sanitizedSliders[key] = defaultSliders[key];
-                }
-            });
-
-            // Update the saved object with sanitized sliders
-            saved.sliderValues = sanitizedSliders;
+            // Sanitize sliderValues using dedicated pure helper
+            saved.sliderValues = sanitizeSavedSliders(saved.sliderValues, gameData.variables?.player_inputs);
 
             Logger.info("Game loaded successfully", { gameId });
             return saved;
-
         } catch (error) {
             Logger.error('useGamePersistence: Failed to load save data', error);
             return null;
@@ -96,19 +94,13 @@ export const useGamePersistence = ({ gameId, user, gameData }: UseGamePersistenc
             saveTimeoutRef.current = setTimeout(() => {
                 setIsSaving(false);
             }, 1000);
-
         } catch (error) {
-            // Note: localStorage quota exceeded (QuotaExceededError) is the most common cause here
             Logger.error('useGamePersistence: Failed to save game data', error);
         }
     }, [getSaveKey]);
 
     // Debounced save wrapper
     const triggerAutoSave = useCallback((data: GameSaveData) => {
-        // Don't save if it's the initial empty state (day 1, funds 100, no upgrades)
-        // BUT: This check is better done by the caller or we duplicate default logic here.
-        // We will leave the "should save" logic to the caller or just debounce everything.
-
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current);
         }
@@ -116,7 +108,6 @@ export const useGamePersistence = ({ gameId, user, gameData }: UseGamePersistenc
         saveTimeoutRef.current = setTimeout(() => {
             saveGameData(data);
         }, 500);
-
     }, [saveGameData]);
 
     return {

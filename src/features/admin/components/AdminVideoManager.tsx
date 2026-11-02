@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useAppStore } from '../../../store';
+import { useState } from "react";
 import { Video } from '../../../types';
 import { Plus, Trash2, Edit, Save, X, Video as VideoIcon } from 'lucide-react';
 import { useEducationStore } from "../../../store/educationStore";
@@ -107,7 +106,7 @@ const AdminVideoManager = () => {
                             <label className="block text-xs font-bold text-gray-500 mb-1">Category</label>
                             <select
                                 className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                value={formData.category} // @ts-ignore
+                                value={formData.category}
                                 onChange={e => setFormData({ ...formData, category: e.target.value as any })}
                             >
                                 <option value="Finance">Finance</option>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { THEMES } from '../data/themes';
 import { useTranslation } from 'react-i18next';
 
 interface ThemeSelectorProps {

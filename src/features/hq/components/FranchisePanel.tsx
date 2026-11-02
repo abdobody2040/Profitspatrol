@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Store, TrendingUp, Users, Coins, ArrowUp, Lock, Sparkles, Clock } from 'lucide-react';
+import { Store, ArrowUp, Lock } from "lucide-react";
 import { useAppStore } from '../../../store';
 import { useTranslation } from 'react-i18next';
+import CoinIcon from '../../../components/ui/CoinIcon';
 import {
     INCOME_PER_HOUR,
     UPGRADE_COST,
@@ -73,7 +74,7 @@ const FranchisePanel: React.FC = () => {
     const isMaxTier = currentIdx >= TIER_ORDER.length - 1;
     const nextTier = isMaxTier ? null : TIER_ORDER[currentIdx + 1];
     const upgradeCost = isMaxTier ? 0 : UPGRADE_COST[franchise.tier];
-    const canAffordUpgrade = (user?.bizCoins ?? 0) >= upgradeCost;
+    const canAffordUpgrade = (user?.ppTokens ?? 0) >= upgradeCost;
     const incomeRate = INCOME_PER_HOUR[franchise.tier];
     const fillPercent = Math.min(100, (franchise.pendingIncome / MAX_PENDING_INCOME) * 100);
 
@@ -204,8 +205,8 @@ const FranchisePanel: React.FC = () => {
                 <div style={{
                     textAlign: 'right', flexShrink: 0,
                 }}>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: '#86efac' }}>
-                        +{incomeRate} 🪙
+                    <div className="flex items-center justify-end gap-1" style={{ fontSize: 15, fontWeight: 900, color: '#86efac' }}>
+                        +{incomeRate} <CoinIcon size={14} />
                     </div>
                     <div className="text-[10px] text-gray-400 dark:text-white/35 font-[600]">
                         {t('enterprise.perHour', 'per hour')}
@@ -221,8 +222,8 @@ const FranchisePanel: React.FC = () => {
                     <span className="text-[13px] font-[700] text-gray-500 dark:text-white/60">
                         💰 {t('enterprise.pendingIncome', 'Pending Income')}
                     </span>
-                    <span style={{ fontSize: 16, fontWeight: 900, color: '#fbbf24' }}>
-                        {franchise.pendingIncome} 🪙
+                    <span className="inline-flex items-center gap-1" style={{ fontSize: 16, fontWeight: 900, color: '#fbbf24' }}>
+                        {franchise.pendingIncome} <CoinIcon size={16} />
                     </span>
                 </div>
 
@@ -246,7 +247,7 @@ const FranchisePanel: React.FC = () => {
                         disabled={franchise.pendingIncome <= 0}
                         className={`flex-1 p-[12px] border-none rounded-[12px] text-[#fff] font-[800] text-[14px] ${franchise.pendingIncome > 0 ? 'bg-gradient-to-br from-[#059669] to-[#10b981] cursor-pointer opacity-100' : 'bg-black/5 dark:bg-white/10 text-gray-400 dark:text-white/40 cursor-not-allowed opacity-45'}`}
                     >
-                        {t('enterprise.collectBtn', 'Collect BizCoins')}
+                        {t('enterprise.collectBtn', 'Collect ppTokens')}
                     </motion.button>
 
                     {/* Upgrade button */}
@@ -257,13 +258,13 @@ const FranchisePanel: React.FC = () => {
                             animate={upgradeFlash ? { scale: [1, 1.1, 1] } : {}}
                             onClick={handleUpgrade}
                             disabled={!canAffordUpgrade}
-                            title={`Upgrade to ${nextTier} for ${upgradeCost} 🪙`}
+                            title={`Upgrade to ${nextTier} for ${upgradeCost} 💰`}
                             className={`p-[12px_16px] border-none rounded-[12px] font-[800] text-[13px] flex items-center gap-[6px] whitespace-nowrap ${canAffordUpgrade ? 'text-white cursor-pointer opacity-100' : 'bg-black/5 dark:bg-white/10 text-gray-400 dark:text-white/40 cursor-not-allowed opacity-40'}`}
                             style={{
                                 background: canAffordUpgrade ? `linear-gradient(135deg, ${tierCfg.color}, #7c3aed)` : undefined,
                             }}
                         >
-                            <ArrowUp size={14} /> {t('enterprise.upgradeBtn', 'Upgrade')} · {upgradeCost} 🪙
+                            <ArrowUp size={14} /> {t('enterprise.upgradeBtn', 'Upgrade')} · {upgradeCost} <CoinIcon size={13} />
                         </motion.button>
                     )}
                     {isMaxTier && (
@@ -286,7 +287,7 @@ const FranchisePanel: React.FC = () => {
                 borderBottom: `1px solid ${tierCfg.color}15`,
             }}>
                 {[
-                    { label: t('enterprise.totalEarned', 'Total Earned'), value: `${franchise.totalEarned} 🪙`, icon: '💎' },
+                    { label: t('enterprise.totalEarned', 'Total Earned'), value: <span className="inline-flex items-center gap-1">{franchise.totalEarned} <CoinIcon size={14} /></span>, icon: '💎' },
                     { label: t('enterprise.visitors', 'Visitors'), value: franchise.totalVisitors.toString(), icon: '👥' },
                     { label: t('enterprise.upgrades', 'Upgrades'), value: franchise.upgradeCount.toString(), icon: '⬆️' },
                 ].map((stat, i) => (
@@ -314,7 +315,7 @@ const FranchisePanel: React.FC = () => {
                             <div key={i} className="flex items-center gap-[5px] bg-black/5 dark:bg-white/5 rounded-[10px] p-[4px_10px] text-[12px] text-gray-600 dark:text-white/60">
                                 <span>{v.visitorEmoji}</span>
                                 <span style={{ fontWeight: 600 }}>{v.visitorName}</span>
-                                <span style={{ color: '#86efac', fontWeight: 700 }}>+{v.bizCoinsSpent}🪙</span>
+                                <span className="inline-flex items-center gap-0.5" style={{ color: '#86efac', fontWeight: 700 }}>+{v.ppTokensSpent}<CoinIcon size={12} /></span>
                             </div>
                         ))}
                     </div>
@@ -336,9 +337,12 @@ const FranchisePanel: React.FC = () => {
                             borderRadius: 12, fontWeight: 900, fontSize: 15,
                             whiteSpace: 'nowrap', pointerEvents: 'none',
                             boxShadow: '0 4px 16px rgba(16,185,129,0.4)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
                         }}
                     >
-                        +{justCollected} 🪙 Collected!
+                        +{justCollected} <CoinIcon size={16} /> Collected!
                     </motion.div>
                 )}
             </AnimatePresence>

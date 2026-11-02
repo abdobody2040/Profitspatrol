@@ -14,7 +14,7 @@ export const ReferralPanel: React.FC = () => {
     const inviteCode = user?.referralCode || 'PENDING';
     const inviteLink = `${window.location.origin}/invite/${inviteCode}`;
     const totalReferrals = user?.totalReferrals || 0;
-    const totalEarned = totalReferrals * 500; // 500 BizCoins per referral
+    const totalEarned = totalReferrals * 500; // 500 P Tokens per referral
 
     const handleCopy = async () => {
         try {
@@ -31,8 +31,8 @@ export const ReferralPanel: React.FC = () => {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Join me on Profits Patrol!',
-                    text: `Use my invite code ${inviteCode} to get started!`,
+                    title: t('social.invite_share_title'),
+                    text: t('social.invite_share_text', { code: inviteCode }),
                     url: inviteLink,
                 });
             } catch (err) {
@@ -52,9 +52,9 @@ export const ReferralPanel: React.FC = () => {
                 <div className="absolute bottom-0 start-0 -mb-4 -ms-4 w-16 h-16 bg-white opacity-10 rounded-full blur-lg"></div>
 
                 <Gift className="w-12 h-12 mx-auto mb-3 text-indigo-100" />
-                <h2 className="text-2xl font-bold mb-2">Invite Friends, Earn Rewards!</h2>
+                <h2 className="text-2xl font-bold mb-2">{t('social.invite_title')}</h2>
                 <p className="text-indigo-100 max-w-sm mx-auto">
-                    Get <strong className="text-yellow-300">500 BizCoins</strong> for every friend who signs up using your link.
+                    {t('social.invite_desc')}
                 </p>
             </div>
 
@@ -62,7 +62,7 @@ export const ReferralPanel: React.FC = () => {
                 {/* Invite Link Section */}
                 <div className="mb-8">
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                        Your Unique Invite Link
+                        {t('social.invite_link')}
                     </label>
                     <div className="flex items-center gap-2">
                         <div className="flex-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center justify-between">
@@ -98,7 +98,7 @@ export const ReferralPanel: React.FC = () => {
                             {totalReferrals}
                         </div>
                         <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                            Friends Invited
+                            {t('social.friends_invited')}
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@ export const ReferralPanel: React.FC = () => {
                             {totalEarned}
                         </div>
                         <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                            BizCoins Earned
+                            {t('social.ppTokens_earned')}
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ export const ReferralPanel: React.FC = () => {
             {/* Parent Bonus Note */}
             <div className="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 p-4 text-center">
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">Parent Bonus:</span> If your friend upgrades to Premium, your parents get 1 Free Month! 🎉
+                    {t('social.parent_bonus')} 🎉
                 </p>
             </div>
         </div>

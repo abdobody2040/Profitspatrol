@@ -6,8 +6,11 @@ import App from '@/app/App';
 import { useAppStore } from '@/store';
 import { SoundProvider } from '@/contexts/SoundContext';
 
+import i18n from '@/lib/i18n';
+
 describe('App Component', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en');
     // Reset store to ensure clean slate (Logged Out)
     useAppStore.setState({ user: null });
   });

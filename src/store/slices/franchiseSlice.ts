@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { Logger } from '../../services/logger';
 
 
@@ -10,7 +10,7 @@ export type FranchiseTier = 'KIOSK' | 'SHOP' | 'STORE' | 'ENTERPRISE';
 export interface FranchiseVisit {
   visitorName: string;
   visitorEmoji: string;
-  bizCoinsSpent: number;
+  ppTokensSpent: number;
   timestamp: string;
 }
 
@@ -20,7 +20,7 @@ export interface FranchiseState {
   tier: FranchiseTier;
   totalVisitors: number;
   totalEarned: number;
-  pendingIncome: number;        // BizCoins waiting to be collected
+  pendingIncome: number;        // P Tokens waiting to be collected
   lastCollectedAt: string | null;
   recentVisits: FranchiseVisit[];  // Last 5 visitors shown in UI
   upgradeCount: number;         // How many times they've upgraded
@@ -39,7 +39,7 @@ export interface FranchiseSlice {
 // Min level to unlock franchise
 const FRANCHISE_UNLOCK_LEVEL = 5;
 
-// Income per hour by tier (in BizCoins)
+// Income per hour by tier (in P Tokens)
 const INCOME_PER_HOUR: Record<FranchiseTier, number> = {
   KIOSK: 10,
   SHOP: 25,
@@ -80,7 +80,7 @@ function generateVisit(tier: FranchiseTier, seed: number): FranchiseVisit {
   return {
     visitorName: visitor.name,
     visitorEmoji: visitor.emoji,
-    bizCoinsSpent: Math.max(1, spend),
+    ppTokensSpent: Math.max(1, spend),
     timestamp: new Date().toISOString(),
   };
 }
@@ -142,13 +142,13 @@ export const createFranchiseSlice: StateCreator<AppState, [], [], FranchiseSlice
         totalEarned: state.franchise.totalEarned + amount,
         lastCollectedAt: new Date().toISOString(),
       },
-      // Credit BizCoins to the user
+      // Credit ppTokens to the user
       user: state.user
-        ? { ...state.user, bizCoins: (state.user.bizCoins ?? 0) + amount }
+        ? { ...state.user, ppTokens: (state.user.ppTokens ?? 0) + amount }
         : state.user,
     }));
 
-    Logger.info(`[Franchise] Collected ${amount} BizCoins`);
+    Logger.info(`[Franchise] Collected ${amount} P Tokens`);
     return amount;
   },
 
@@ -160,7 +160,7 @@ export const createFranchiseSlice: StateCreator<AppState, [], [], FranchiseSlice
     if (currentIdx >= TIER_ORDER.length - 1) return; // Already max tier
 
     const cost = UPGRADE_COST[franchise.tier];
-    const currentCoins = user.bizCoins ?? 0;
+    const currentCoins = user.ppTokens ?? 0;
 
     if (currentCoins < cost) {
       Logger.warn(`[Franchise] Not enough coins: need ${cost}, have ${currentCoins}`);
@@ -176,7 +176,7 @@ export const createFranchiseSlice: StateCreator<AppState, [], [], FranchiseSlice
         upgradeCount: state.franchise.upgradeCount + 1,
       },
       user: state.user
-        ? { ...state.user, bizCoins: (state.user.bizCoins ?? 0) - cost }
+        ? { ...state.user, ppTokens: (state.user.ppTokens ?? 0) - cost }
         : state.user,
     }));
 

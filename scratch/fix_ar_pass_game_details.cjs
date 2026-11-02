@@ -81,4 +81,3 @@ Object.keys(t).forEach(eng => {
 });
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('Game Scenarios and Ingredients Arabic translation pass complete.');

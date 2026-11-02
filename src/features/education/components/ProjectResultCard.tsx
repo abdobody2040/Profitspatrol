@@ -10,7 +10,7 @@ const ProjectResultCard: React.FC = () => {
 
     if (!gradeResult) return null;
 
-    const { score, letterGrade, feedback, bizCoinsAwarded, xpGained } = gradeResult;
+    const { score, letterGrade, feedback, ppTokensAwarded, xpGained } = gradeResult;
 
     const getGradeColor = (grade: string) => {
         switch (grade) {
@@ -52,7 +52,7 @@ const ProjectResultCard: React.FC = () => {
                 </motion.div>
 
                 {/* Confetti / Decoration */}
-                <div className="absolute top-0 start-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat"></div>
+                <div className="absolute top-0 start-0 w-full h-full opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
             </div>
 
             {/* Rewards */}
@@ -68,7 +68,7 @@ const ProjectResultCard: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-xs font-bold text-gray-400 uppercase">Earned</div>
-                        <div className="font-black text-xl text-gray-800 dark:text-white">+{bizCoinsAwarded}</div>
+                        <div className="font-black text-xl text-gray-800 dark:text-white">+{ppTokensAwarded}</div>
                     </div>
                 </motion.div>
 

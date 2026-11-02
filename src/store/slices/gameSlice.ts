@@ -1,12 +1,14 @@
 
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { BusinessSimulation, LemonadeState, PortfolioItem, SubscriptionTier, FurnitureItem, PlacedItem } from '../../types';
 import { GAMES_DB } from '../../features/game/data/games';
 import { HQ_LEVELS, SKILLS_DB } from '../../data/constants';
 import { getLevel, getToday, getYesterday } from '../../utils/gameUtils';
 import { SoundService } from '../../lib/sound';
 import { Logger } from '../../services/logger';
+import { laravelAdapter } from '../../services/persistence/LaravelAdapter';
+
 
 
 const INITIAL_LEMONADE_STATE: LemonadeState = {
@@ -108,7 +110,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         const oldLevel = state.user.level;
         const newLevel = getLevel(newXp);
         const leveledUp = newLevel > oldLevel;
-        const coinReward = Math.floor(xpReward / 5);
+        const tokenReward = Math.floor(xpReward / 5);
 
         let newInventory = [...state.user.inventory];
         let newBadges = [...state.user.badges];
@@ -129,7 +131,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             ...state.user,
             xp: newXp,
             level: newLevel,
-            bizCoins: state.user.bizCoins + coinReward,
+            ppTokens: state.user.ppTokens + tokenReward,
             inventory: newInventory,
             badges: newBadges,
             hasGraduated
@@ -171,7 +173,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         let newStreak = state.user.streak;
         let newInventory = [...state.user.inventory];
         let bonusXp = 0;
-        let bonusCoins = 0;
+        let bonusTokens = 0;
         let streakShieldUsed = false;
 
         if (state.user.lastActivityDate === yesterday) {
@@ -196,7 +198,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         const bonusAlreadyGivenToday = state.user.streakLastBonusDate === today;
         if (!bonusAlreadyGivenToday && newStreak > 0 && newStreak % 7 === 0) {
             bonusXp = 300;
-            bonusCoins = 200;
+            bonusTokens = 200;
             Logger.info(`7-day streak bonus! Streak: ${newStreak}`, { userId: state.user.id });
         }
 
@@ -206,7 +208,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             streak: newStreak,
             inventory: newInventory,
             xp: state.user.xp + bonusXp,
-            bizCoins: state.user.bizCoins + bonusCoins,
+            ppTokens: state.user.ppTokens + bonusTokens,
             ...(bonusXp > 0 ? { streakLastBonusDate: today } : {}),
             ...(streakShieldUsed ? { streakShieldUsedDate: today } : {}),
         };
@@ -217,7 +219,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
     buyItem: (item) => set((state) => {
         if (!state.user) return {};
-        if (state.user.bizCoins < item.cost) {
+        if (state.user.ppTokens < item.cost) {
             if (state.user.settings.soundEnabled) SoundService.playError();
             return {};
         }
@@ -229,7 +231,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins - item.cost,
+            ppTokens: state.user.ppTokens - item.cost,
             inventory: [...state.user.inventory, item.id]
         };
 
@@ -269,13 +271,13 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         if (!state.user) return {};
         const hq = HQ_LEVELS.find(h => h.id === hqId);
         if (!hq) return {};
-        if (state.user.bizCoins < hq.cost) {
+        if (state.user.ppTokens < hq.cost) {
             if (state.user.settings.soundEnabled) SoundService.playError();
             return {};
         }
         if (state.user.settings.soundEnabled) SoundService.playSuccess();
 
-        const updatedUser = { ...state.user, bizCoins: state.user.bizCoins - hq.cost, hqLevel: hqId };
+        const updatedUser = { ...state.user, ppTokens: state.user.ppTokens - hq.cost, hqLevel: hqId };
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
     }),
 
@@ -283,7 +285,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         if (!state.user) return {};
         const skill = SKILLS_DB.find(s => s.id === skillId);
         if (!skill) return {};
-        if (state.user.bizCoins < skill.cost) {
+        if (state.user.ppTokens < skill.cost) {
             if (state.user.settings.soundEnabled) SoundService.playError();
             return {};
         }
@@ -292,7 +294,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins - skill.cost,
+            ppTokens: state.user.ppTokens - skill.cost,
             unlockedSkills: [...state.user.unlockedSkills, skillId]
         };
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
@@ -301,14 +303,14 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
     hireManager: (businessId) => set((state) => {
         if (!state.user) return {};
         const hireCost = 500;
-        if (state.user.bizCoins < hireCost) return {};
+        if (state.user.ppTokens < hireCost) return {};
         if (state.user.portfolio.some(p => p.businessId === businessId)) return {};
         if (state.user.settings.soundEnabled) SoundService.playCoin();
 
         const newItem: PortfolioItem = { businessId, managerLevel: 1, lastCollected: new Date().toISOString() };
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins - hireCost,
+            ppTokens: state.user.ppTokens - hireCost,
             portfolio: [...state.user.portfolio, newItem]
         };
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
@@ -379,7 +381,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
             const updatedUser = {
                 ...state.user,
-                bizCoins: state.user.bizCoins + income,
+                ppTokens: state.user.ppTokens + income,
                 portfolio: updatedPortfolio
             };
 
@@ -427,7 +429,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins + totalIncome,
+            ppTokens: state.user.ppTokens + totalIncome,
             portfolio: updatedPortfolio,
         };
         // ✅ Single set() — one React re-render regardless of portfolio size
@@ -465,20 +467,25 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             billingCycle: newBillingCycle 
         };
 
-        // ✅ SECURITY FIX (CRIT-02): Removed direct Supabase profile update.
-        // Previously this action wrote subscription_tier directly to the DB, meaning
-        // ANY user could call upgradeSubscription('tycoon') from the browser console
-        // and get a free subscription upgrade persisted to Supabase.
-        //
-        // The Supabase profile write has been REMOVED. subscription_tier in the DB
-        // is now ONLY updated by the verified Stripe webhook Edge Function
-        // (stripe-webhook), which validates the stripe-signature header before
-        // making any changes. This local state update is kept only to provide
-        // immediate UI feedback after a legitimate Stripe checkout redirect.
-        //
-        // See: supabase/functions/stripe-webhook/index.ts
+        const isParent = state.user.role === 'PARENT';
 
-        return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
+        // Local state update only for UI feedback. Authoritative updates are processed via Stripe webhook.
+        return { 
+            user: updatedUser, 
+            users: state.users.map(u => {
+                if (u.id === updatedUser.id) return updatedUser;
+                // If parent upgrades or downgrades, cascade to all linked children
+                if (isParent && u.parentId === updatedUser.id) {
+                    return {
+                        ...u,
+                        subscriptionTier: tier,
+                        subscriptionStatus: newStatus as 'FREE' | 'PREMIUM',
+                        billingCycle: newBillingCycle
+                    };
+                }
+                return u;
+            }) 
+        };
     }),
 
 
@@ -509,7 +516,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
     buyFurniture: (item: FurnitureItem) => set((state) => {
         if (!state.user) return {};
-        if (state.user.bizCoins < item.cost) {
+        if (state.user.ppTokens < item.cost) {
             if (state.user.settings.soundEnabled) SoundService.playError();
             return {};
         }
@@ -517,7 +524,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins - item.cost,
+            ppTokens: state.user.ppTokens - item.cost,
             inventory: [...state.user.inventory, item.id]
         };
 
@@ -598,7 +605,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins + refund,
+            ppTokens: state.user.ppTokens + refund,
             placedItems: updatedPlaced
         };
 
@@ -649,7 +656,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         const updatedUser = {
             ...state.user,
             readBookIds: [...(state.user.readBookIds || []), bookId],
-            bizCoins: state.user.bizCoins + 10,
+            ppTokens: state.user.ppTokens + 10,
             xp: state.user.xp + 20
         };
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
@@ -662,7 +669,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins + 100,
+            ppTokens: state.user.ppTokens + 100,
             xp: state.user.xp + 50
         };
 
@@ -696,7 +703,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         // Award XP and coins
         const newXp = state.user.xp + task.rewards.xp;
-        const newCoins = state.user.bizCoins + task.rewards.coins;
+        const newTokens = state.user.ppTokens + task.rewards.coins;
         const newLevel = getLevel(newXp);
         const leveledUp = newLevel > state.user.level;
 
@@ -773,7 +780,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             ...state.user,
             xp: newXp,
             level: newLevel,
-            bizCoins: newCoins,
+            ppTokens: newTokens,
             completedBookTasks: completedTasks,
             bookTaskStreak: newStreak,
             lastBookTaskDate: today,
@@ -816,7 +823,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         };
 
         if (prize.type === 'coins' || prize.type === 'jackpot') {
-            updatedUser = { ...updatedUser, bizCoins: updatedUser.bizCoins + prize.value };
+            updatedUser = { ...updatedUser, ppTokens: updatedUser.ppTokens + prize.value };
         } else if (prize.type === 'xp') {
             const newXp = updatedUser.xp + prize.value;
             updatedUser = { ...updatedUser, xp: newXp, level: getLevel(newXp) };
@@ -829,6 +836,9 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
         }
 
         Logger.info('Daily Spin claimed', { userId: state.user.id, prize: prize.id });
+
+        laravelAdapter.saveUser(updatedUser).catch(err => Logger.error("Laravel Sync Failed", err));
+
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
     }),
 
@@ -854,7 +864,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         // Apply individual reward
         if (challenge.reward.type === 'coins') {
-            updatedUser = { ...updatedUser, bizCoins: updatedUser.bizCoins + challenge.reward.value };
+            updatedUser = { ...updatedUser, ppTokens: updatedUser.ppTokens + challenge.reward.value };
         } else {
             const newXp = updatedUser.xp + challenge.reward.value;
             updatedUser = { ...updatedUser, xp: newXp, level: getLevel(newXp) };
@@ -862,7 +872,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
 
         // Apply completion bonus (500 coins) if all 3 done and bonus not yet claimed
         if (allDone && !existing.bonusClaimed) {
-            updatedUser = { ...updatedUser, bizCoins: updatedUser.bizCoins + 500 };
+            updatedUser = { ...updatedUser, ppTokens: updatedUser.ppTokens + 500 };
             if (state.user.settings.soundEnabled) SoundService.playSuccess();
         }
 
@@ -894,7 +904,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
     buyStock: (stockId, shares, pricePerShare) => set((state) => {
         if (!state.user) return {};
         const cost = Math.round(pricePerShare * shares);
-        if (state.user.bizCoins < cost) return {};
+        if (state.user.ppTokens < cost) return {};
 
         const portfolio = [...(state.user.stockPortfolio ?? [])];
         const idx = portfolio.findIndex(h => h.stockId === stockId);
@@ -910,7 +920,10 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             portfolio.push({ stockId, shares, avgBuyPrice: pricePerShare });
         }
 
-        const updatedUser = { ...state.user, bizCoins: state.user.bizCoins - cost, stockPortfolio: portfolio };
+        const updatedUser = { ...state.user, ppTokens: state.user.ppTokens - cost, stockPortfolio: portfolio };
+        
+        laravelAdapter.saveUser(updatedUser).catch(err => Logger.error("Laravel Sync Failed", err));
+
         Logger.info('Stock bought', { userId: state.user.id, stockId, shares });
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
     }),
@@ -928,17 +941,20 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             portfolio[idx] = { ...portfolio[idx], shares: portfolio[idx].shares - shares };
         }
 
-        const updatedUser = { ...state.user, bizCoins: state.user.bizCoins + proceeds, stockPortfolio: portfolio };
+        const updatedUser = { ...state.user, ppTokens: state.user.ppTokens + proceeds, stockPortfolio: portfolio };
+
+        laravelAdapter.saveUser(updatedUser).catch(err => Logger.error("Laravel Sync Failed", err));
+
         Logger.info('Stock sold', { userId: state.user.id, stockId, shares });
         return { user: updatedUser, users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u) };
     }),
 
     buyAvatarItem: (itemId, cost) => set((state) => {
-        if (!state.user || state.user.bizCoins < cost) return {};
+        if (!state.user || state.user.ppTokens < cost) return {};
         if (state.user.inventory.includes(itemId)) return {};
         const updatedUser = {
             ...state.user,
-            bizCoins: state.user.bizCoins - cost,
+            ppTokens: state.user.ppTokens - cost,
             inventory: [...state.user.inventory, itemId],
         };
         Logger.info('Avatar item bought', { userId: state.user.id, itemId });
@@ -973,7 +989,7 @@ export const createGameSlice: StateCreator<AppState, [], [], GameSlice> = (set, 
             ...state.user,
             completedSeasonalChallenges: [...already, challengeId],
             ...(reward.type === 'coins'
-                ? { bizCoins: state.user.bizCoins + reward.value }
+                ? { ppTokens: state.user.ppTokens + reward.value }
                 : { xp: state.user.xp + reward.value, level: getLevel(state.user.xp + reward.value) }
             ),
         };

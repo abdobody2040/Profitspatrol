@@ -1,0 +1,60 @@
+groups:
+  - name: profitspatrol_operational_alerts
+    rules:
+      # 1. Error-rate spike (> 5% of total log volume over 5 minutes)
+      - alert: ErrorRateSpike
+        expr: |
+          (
+            sum(rate({service=~"profits-patrol.*", level="ERROR"}[5m]))
+            /
+            sum(rate({service=~"profits-patrol.*"}[5m]))
+          ) * 100 > 5
+        for: 2m
+        labels:
+          severity: warning
+          team: sre
+        annotations:
+          summary: "Error rate spike detected on {{ $labels.service }}"
+          description: "Errors represent {{ $value | printf \"%.2f\" }}% of total log volume over the last 5 minutes (threshold: 5%)."
+
+      # 2. HTTP 5xx error ratio > 2% over 5 minutes
+      - alert: Http5xxRatioSpike
+        expr: |
+          (
+            sum(rate({service=~"profits-patrol.*"} | json | status >= 500 [5m]))
+            /
+            sum(rate({service=~"profits-patrol.*"} | json | status > 0 [5m]))
+          ) * 100 > 2
+        for: 2m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "HTTP 5xx response ratio exceeded 2% on {{ $labels.service }}"
+          description: "5xx server errors represent {{ $value | printf \"%.2f\" }}% of all HTTP responses in the last 5 minutes."
+
+      # 3. Failed-login bursts (> 5 failed logins from single IP in 2 minutes)
+      - alert: FailedLoginBurst
+        expr: |
+          sum by (client_ip) (
+            count_over_time({service="profits-patrol-api", event="auth.login.failed"} | json [2m])
+          ) > 5
+        for: 30s
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "Brute force / failed login burst from IP {{ $labels.client_ip }}"
+          description: "Client IP {{ $labels.client_ip }} generated {{ $value }} failed login attempts in the past 2 minutes."
+
+      # 4. Service Heartbeat: No logs from service for 10 minutes
+      - alert: ServiceNoLogsHeartbeat
+        expr: |
+          absent_over_time({service="profits-patrol-api"}[10m]) == 1
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "Heartbeat failure: No logs from profits-patrol-api for 10 minutes"
+          description: "Service has produced zero logs to stdout/Loki in the last 10 minutes. Check whether the container or VPS process has crashed."

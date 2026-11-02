@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coins, Users, TrendingUp, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Coins, Users, TrendingUp, Wallet, ArrowUpRight } from "lucide-react";
 import { EconomyStats } from '../../../../services/AnalyticsService';
 
 interface Props {
@@ -24,9 +24,9 @@ export const EconomyHealth: React.FC<Props> = ({ data, isLoading }) => {
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD', // Using USD symbol to represent BizCoins efficiently
+            currency: 'USD', // Using USD symbol to represent ppTokens efficiently
             maximumFractionDigits: 0
-        }).format(val).replace('$', 'BZ ');
+        }).format(val).replace('$', 'PP ');
     };
 
     const stats = [
@@ -36,7 +36,7 @@ export const EconomyHealth: React.FC<Props> = ({ data, isLoading }) => {
             icon: Coins,
             color: 'text-yellow-600',
             bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-            desc: 'Total BizCoins in circulation'
+            desc: 'Total ppTokens in circulation'
         },
         {
             title: 'Avg. Net Worth',
@@ -60,7 +60,7 @@ export const EconomyHealth: React.FC<Props> = ({ data, isLoading }) => {
             icon: TrendingUp,
             color: 'text-green-600',
             bg: 'bg-green-100 dark:bg-green-900/30',
-            desc: 'Players with > 5,000 BZ'
+            desc: 'Players with > 5,000 PP'
         }
     ];
 

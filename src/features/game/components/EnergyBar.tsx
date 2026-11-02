@@ -3,9 +3,12 @@ import React from 'react';
 import { useEnergy } from '../../../hooks/useEnergy';
 import { Heart, Infinity as InfinityIcon, Clock, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const EnergyBar: React.FC = () => {
   const { energy, maxEnergy, isUnlimited, timeToNextRefill } = useEnergy();
+
+  const { t } = useTranslation();
 
   if (isUnlimited) {
     return (
@@ -16,7 +19,7 @@ const EnergyBar: React.FC = () => {
         >
           <InfinityIcon size={18} strokeWidth={3} />
         </motion.div>
-        <span className="text-xs font-black uppercase tracking-wider">Unlimited</span>
+        <span className="text-xs font-black uppercase tracking-wider">{t('mapExtras.unlimited', { defaultValue: 'Unlimited' })}</span>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import { motion } from 'framer-motion';
-import { RoomType, THEMES, ROOM_NAMES } from '../data/themes';
+import { RoomType, THEMES } from "../data/themes";
 import { WallPattern, FloorPattern } from '../data/patterns';
 import { FURNITURE_ITEMS } from '../data/furniture';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +43,6 @@ const Dollhouse2D: React.FC<Dollhouse2DProps> = ({ displayUser, isReadOnly = fal
 
     const rooms: RoomType[] = ['bedroom', 'bathroom', 'kitchen', 'living', 'office', 'game'];
 
-    // Get character icon based on theme
     const characterIcon = currentTheme === 'girls' ? '👧' : '👦';
 
     const handleThemeChange = (theme: string) => {
@@ -69,14 +68,12 @@ const Dollhouse2D: React.FC<Dollhouse2DProps> = ({ displayUser, isReadOnly = fal
         }));
     };
 
-    // Get user's furniture inventory
     const userFurniture = user.inventory || [];
     const { placeFurniture, removeFurnitureFromRoom, moveFurnitureToRoom } = useAppStore();
 
     const handleFurnitureDrop = (roomType: RoomType, furnitureData: any) => {
         // Check if it's a placed furniture being moved
         if (furnitureData.action === 'remove') {
-            // Remove furniture from room and return to inventory
             removeFurnitureFromRoom(furnitureData.id);
         } else if (furnitureData.fromRoom) {
             // Moving furniture from another room
@@ -87,7 +84,6 @@ const Dollhouse2D: React.FC<Dollhouse2DProps> = ({ displayUser, isReadOnly = fal
         }
     };
 
-    // Get furniture placed in each room
     const getRoomFurniture = (roomType: RoomType) => {
         const placedInRoom = user?.placedItems?.filter((item: any) => item.roomType === roomType) || [];
         // Map to furniture with icons

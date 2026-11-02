@@ -1,8 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { BookOpen, Star, Zap, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 import { Book } from '../../../types';
 import SmartImage from '../../../components/ui/SmartImage';
+import { CoinIcon } from '../../../components/ui/CoinIcon';
 
 // A gradient per category for the hero strip
 const CATEGORY_GRADIENTS: Record<string, string> = {
@@ -37,6 +39,7 @@ interface ExclusiveBookCardProps {
 }
 
 const ExclusiveBookCard: React.FC<ExclusiveBookCardProps> = ({ book, index, isRead, onRead }) => {
+    const { t } = useTranslation();
     const gradient = CATEGORY_GRADIENTS[book.category] ?? 'from-violet-500 to-indigo-600';
     const emoji = CATEGORY_EMOJIS[book.category] ?? '📚';
     const taskCount = book.tasks?.length ?? 0;
@@ -72,7 +75,7 @@ const ExclusiveBookCard: React.FC<ExclusiveBookCardProps> = ({ book, index, isRe
                     <div className="flex items-center gap-1.5 mb-1.5">
                         <span className="text-lg">{emoji}</span>
                         <span className="text-white/80 text-[10px] font-black uppercase tracking-widest">
-                            {book.category}
+                            {t(`library.categories.${book.category.toLowerCase()}` as any)}
                         </span>
                     </div>
                     <h3 className="text-white font-black text-lg leading-tight mb-1 drop-shadow">
@@ -139,7 +142,7 @@ const ExclusiveBookCard: React.FC<ExclusiveBookCardProps> = ({ book, index, isRe
                     )}
                     {totalCoins > 0 && (
                         <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full px-2.5 py-1 text-[10px] font-black">
-                            🪙 {totalCoins} Coins
+                            <CoinIcon size={10} className="mr-0.5" /> {totalCoins} Coins
                         </div>
                     )}
                 </div>

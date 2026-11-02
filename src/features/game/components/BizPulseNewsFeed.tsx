@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
-import { Zap, ChevronLeft, ChevronRight, X, TrendingUp, Lightbulb, Globe, Star } from 'lucide-react';
+import { Zap, ChevronLeft, ChevronRight, X, TrendingUp, Star } from "lucide-react";
 import { useAppStore } from '../../../store';
 import { getToday } from '../../../utils/gameUtils';
 
@@ -261,22 +261,22 @@ export const BizPulseNewsFeed: React.FC<BizPulseNewsFeedProps> = ({ onClose }) =
                         {/* Category Bar */}
                         <div className="flex items-center justify-between px-4 pt-3 pb-1">
                             <span className="text-xs font-bold px-3 py-1 rounded-full text-white" style={{ background: catConfig.color }}>
-                                {catConfig.label}
+                                {t(`bizpulse.cat_${article.category}`, { defaultValue: catConfig.label })}
                             </span>
-                            <span className="text-xs font-semibold text-gray-500">{article.tag}</span>
+                            <span className="text-xs font-semibold text-gray-500">{t(`bizpulse.news.${article.id}.tag`, { defaultValue: article.tag })}</span>
                         </div>
 
                         {/* Emoji + Headline */}
                         <div className="px-4 pt-2 pb-1 flex items-start gap-3">
                             <span className="text-4xl leading-none mt-1">{article.emoji}</span>
                             <h3 className="font-black text-gray-800 dark:text-gray-900 text-base leading-tight">
-                                {article.headline}
+                                {t(`bizpulse.news.${article.id}.headline`, { defaultValue: article.headline })}
                             </h3>
                         </div>
 
                         {/* Body */}
                         <p className="px-4 pb-4 pt-2 text-sm text-gray-600 leading-relaxed">
-                            {article.body}
+                            {t(`bizpulse.news.${article.id}.body`, { defaultValue: article.body })}
                         </p>
 
                         {/* Read Button + XP */}

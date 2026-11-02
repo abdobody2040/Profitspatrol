@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { useGameStore } from '../../../store/gameStore';
 import { getLemonadeFeedback } from '../../../lib/gemini';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Sun, CloudRain, DollarSign, TrendingUp, RefreshCcw, Zap, ArrowLeft, Play } from 'lucide-react';
+import { Sun, DollarSign, TrendingUp, RefreshCcw, Zap, ArrowLeft, Play } from "lucide-react";
 import GameTutorialModal from './common/GameTutorialModal';
 import { useTranslation } from 'react-i18next';
 import { useEnergy } from '../../../hooks/useEnergy';
@@ -170,7 +169,7 @@ const LemonadeStand: React.FC<LemonadeStandProps> = ({ onBack }) => {
           title={t('lemonade.title')}
           description={t('lemonade.desc')}
           icon="🍋"
-          color="bg-yellow-500"
+          color="#EAB308"
           instructions={t('lemonade.instructions', { returnObjects: true }) as unknown as string[]}
         />
       )}

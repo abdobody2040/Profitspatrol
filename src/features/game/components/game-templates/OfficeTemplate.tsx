@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, DollarSign, ArrowUp, Plus, Building2 } from 'lucide-react';
-import { BusinessSimulation, OfficeConfig } from '../../../../types';
+import { DollarSign, ArrowUp, Plus, Building2 } from "lucide-react";
+import { BusinessSimulation } from "../../../../types";
 
 interface OfficeTemplateProps {
     config?: BusinessSimulation;

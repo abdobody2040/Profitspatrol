@@ -9,7 +9,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito', 'sans-serif'],
+        sans: ['Nunito', 'Cairo', 'sans-serif'],
+        arabic: ['Cairo', 'sans-serif'],
       },
       colors: {
         kid: {

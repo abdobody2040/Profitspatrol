@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../../store';
 import { BusinessSimulation, VisualConfig } from '../../../../types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const MatchingTemplate: React.FC<Props> = ({ config, onExit }) => {
+    const { t } = useTranslation();
     const { completeGame } = useAppStore();
     const visual: VisualConfig = config.visual_config || { colors: { primary: '#EC4899', background: '#FDF2F8' } as any } as any;
     const ingredients = config.entities?.filter(e => e.type === 'resource') || [];
@@ -69,14 +71,14 @@ const MatchingTemplate: React.FC<Props> = ({ config, onExit }) => {
         <div className="h-full flex flex-col pb-24 md:pb-0 items-center p-6" style={{ backgroundColor: visual.colors.background }}>
 
             <div className="w-full max-w-md flex justify-between items-center mb-4 md:mb-8">
-                <div className="font-black text-lg md:text-2xl" style={{ color: visual.colors.primary }}>Orders: {Math.floor(score / 10)}</div>
-                <button onClick={handleExit} className="text-gray-400 font-bold hover:text-gray-600">Save & Exit</button>
+                <div className="font-black text-lg md:text-2xl" style={{ color: visual.colors.primary }}>{t('games.ui.orders')}: {Math.floor(score / 10)}</div>
+                <button onClick={handleExit} className="text-gray-400 font-bold hover:text-gray-600">{t('games.ui.save_exit')}</button>
             </div>
 
             {/* Customer Order (Target) */}
             <div className="bg-white p-6 rounded-xl md:rounded-3xl shadow-lg border-4 border-gray-100 mb-12 w-full max-w-md text-center relative">
                 <div className="absolute -top-4 start-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
-                    Current Order
+                    {t('games.ui.current_order')}
                 </div>
                 <div className="flex justify-center gap-4 text-3xl md:text-5xl min-h-[60px]">
                     {targetRecipe.map((id, idx) => {
@@ -131,7 +133,7 @@ const MatchingTemplate: React.FC<Props> = ({ config, onExit }) => {
                             className="bg-white p-4 rounded-2xl shadow-sm border-b-4 border-gray-200 hover:border-gray-300 active:border-t-4 active:border-b-0 transition-all flex flex-col items-center gap-2"
                         >
                             <span className="text-2xl md:text-4xl">{item.emoji}</span>
-                            <span className="text-xs font-bold text-gray-500 uppercase">{item.name}</span>
+                            <span className="text-xs font-bold text-gray-500 uppercase">{t((item.nameKey || item.name) as any)}</span>
                         </button>
                     ))}
                 </div>
@@ -141,3 +143,4 @@ const MatchingTemplate: React.FC<Props> = ({ config, onExit }) => {
 };
 
 export default MatchingTemplate;
+

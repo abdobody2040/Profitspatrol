@@ -129,4 +129,3 @@ Object.keys(t).forEach(eng => {
 });
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('The Tank and Games Arabic translation pass complete.');

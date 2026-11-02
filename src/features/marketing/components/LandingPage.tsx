@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Rocket, Brain, Shield, Star, Check, ArrowRight, Play, Trophy, Users, ArrowUpRight, Briefcase, BookOpen, LineChart, Handshake, Monitor, Scale } from 'lucide-react';
+import { Rocket, Brain, Star, Check, ArrowRight, Play, Trophy, ArrowUpRight, Briefcase, BookOpen, Handshake, Monitor, Scale } from "lucide-react";
 import { useAppStore } from '../../../store'; // Keep for other store needs if any, but removing cmsContent usage
 import { ContentBlock } from '../../../types';
 import PublicNavbar from '../../../components/layout/PublicNavbar';
@@ -80,11 +79,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <section className="relative pt-40 pb-20 px-4 overflow-hidden bg-gradient-to-b from-green-50 via-blue-50 to-white">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
                     <div className="flex-1 text-center md:text-start z-10">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                        >
+                        <div>
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 font-black text-xs uppercase tracking-widest mb-6 border-2 border-yellow-200">
                                 <Star fill="currentColor" size={14} /> {t('landing.stat_label')}
                             </div>
@@ -100,7 +95,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                     onClick={onGetStarted}
                                     className="px-8 py-4 bg-kid-secondary text-white font-black text-xl rounded-2xl shadow-[0_6px_0_0_rgba(21,128,61,1)] hover:bg-green-500 btn-juicy flex items-center justify-center gap-3 transition-all"
                                 >
-                                    {t('landing.heroCta')} <ArrowRight strokeWidth={4} />
+                                    {t('landing.heroCta')} <ArrowRight strokeWidth={4} className="rtl:rotate-180" />
                                 </button>
                             </div>
 
@@ -108,22 +103,22 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 <div className="flex -space-x-2">
                                     {[1, 2, 3, 4].map(i => (
                                         <div key={i} className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white overflow-hidden">
-                                            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} alt="user" loading="lazy" />
+                                            <span className="text-xs">{['👧', '👦', '🧑‍🚀', '⭐'][i - 1]}</span>
                                         </div>
                                     ))}
                                 </div>
                                 <p>{t('landing.social_proof')}</p>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
 
-                    <div className="flex-1 relative h-[500px] w-full flex items-center justify-center">
+                    <div className="flex-1 relative min-h-[420px] md:h-[500px] w-full flex items-center justify-center">
                         {/* Decorative Elements */}
-                        <div className="absolute top-10 end-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl animate-pulse" />
-                        <div className="absolute bottom-10 start-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl" />
+                        <div className="absolute top-10 end-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute bottom-10 start-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none" />
 
                         {/* Floating Cards */}
-                        <motion.div
+                        <div
                             className="absolute z-20 top-0 end-10 md:end-20 bg-white p-4 rounded-2xl shadow-xl border-b-4 border-gray-100 flex items-center gap-3 animate-float"
                         >
                             <div className="bg-yellow-100 p-3 rounded-full text-yellow-600">
@@ -133,9 +128,9 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 <div className="font-black text-gray-800">{t('landing.floating.won')}</div>
                                 <div className="text-gray-400 text-xs font-bold">{t('landing.floating.xp')}</div>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div
+                        <div
                             className="absolute z-20 bottom-20 start-0 md:start-10 bg-white p-4 rounded-2xl shadow-xl border-b-4 border-gray-100 flex items-center gap-3 animate-float-delayed"
                         >
                             <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -145,22 +140,21 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 <div className="font-black text-gray-800">{t('landing.floating.startup')}</div>
                                 <div className="text-gray-400 text-xs font-bold">{t('landing.floating.inc')}</div>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        {/* Main Image */}
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="relative z-10 w-full max-w-md"
-                        >
-                            <SmartImage
+                        {/* Main Image: explicit 400x400 aspect-ratio and high priority */}
+                        <div className="relative z-10 w-full max-w-md min-h-[400px] flex items-center justify-center">
+                             <SmartImage
                                 src={t('landing.heroImage')}
-                                alt="App Screenshot"
+                                alt="Profits Patrol Academy"
                                 type="hero"
-                                className="rounded-3xl shadow-2xl border-8 border-white w-full transform rotate-2 hover:rotate-0 transition-transform duration-500 object-cover h-[400px]"
+                                width={400}
+                                height={400}
+                                priority={true}
+                                style={{ aspectRatio: '1 / 1' }}
+                                className="rounded-3xl shadow-2xl border-8 border-white w-full transform rotate-2 rtl:-rotate-2 hover:rotate-0 transition-transform duration-500 object-cover h-[400px]"
                             />
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -220,14 +214,38 @@ const LandingPage: React.FC<LandingPageProps> = ({
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-4 mt-8">
                                     <div className="h-48 rounded-3xl w-full relative overflow-hidden group border-4 border-yellow-200 bg-yellow-50">
-                                        <img src="/images/features/tycoon-thumb.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={t('landing.games.tycoon')} loading="lazy" />
+                                        <picture>
+                                            <source srcSet="/images/features/tycoon-thumb.webp" type="image/webp" />
+                                            <img
+                                                src="/images/features/tycoon-thumb.png"
+                                                width={320}
+                                                height={192}
+                                                style={{ aspectRatio: '1 / 1' }}
+                                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                alt={t('landing.games.tycoon')}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </picture>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         <div className="absolute bottom-3 start-0 end-0 text-center">
                                             <div className="font-black text-white text-lg drop-shadow-md">{t('landing.games.tycoon')}</div>
                                         </div>
                                     </div>
                                     <div className="h-64 rounded-3xl w-full relative overflow-hidden group border-4 border-blue-200 bg-blue-50">
-                                        <img src="/images/features/pizza-thumb.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={t('landing.games.pizza')} loading="lazy" />
+                                        <picture>
+                                            <source srcSet="/images/features/pizza-thumb.webp" type="image/webp" />
+                                            <img
+                                                src="/images/features/pizza-thumb.png"
+                                                width={320}
+                                                height={256}
+                                                style={{ aspectRatio: '1 / 1' }}
+                                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                alt={t('landing.games.pizza')}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </picture>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         <div className="absolute bottom-3 start-0 end-0 text-center">
                                             <div className="font-black text-white text-lg drop-shadow-md">{t('landing.games.pizza')}</div>
@@ -236,14 +254,38 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 </div>
                                 <div className="space-y-4">
                                     <div className="h-64 rounded-3xl w-full relative overflow-hidden group border-4 border-pink-200 bg-pink-50">
-                                        <img src="/images/features/brand-thumb.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={t('landing.games.brand')} loading="lazy" />
+                                        <picture>
+                                            <source srcSet="/images/features/brand-thumb.webp" type="image/webp" />
+                                            <img
+                                                src="/images/features/brand-thumb.png"
+                                                width={320}
+                                                height={256}
+                                                style={{ aspectRatio: '1 / 1' }}
+                                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                alt={t('landing.games.brand')}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </picture>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         <div className="absolute bottom-3 start-0 end-0 text-center">
                                             <div className="font-black text-white text-lg drop-shadow-md">{t('landing.games.brand')}</div>
                                         </div>
                                     </div>
                                     <div className="h-48 rounded-3xl w-full relative overflow-hidden group border-4 border-green-200 bg-green-50">
-                                        <img src="/images/features/stock-thumb.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={t('landing.games.stock')} loading="lazy" />
+                                        <picture>
+                                            <source srcSet="/images/features/stock-thumb.webp" type="image/webp" />
+                                            <img
+                                                src="/images/features/stock-thumb.png"
+                                                width={320}
+                                                height={192}
+                                                style={{ aspectRatio: '1 / 1' }}
+                                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                alt={t('landing.games.stock')}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </picture>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         <div className="absolute bottom-3 start-0 end-0 text-center">
                                             <div className="font-black text-white text-lg drop-shadow-md">{t('landing.games.stock')}</div>
@@ -264,7 +306,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 ))}
                             </ul>
                             <button onClick={onGetStarted} className="mt-8 text-kid-secondary font-black text-lg flex items-center gap-2 hover:gap-4 transition-all">
-                                {t('landing.action_explore_arcade')} <ArrowRight strokeWidth={4} />
+                                {t('landing.action_explore_arcade')} <ArrowRight strokeWidth={4} className="rtl:rotate-180" />
                             </button>
                         </div>
                     </div>
@@ -289,7 +331,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                         </div>
                         <div className="order-1 md:order-2 relative flex justify-center">
                             {/* Fake Pitch Card */}
-                            <div className="bg-white p-8 rounded-[2rem] shadow-2xl border border-yellow-100 transform rotate-3 hover:rotate-0 transition-transform duration-500 max-w-sm w-full">
+                            <div className="bg-white p-8 rounded-[2rem] shadow-2xl border border-yellow-100 transform rotate-3 rtl:-rotate-3 hover:rotate-0 transition-transform duration-500 max-w-sm w-full">
                                 <div className="flex items-center gap-4 border-b border-gray-100 pb-6 mb-6">
                                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white shadow-inner">
                                         <Briefcase size={32} />
@@ -337,8 +379,8 @@ const LandingPage: React.FC<LandingPageProps> = ({
                             <p className="text-lg text-gray-600 font-medium mb-8 leading-relaxed">
                                 {t('landing.dojoDesc')}
                             </p>
-                            <button onClick={onGetStarted} className="px-8 py-4 bg-purple-500 text-white font-black text-lg rounded-xl shadow-[0_4px_0_0_rgba(126,34,206,1)] flex items-center gap-3 hover:bg-purple-400 transition-all btn-juicy">
-                                {t('landing.action_explore_dojo')} <ArrowRight strokeWidth={3} />
+                             <button onClick={onGetStarted} className="px-8 py-4 bg-purple-500 text-white font-black text-lg rounded-xl shadow-[0_4px_0_0_rgba(126,34,206,1)] flex items-center gap-3 hover:bg-purple-400 transition-all btn-juicy">
+                                {t('landing.action_explore_dojo')} <ArrowRight strokeWidth={3} className="rtl:rotate-180" />
                             </button>
                         </div>
                     </div>
@@ -361,15 +403,25 @@ const LandingPage: React.FC<LandingPageProps> = ({
                         </div>
                         <div className="order-1 md:order-2 flex justify-center">
                              {/* Real Book Covers */}
-                             <div className="flex gap-4 sm:ms-12 overflow-visible py-8 transform -rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
-                                {['rich-dad-poor-dad.jpg', 'atomic-habits.jpg', 'zero-to-one.jpg'].map((cover, i) => (
-                                    <img
-                                        key={cover}
-                                        src={`/images/books/${cover}`}
-                                        alt={cover}
-                                        loading="lazy"
-                                        className={`flex-shrink-0 w-32 sm:w-40 h-48 sm:h-56 rounded-xl shadow-xl border-4 border-white object-cover ${i===0 ? '-mt-6' : i===1 ? 'z-10 scale-110 shadow-2xl relative' : 'mt-6'}`}
-                                    />
+                              <div className="flex gap-4 sm:ms-12 overflow-visible py-8 transform -rotate-3 rtl:rotate-3 hover:rotate-0 transition-transform duration-500 cursor-default">
+                                {[
+                                  { name: 'rich-dad-poor-dad', ext: 'jpg' },
+                                  { name: 'atomic-habits', ext: 'jpg' },
+                                  { name: 'zero-to-one', ext: 'jpg' }
+                                ].map((book, i) => (
+                                    <picture key={book.name}>
+                                        <source srcSet={`/images/books/${book.name}.webp`} type="image/webp" />
+                                        <img
+                                            src={`/images/books/${book.name}.${book.ext}`}
+                                            alt={book.name.replace(/-/g, ' ')}
+                                            width={160}
+                                            height={224}
+                                            loading="lazy"
+                                            decoding="async"
+                                            style={{ aspectRatio: '575 / 863' }}
+                                            className={`flex-shrink-0 w-32 sm:w-40 h-48 sm:h-56 rounded-xl shadow-xl border-4 border-white object-cover ${i===0 ? '-mt-6' : i===1 ? 'z-10 scale-110 shadow-2xl relative' : 'mt-6'}`}
+                                        />
+                                    </picture>
                                 ))}
                              </div>
                         </div>
@@ -392,7 +444,19 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                     <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                                  </div>
                              </div>
-                             <img src="/images/features/dashboard-preview.png" alt="Admin Dashboard" className="w-full h-auto object-cover" loading="lazy" />
+                             <picture>
+                                 <source srcSet="/images/features/dashboard-preview.webp" type="image/webp" />
+                                 <img
+                                     src="/images/features/dashboard-preview.png"
+                                     alt="Admin Dashboard"
+                                     width={1200}
+                                     height={574}
+                                     style={{ aspectRatio: '1920 / 919' }}
+                                     className="w-full h-auto object-cover"
+                                     loading="lazy"
+                                     decoding="async"
+                                 />
+                             </picture>
                          </div>
                      </div>
                      <div className="flex-1 order-1 md:order-2 text-center md:text-start">
@@ -438,7 +502,18 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <footer className="bg-white border-t border-gray-100 py-12">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex items-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all">
-                        <img src="/images/logo_text.png" alt="Profits Patrol" className="h-8 w-auto object-contain grayscale opacity-80" />
+                        <picture>
+                            <source srcSet="/images/logo_text.webp" type="image/webp" />
+                            <img
+                                src="/images/logo_text.png"
+                                alt="Profits Patrol"
+                                width={140}
+                                height={32}
+                                loading="lazy"
+                                decoding="async"
+                                className="h-8 w-auto object-contain grayscale opacity-80"
+                            />
+                        </picture>
                     </div>
                     <div className="flex flex-wrap gap-6 text-sm font-bold text-gray-500 justify-center">
                         {cmsContent.customPages?.map(page => (
@@ -447,12 +522,12 @@ const LandingPage: React.FC<LandingPageProps> = ({
                                 onClick={() => onNavigateToPage?.(page.slug)}
                                 className="hover:text-blue-600 flex items-center gap-1"
                             >
-                                {page.title} <ArrowUpRight size={12} />
+                                 {page.title} <ArrowUpRight size={12} className="rtl:-scale-x-100" />
                             </button>
                         ))}
-                        <button onClick={onViewPrivacy} className="hover:text-blue-600 flex items-center gap-1">Privacy Policy <ArrowUpRight size={12} /></button>
-                        <button onClick={onViewTerms} className="hover:text-blue-600 flex items-center gap-1">Terms of Service <ArrowUpRight size={12} /></button>
-                        <button onClick={onViewRefund} className="hover:text-blue-600 flex items-center gap-1">Refund Policy <ArrowUpRight size={12} /></button>
+                        <button onClick={onViewPrivacy} className="hover:text-blue-600 flex items-center gap-1">Privacy Policy <ArrowUpRight size={12} className="rtl:-scale-x-100" /></button>
+                        <button onClick={onViewTerms} className="hover:text-blue-600 flex items-center gap-1">Terms of Service <ArrowUpRight size={12} className="rtl:-scale-x-100" /></button>
+                        <button onClick={onViewRefund} className="hover:text-blue-600 flex items-center gap-1">Refund Policy <ArrowUpRight size={12} className="rtl:-scale-x-100" /></button>
                     </div>
                     <div className="text-sm text-gray-400 font-medium">
                         {t('landing.footer_copyright')}

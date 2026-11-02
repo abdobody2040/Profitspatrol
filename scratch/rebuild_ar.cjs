@@ -139,4 +139,3 @@ Object.keys(lessons).forEach(key => {
 });
 
 fs.writeFileSync(arPath, arContent, 'utf8');
-console.log('Rebuilt ar.ts from en.ts template.');

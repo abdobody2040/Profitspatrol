@@ -1,23 +1,36 @@
 import {
-    User, UserRole, BusinessSimulation, LemonadeState, Classroom, StudentGroup, Rubric, Assignment, Submission, Book, CMSContent,
-    ShopItem, LeaderboardEntry, UserSettings, BusinessLogo, SubscriptionTier, UniversalLessonUnit, HQLevel, PortfolioItem, Skill, Bounty, Video, LiveSession, NewsEvent, SideHustle, TurnaroundScenario, Property, FurnitureItem, PlacedItem,
-    DailyMissionsState, DailyMission
-} from '../types';
-import { DailyMissionsSlice } from './slices/dailyMissionSlice';
-import { WeeklyChallengeSlice } from './slices/weeklyChallengeSlice';
-import { SeasonalEventSlice } from './slices/seasonalEventSlice';
-import { FranchiseSlice } from './slices/franchiseSlice';
-import { TournamentSlice } from './slices/tournamentSlice';
-import { AdminConfigSlice } from './slices/adminConfigSlice';
-import { UiSlice } from './slices/uiSlice';
-import { UserSlice } from './slices/userSlice';
-import { GameSlice } from './slices/gameSlice';
-import { LibrarySlice } from './slices/librarySlice';
-import { SessionSlice } from './slices/sessionSlice';
-import { ScenarioSlice } from './slices/scenarioSlice';
-import { CorporationSlice } from './slices/corporationSlice';
+    User,
+    UserRole,
+    BusinessSimulation,
+    Classroom,
+    Book,
+    CMSContent,
+    ShopItem,
+    UserSettings,
+    BusinessLogo,
+    SubscriptionTier,
+    Skill,
+    LiveSession,
+    TurnaroundScenario,
+    FurnitureItem,
+    DailyMission,
+} from "../types";
+import type { DailyMissionsSlice } from './slices/dailyMissionSlice';
+import type { WeeklyChallengeSlice } from './slices/weeklyChallengeSlice';
+import type { SeasonalEventSlice } from './slices/seasonalEventSlice';
+import type { FranchiseSlice } from './slices/franchiseSlice';
+import type { TournamentSlice } from './slices/tournamentSlice';
+import type { AdminConfigSlice } from "./slices/adminConfigSlice";
+import type { NotificationSlice } from "./slices/notificationSlice";
+import type { UiSlice } from './slices/uiSlice';
+import type { UserSlice } from './slices/userSlice';
+import type { GameSlice } from './slices/gameSlice';
+import type { LibrarySlice } from './slices/librarySlice';
+import type { SessionSlice } from './slices/sessionSlice';
+import type { ScenarioSlice } from './slices/scenarioSlice';
+import type { CorporationSlice } from './slices/corporationSlice';
 
-export interface AppState extends UserSlice, GameSlice, UiSlice, LibrarySlice, SessionSlice, ScenarioSlice, DailyMissionsSlice, WeeklyChallengeSlice, SeasonalEventSlice, FranchiseSlice, TournamentSlice, CorporationSlice, AdminConfigSlice {
+export interface AppState extends UserSlice, GameSlice, UiSlice, LibrarySlice, SessionSlice, ScenarioSlice, DailyMissionsSlice, WeeklyChallengeSlice, SeasonalEventSlice, FranchiseSlice, TournamentSlice, CorporationSlice, AdminConfigSlice, NotificationSlice {
     user: User | null;
     showLevelUpModal: boolean;
     showGraduationModal?: boolean;
@@ -29,7 +42,7 @@ export interface AppState extends UserSlice, GameSlice, UiSlice, LibrarySlice, S
 
     // Actions
     login: (role: UserRole) => void;
-    loginWithCredentials: (username: string, password: string) => Promise<boolean>;
+    loginWithCredentials: (username: string, password: string) => Promise<boolean | 'EMAIL_NOT_CONFIRMED'>;
     impersonateUser: (userId: string) => void;
     registerUser: (name: string, username: string, email: string, password: string, role: UserRole, inviteCode?: string) => Promise<string | undefined>;
     logout: () => void;

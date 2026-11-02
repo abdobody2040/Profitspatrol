@@ -1,0 +1,43 @@
+export const yearEndReport = {
+  title: 'تقرير نهاية العام',
+  subtitle: 'مراجعة سنتك المالية — جاهز للتحميل!',
+  previewBtn: 'معاينة',
+  generating: 'جاري الإنشاء...',
+  downloadBtn: 'تحميل PDF',
+  statXp: 'إجمالي XP',
+  statLessons: 'دروس',
+  statStreak: 'أفضل سلسلة',
+  statCoins: 'P Tokens',
+  statBooks: 'كتب تمت قراءتها',
+  statGigs: 'أعمال تم إتقانها',
+  topGigs: 'أكثر المهن إتقاناً',
+  tier: 'فئة {{tier}}',
+  franchiseActive: 'الفرنشايز نشط',
+  earned: 'تم اكتسابه',
+  errorMsg: 'عذراً، حدثت مشكلة أثناء إنشاء التقرير.',
+
+  pdfHeaderApp: 'بروفيتس باترول',
+  pdfHeaderDesc: 'تقرير نهاية العام الرسمي',
+  pdfIntro: 'يلخص هذا التقرير تقدم طفلك على مدار العام الماضي في بروفيتس باترول.',
+
+  pdfLevelReached: 'المستوى الذي تم الوصول إليه:',
+  pdfTopSkill: 'أعلى مهارة سوقية:',
+  pdfSkillsUnlocked: 'المهارات المفتوحة:',
+  pdfFranchiseTier: 'مستوى الفرنشايز:',
+  pdfNotOpened: 'لم يُفتح بعد',
+  pdfExecutiveSummary: 'الملخص التنفيذي',
+  pdfInstructorNotes: 'أظهر هذا الطفل مهارات قوية في ريادة الأعمال والثقافة المالية.',
+
+  pdfGigMastery: 'إتقان المهن',
+  pdfDocId: 'معرف المستند:',
+  pdfFooterCopyright: 'نظام بروفيتس باترول التعليمي © {{year}}',
+
+  previewModalTitle: 'معاينة التقرير',
+  previewModalDesc: 'هذا هو بالضبط شكل ملف PDF الخاص بك',
+
+  rankCeo: '👑 مدير تنفيذي',
+  rankTycoon: '🏆 تايكون',
+  rankExecutive: '⭐ تنفيذي',
+  rankManager: '📈 مدير',
+  rankIntern: '🌱 متدرب',
+};

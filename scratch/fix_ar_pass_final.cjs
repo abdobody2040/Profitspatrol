@@ -56,4 +56,3 @@ content = content.replace(/tank_desc:\s*['"].*?['"]/s, `tank_desc: "اعرض أ�
 content = content.replace(/tankDesc:\s*['"].*?['"]/s, `tankDesc: "اعرض أفكار عملك على حكامنا من الذكاء الاصطناعي، وفاوض على الشروط، واحصل على تمويل لشركتك الناشئة الافتراضية."`);
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('Final translation pass complete.');

@@ -17,7 +17,6 @@ export const HASH_MOCK_123 = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e99
 
 // DEPRECATED: These MOCKS are for local development / testing only. 
 // Production authentication uses Supabase Auth.
-import { MOCK_USER, MOCK_PARENT, MOCK_TEACHER, MOCK_ADMIN } from './mocks'; 
 export const SUBSCRIPTION_PLANS = [
     {
         id: 'intern',

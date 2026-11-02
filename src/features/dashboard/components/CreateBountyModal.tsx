@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import { useSocialStore } from '../../../store/socialStore';
-import { UserRole } from '../../../types';
-import { X, DollarSign, Briefcase, Check, Info, PlusCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { X, DollarSign, Briefcase, Calendar, Camera } from "lucide-react";
+import { motion } from "framer-motion";
 import { v4 as uuidv4 } from 'uuid';
 
 interface CreateBountyModalProps {
@@ -16,6 +15,8 @@ const CreateBountyModal: React.FC<CreateBountyModalProps> = ({ isOpen, onClose }
     const { addBounty } = useSocialStore();
     const [title, setTitle] = useState('');
     const [reward, setReward] = useState(100);
+    const [frequency, setFrequency] = useState<'ONCE' | 'DAILY' | 'WEEKLY'>('ONCE');
+    const [requiresPhoto, setRequiresPhoto] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,12 +29,17 @@ const CreateBountyModal: React.FC<CreateBountyModalProps> = ({ isOpen, onClose }
             description: '', // MVP: No description field yet
             reward,
             status: 'OPEN',
-            createdAt: new Date().toISOString()
+            frequency,
+            requiresPhoto,
+            createdAt: new Date().toISOString(),
+            lastGeneratedAt: frequency !== 'ONCE' ? new Date().toISOString() : undefined
         });
 
         // Reset and close
         setTitle('');
         setReward(100);
+        setFrequency('ONCE');
+        setRequiresPhoto(false);
         onClose();
     };
 
@@ -70,7 +76,7 @@ const CreateBountyModal: React.FC<CreateBountyModalProps> = ({ isOpen, onClose }
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-gray-500 mb-1">Reward (BizCoins)</label>
+                        <label className="block text-sm font-bold text-gray-500 mb-1">Reward (ppTokens)</label>
                         <div className="relative">
                             <DollarSign className="absolute start-3 top-3.5 text-gray-400" size={16} />
                             <input
@@ -81,6 +87,36 @@ const CreateBountyModal: React.FC<CreateBountyModalProps> = ({ isOpen, onClose }
                                 min="10"
                                 max="10000"
                             />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-500 mb-1">Frequency</label>
+                            <div className="relative">
+                                <Calendar className="absolute start-3 top-3.5 text-gray-400" size={16} />
+                                <select
+                                    value={frequency}
+                                    onChange={e => setFrequency(e.target.value as any)}
+                                    className="w-full px-4 py-3 ps-9 rounded-xl border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 font-bold appearance-none"
+                                >
+                                    <option value="ONCE">Once</option>
+                                    <option value="DAILY">Daily</option>
+                                    <option value="WEEKLY">Weekly</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-500 mb-1">Verification</label>
+                            <button
+                                type="button"
+                                onClick={() => setRequiresPhoto(!requiresPhoto)}
+                                className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all font-bold ${requiresPhoto ? 'bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-gray-200 text-gray-400'}`}
+                            >
+                                <Camera size={16} />
+                                {requiresPhoto ? 'Photo Required' : 'No Photo'}
+                            </button>
                         </div>
                     </div>
 

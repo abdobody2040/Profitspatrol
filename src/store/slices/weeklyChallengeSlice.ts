@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
-import { WeeklyChallenge, WeeklyChallengeState, WeeklyChallengeEntry } from '../../types';
+import type { AppState } from '../types';
+import { WeeklyChallenge, WeeklyChallengeState } from "../../types";
 
 // ─── Challenge Pool ───────────────────────────────────────────────────────────
 const CHALLENGE_POOL: WeeklyChallenge[] = [
@@ -41,7 +41,7 @@ const CHALLENGE_POOL: WeeklyChallenge[] = [
         id: 'wc_coin_grind',
         icon: '💰',
         title: 'Coin Collector',
-        description: 'Earn 2,000 BizCoins from ANY activity this week!',
+        description: 'Earn 2,000 P Tokens from ANY activity this week!',
         type: 'COIN_GRIND',
         targetCount: 2000,
         xpReward: 400,
@@ -170,7 +170,7 @@ export const createWeeklyChallengeSlice: StateCreator<AppState, [], [], WeeklyCh
                 user: {
                     ...user,
                     xp: user.xp + xpReward,
-                    bizCoins: user.bizCoins + coinReward,
+                    ppTokens: user.ppTokens + coinReward,
                 },
             };
         });

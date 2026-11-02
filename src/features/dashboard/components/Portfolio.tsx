@@ -1,20 +1,19 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../../store';
-import { Briefcase, Clock, DollarSign, UserCheck, TrendingUp, Lock, Wallet } from 'lucide-react';
+import { Clock, DollarSign, UserCheck, TrendingUp, Lock, Wallet } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { GAMES_DB } from '../../game/data/games';
 import { UserRole } from '../../../types';
 
 const CATEGORY_MAP: Record<string, string> = {
-    'Retail & Food': 'retail',
-    'Services & E-Commerce': 'services',
-    'Production & Manufacturing': 'production',
-    'Creative & Events': 'creative',
-    'Digital & Tech': 'tech',
-    'Social Impact': 'social',
-    'Tycoon Exclusive': 'tycoon'
+    'Retail & Food': 'cat_retail',
+    'Services & E-Commerce': 'cat_service',
+    'Production & Manufacturing': 'cat_production',
+    'Creative & Events': 'cat_creative',
+    'Digital & Tech': 'cat_tech',
+    'Social Impact': 'cat_social',
+    'Tycoon Exclusive': 'cat_tycoon'
 };
 
 const Portfolio: React.FC = () => {
@@ -118,7 +117,7 @@ const Portfolio: React.FC = () => {
                                             return (
                                                 <>
                                                     <h3 className="font-black text-lg text-gray-800 dark:text-white leading-tight">{t(nameKey as any)}</h3>
-                                                    <span className="text-xs font-bold text-gray-400 uppercase">{t(`categories.${catKey}` as any)}</span>
+                                                    <span className="text-xs font-bold text-gray-400 uppercase">{t(`arcade.${catKey}` as any)}</span>
                                                 </>
                                             );
                                         })()}
@@ -142,7 +141,7 @@ const Portfolio: React.FC = () => {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500 dark:text-gray-300 font-bold">{t('portfolio.rate')}</span>
-                                            <span className="text-green-600 dark:text-green-400 font-black">${50 * portfolioItem.managerLevel}/hr</span>
+                                            <span className="text-green-600 dark:text-green-400 font-black">${50 * portfolioItem.managerLevel}{t('common.per_hour')}</span>
                                         </div>
 
                                         {/* Progress Bar for next coin */}
@@ -187,9 +186,9 @@ const Portfolio: React.FC = () => {
                             ) : (
                                 <button
                                     onClick={() => hireManager(biz.business_id)}
-                                    disabled={user.bizCoins < 500 && user.role !== UserRole.ADMIN}
+                                    disabled={user.ppTokens < 500 && user.role !== UserRole.ADMIN}
                                     className={`w-full py-3 rounded-xl font-black flex items-center justify-center gap-2 transition-all
-                                ${user.bizCoins >= 500
+                                ${user.ppTokens >= 500
                                             ? 'bg-kid-primary text-yellow-900 shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy hover:bg-yellow-400'
                                             : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}
                              `}

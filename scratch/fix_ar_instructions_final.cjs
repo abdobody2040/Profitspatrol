@@ -174,7 +174,6 @@ if (startIndex !== -1 && endIndex !== -1) {
     const before = content.substring(0, blockStart);
     const after = content.substring(endIndex);
     fs.writeFileSync(arPath, before + newInstructions + '\n    ' + after, 'utf8');
-    console.log('Successfully replaced broken instructions block with unique markers.');
 } else {
     console.log('Could not find markers:', { startIndex, endIndex });
 }

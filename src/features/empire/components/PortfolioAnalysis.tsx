@@ -1,8 +1,7 @@
-import React from 'react';
 import { useAppStore } from '../../../store';
 import { HQ_LEVELS, SHOP_ITEMS, SKILLS_DB } from '../../../data/constants';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
-import { TrendingUp, PieChart as PieIcon, DollarSign, Briefcase } from 'lucide-react';
+import { TrendingUp, PieChart as PieIcon } from "lucide-react";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -12,7 +11,7 @@ const PortfolioAnalysis = () => {
     if (!user) return null;
 
     // --- CALCULATE ASSETS ---
-    const cash = user.bizCoins;
+    const cash = user.ppTokens;
 
     // HQ Value: Sum of costs of all levels up to current
     const hqIndex = HQ_LEVELS.findIndex(h => h.id === user.hqLevel);

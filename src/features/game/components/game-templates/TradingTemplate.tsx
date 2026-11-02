@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, Gavel, User, TrendingUp } from 'lucide-react';
-import { BusinessSimulation, TradingConfig, TradingItem } from '../../../../types';
+import { DollarSign, Gavel } from "lucide-react";
+import { secureRandom } from '../../../../utils/cryptoUtils';
+import { BusinessSimulation, TradingItem } from "../../../../types";
 
 interface TradingTemplateProps {
     config?: BusinessSimulation;
@@ -44,7 +45,7 @@ const TradingTemplate: React.FC<TradingTemplateProps> = ({ config, onComplete })
         setTimer(10);
 
         // Random real value based on range
-        const val = Math.floor(Math.random() * (item.max_value - item.min_value + 1)) + item.min_value;
+        const val = Math.floor(secureRandom() * (item.max_value - item.min_value + 1)) + item.min_value;
         setRealValue(val);
 
         // Start Timer
@@ -58,7 +59,7 @@ const TradingTemplate: React.FC<TradingTemplateProps> = ({ config, onComplete })
 
                 // Random Bot Bids logic inside timer update for simplicity?
                 // Or separate effect. Let's do random bot bids here.
-                if (Math.random() < 0.3) {
+                if (secureRandom() < 0.3) {
                     // Bot bids
                     // Bot knows "somewhat" value or just bids up to random point.
                     // Bot limit is random between start and max*0.8
@@ -80,7 +81,7 @@ const TradingTemplate: React.FC<TradingTemplateProps> = ({ config, onComplete })
             // Bot chance to bid if player is leading or no one is leading
             // Bot shouldn't bid if price > perceived value
             // 30% chance per second
-            if (Math.random() < 0.3 && highestBidder !== 'BOT') {
+            if (secureRandom() < 0.3 && highestBidder !== 'BOT') {
                 // Bid increment
                 setCurrentBid(prev => {
                     const next = prev + 50;
@@ -103,10 +104,6 @@ const TradingTemplate: React.FC<TradingTemplateProps> = ({ config, onComplete })
                 // Player won!
                 setInventory(prev => [...prev, { item, cost: currentBid, realValue: value }]); // Need actual currentBid
                 setBudget(b => b - currentBid); // Need actual currentBid. Warning: Closure issue if using startAuction scope vars.
-                // Correct approach: We need to access state. 
-                // So endAuction should rely on state.
-                // But this function is called from setInterval closure...
-                // Refactor needed: Use useEffect for Timer checks.
                 return current;
             }
             return current;

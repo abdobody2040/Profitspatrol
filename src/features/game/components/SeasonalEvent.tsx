@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
-import { X, Star, Clock, Trophy, Zap, Gift } from 'lucide-react';
+import CoinIcon from '../../../components/ui/CoinIcon';
+import { X, Trophy, Zap, Gift } from "lucide-react";
 import { useAppStore } from '../../../store';
 
 // ─── Season Definitions ───────────────────────────────────────────────────────
@@ -75,7 +76,7 @@ const SEASON_EVENTS: SeasonEvent[] = [
         tagline: 'عيد مبارك — Keep building!',
         bonusXPMultiplier: 1.75,
         challenges: [
-            { id: 'eid1', title: 'Crescent Deal', desc: 'Earn 500 BizCoins in one day', icon: '🌙', reward: { type: 'coins', value: 400 } },
+            { id: 'eid1', title: 'Crescent Deal', desc: 'Earn 500 ppTokens in one day', icon: '🌙', reward: { type: 'coins', value: 400 } },
             { id: 'eid2', title: 'Lantern Lesson', desc: 'Complete 3 lessons this week', icon: '🪔', reward: { type: 'xp', value: 500 } },
             { id: 'eid3', title: 'Eid CEO', desc: 'Spin the daily wheel 3 days in a row', icon: '🎆', reward: { type: 'coins', value: 600 } },
         ],
@@ -97,6 +98,23 @@ const SEASON_EVENTS: SeasonEvent[] = [
             { id: 'su3', title: 'Summer CEO', desc: 'Reach top 10 on the leaderboard', icon: '🏆', reward: { type: 'coins', value: 600 } },
         ],
         exclusiveReward: { name: 'Surf Hoodie', emoji: '🏄' },
+    },
+    {
+        id: 'annual_ceo',
+        name: 'Annual CEO Championship',
+        icon: '🏆',
+        emoji: '👑',
+        gradient: 'linear-gradient(135deg, #4f2f00, #b8860b, #daa520)',
+        textColor: '#FFF',
+        months: [1, 12], // Active logic can be configured or handled separately, but let's give it [11, 11] for November/End of year
+        tagline: 'The ultimate business showdown!',
+        bonusXPMultiplier: 3.0,
+        challenges: [
+            { id: 'ceo1', title: 'Billionaire Pitch', desc: 'Complete 10 Pitch Simulators', icon: '🗣️', reward: { type: 'coins', value: 1000 } },
+            { id: 'ceo2', title: 'Market Dominator', desc: 'Earn 10,000 XP in one week', icon: '📈', reward: { type: 'xp', value: 2500 } },
+            { id: 'ceo3', title: 'Mega Corp', desc: 'Reach Level 20', icon: '🏢', reward: { type: 'coins', value: 2000 } },
+        ],
+        exclusiveReward: { name: 'Golden Tycoon Trophy', emoji: '🏆' },
     },
 ];
 
@@ -124,7 +142,7 @@ function ChallengeCard({
                 <p className="font-black text-sm" style={{ color: done ? '#9CA3AF' : 'white' }}>{challenge.title}</p>
                 <p className="text-xs opacity-70" style={{ color: done ? '#6B7280' : 'white' }}>{challenge.desc}</p>
                 <p className="text-xs font-bold mt-0.5" style={{ color: accent }}>
-                    +{challenge.reward.value} {challenge.reward.type === 'coins' ? '🪙' : '⚡ XP'}
+                    +{challenge.reward.value} {challenge.reward.type === 'coins' ? <CoinIcon size={12} /> : '⚡ XP'}
                 </p>
             </div>
             {!done && (

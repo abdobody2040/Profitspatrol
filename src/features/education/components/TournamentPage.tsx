@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Users, Timer, CheckCircle, XCircle, Star, Share2, RotateCcw, Copy, Play } from 'lucide-react';
+import { Trophy, Timer, CheckCircle, XCircle, Star, RotateCcw, Copy, Play } from "lucide-react";
 import { useAppStore } from '../../../store';
 import { DEFAULT_QUESTIONS, TournamentQuestion } from '../../../store/slices/tournamentSlice';
 
@@ -306,7 +306,7 @@ const TournamentLeaderboard: React.FC = () => {
                 {winner?.userId === user?.id && (
                     <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 1.8 }}
                         style={{ marginTop: 10, fontSize: 14, fontWeight: 900, color: '#fbbf24' }}>
-                        🎉 That's YOU! +300 BizCoins earned!
+                        🎉 That's YOU! +300 ppTokens earned!
                     </motion.div>
                 )}
             </motion.div>

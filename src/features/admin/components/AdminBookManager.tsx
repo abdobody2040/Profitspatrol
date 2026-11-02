@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAppStore } from '../../../store';
+import { useAppStore } from '../../../store/useAppStore';
 import { Book } from '../../../types';
 import { Trash2, Plus, Sparkles, Loader2, BookOpen, AlertTriangle, BatteryWarning } from 'lucide-react';
 import { generateBookDetails } from '../../../lib/gemini';

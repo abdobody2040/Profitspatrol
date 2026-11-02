@@ -46,16 +46,14 @@ if (en.includes(enMarker)) {
   en = en.replace(enMarker,
     "      track_progress: 'Track Your Progress:',\n      },\n" + enKeys + '\n' + "      exclusive_banner_desc:");
   fs.writeFileSync(EN_PATH, en, 'utf8');
-  console.log('✅ en.ts generic task keys added');
 } else {
   // Find library tasks section end
   const alt = "      exclusive_banner_desc: 'Hand-picked";
   if (en.includes(alt)) {
     en = en.replace(alt, enKeys + '\n      exclusive_banner_desc: \'Hand-picked');
     fs.writeFileSync(EN_PATH, en, 'utf8');
-    console.log('✅ en.ts generic task keys added (alt)');
   } else {
-    console.log('⚠️  en.ts: marker not found, skipping');
+    console.error('⚠️  en.ts: marker not found, skipping');
   }
 }
 
@@ -65,13 +63,11 @@ const arMarker = "      exclusive_banner_desc: '\u0643\u062a\u0628 \u0645\u062e\
 if (ar.includes(arMarker)) {
   ar = ar.replace(arMarker, arKeys + '\n      exclusive_banner_desc: \'\u0643\u062a\u0628 \u0645\u062e\u062a\u0627\u0631\u0629');
   fs.writeFileSync(AR_PATH, ar, 'utf8');
-  console.log('✅ ar.ts generic task keys added');
 } else {
-  console.log('⚠️  ar.ts: marker not found');
+  console.error('⚠️  ar.ts: marker not found');
 }
 
 // Syntax check ar.ts
 const arSrc = fs.readFileSync(AR_PATH, 'utf8');
 const js = arSrc.replace('export const ar', 'const ar').replace('} as const;', '}');
-try { new Function(js); console.log('✅ ar.ts syntax OK'); }
 catch(e) { console.error('❌ SYNTAX ERROR:', e.message); }

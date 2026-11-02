@@ -5,12 +5,10 @@ const lines = src.split('\n');
 
 // Find the real closing line (first occurrence of "} as const;")
 const closingIdx = lines.findIndex(l => l.trim() === '} as const;');
-console.log('Closing line index (0-based):', closingIdx, '=> line', closingIdx + 1);
 
 // Everything from closingIdx+1 onwards is orphaned — extract the truly NEW blocks from it
 const orphanSrc = lines.slice(closingIdx + 1).join('\n');
 
-// Extract specific blocks from orphan
 function extractBlock(name, text) {
   const re = new RegExp(`^    ${name}: \\{`, 'm');
   const start = text.search(re);
@@ -27,9 +25,6 @@ function extractBlock(name, text) {
 
 const settingsBlock = extractBlock('settings', orphanSrc);
 const familyBlock   = extractBlock('family', orphanSrc);
-
-console.log('settings block found:', !!settingsBlock);
-console.log('family block found:',   !!familyBlock);
 
 // Build the new file: keep everything up to the closing line, inject new blocks before it, then close
 const beforeClose = lines.slice(0, closingIdx).join('\n'); // everything before "  },"
@@ -52,4 +47,3 @@ if (insertPoint !== -1) {
 newContent += '\n  },\n} as const;\n';
 
 fs.writeFileSync(path, newContent, 'utf8');
-console.log('✅ en.ts cleaned — duplicates removed, new blocks inserted');

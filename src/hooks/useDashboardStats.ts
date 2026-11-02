@@ -10,7 +10,7 @@
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { User, LeaderboardEntry } from '../types';
+import type { User, LeaderboardEntry, Book } from "../types";
 import type { ShopItem } from '../data/constants';
 import {
     calculateNetWorth,
@@ -28,7 +28,7 @@ import type {
 // --------------------------------------------------------------------------
 
 export interface DashboardStats {
-    /** Full net worth breakdown (bizCoins + inventory + portfolio). */
+    /** Full net worth breakdown (ppTokens + inventory + portfolio). */
     readonly netWorth: NetWorthBreakdown;
     /** Percentile rank result with a translated label. */
     readonly rank: PercentileResult & { readonly label: string };
@@ -39,7 +39,6 @@ export interface DashboardStats {
 }
 
 // Import Book type for the booksRead field
-import type { Book } from '../types';
 
 // --------------------------------------------------------------------------
 // Hook
@@ -91,7 +90,7 @@ export function useDashboardStats(
         };
     }, [
         // Only re-compute when relevant data actually changes
-        subject.bizCoins,
+        subject.ppTokens,
         subject.inventory,
         subject.portfolio,
         subject.xp,

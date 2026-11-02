@@ -62,7 +62,7 @@ export class TextSanitizer {
      */
     static sanitizeEmail(email: string): string {
         if (!email) {
-            throw new Error('Email is required');
+            throw new ValidationError('Email is required');
         }
 
         const sanitized = this.sanitizeText(email).toLowerCase().trim();
@@ -70,7 +70,7 @@ export class TextSanitizer {
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(sanitized)) {
-            throw new Error('Invalid email format');
+            throw new ValidationError('Invalid email format');
         }
 
         return sanitized;

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "npc_tariq",
+    "nameEn": "Tariq",
+    "nameAr": "طارق",
+    "role": "Founder",
+    "avatar": "🎒",
+    "tips": [
+      { "en": "Count your costs before you price anything!", "ar": "احسب تكاليفك قبل تحديد سعر أي منتج!" },
+      { "en": "Small savings today become huge businesses tomorrow!", "ar": "التوفير الصغير اليوم يبني إمبراطورية الغد الكبرى!" },
+      { "en": "Sell lemonade cold and smile at every customer!", "ar": "قدّم الليمون بارداً وابتسم لكل عميل دائماً!" },
+      { "en": "Reinvest your profits to grow even faster!", "ar": "أعد استثمار أرباحك لتنمو تجارتك بسرعة أكبر!" }
+    ]
+  },
+  {
+    "id": "npc_layla",
+    "nameEn": "Layla",
+    "nameAr": "ليلى",
+    "role": "Marketer",
+    "avatar": "🎨",
+    "tips": [
+      { "en": "Bright colors make your store poster stand out!", "ar": "الألوان الزاهية تجعل لافتة متجرك لا تُنسى!" },
+      { "en": "Happy customers will always bring their best friends!", "ar": "الزبائن السعداء يجلبون أصدقاءهم دائماً للشراء منك!" },
+      { "en": "A clear logo tells your story in seconds!", "ar": "الشعار المبتكر يروي قصة مشروعك بثوان معدودة!" },
+      { "en": "Free tasty samples build instant customer trust!", "ar": "العينات المجانية اللذيذة تبني ثقة العملاء فوراً!" }
+    ]
+  },
+  {
+    "id": "npc_kareem",
+    "nameEn": "Kareem",
+    "nameAr": "كريم",
+    "role": "Courier",
+    "avatar": "🚚",
+    "tips": [
+      { "en": "Speedy safe deliveries earn five star ratings!", "ar": "التوصيل السريع والآمن يمنحك تقييم خمس نجوم!" },
+      { "en": "Always keep extra inventory for rainy days!", "ar": "احتفظ بمخزون إضافي دائماً للأوقات الصعبة المفاجئة!" },
+      { "en": "Plan your delivery routes to save valuable time!", "ar": "خطط مسارات التوصيل لتوفير وقتك وجهدك الثمين!" },
+      { "en": "Check your boxes carefully before every single ride!", "ar": "تأكد من سلامة الصناديق قبل كل رحلة!" }
+    ]
+  },
+  {
+    "id": "npc_sami",
+    "nameEn": "Sami",
+    "nameAr": "سامي",
+    "role": "Investor",
+    "avatar": "💼",
+    "tips": [
+      { "en": "Never put all your coins in one jar!", "ar": "لا تضع كل عملاتك في جرة واحدة!" },
+      { "en": "Compound interest is the world's eighth wonder!", "ar": "الفائدة المركبة هي أعظم أسرار نمو الثروات!" },
+      { "en": "Invest in learning new skills every single day!", "ar": "استثمر في تعلّم مهارات جديدة كل يوم!" },
+      { "en": "Patience is a great superpower for young investors!", "ar": "الصبر هو القوة الخارقة لكل مستثمر ذكي!" }
+    ]
+  },
+  {
+    "id": "npc_nour",
+    "nameEn": "Nour",
+    "nameAr": "نور",
+    "role": "CEO",
+    "avatar": "👑",
+    "tips": [
+      { "en": "Great leaders always listen before giving orders!", "ar": "القادة العظماء يستمعون لفرقهم قبل إصدار القرارات!" },
+      { "en": "Mistakes are just stepping stones to ultimate mastery!", "ar": "الأخطاء هي مجرد درجات تصعد بها للقمة!" },
+      { "en": "Praise your team members for their hard work!", "ar": "امدح أعضاء فريقك واحتفل بإنجازاتهم المتميزة دائماً!" },
+      { "en": "Fair win win deals last for many years!", "ar": "الصفقات العادلة للطرفين تدوم لسنوات طويلة جداً!" }
+    ]
+  }
+]

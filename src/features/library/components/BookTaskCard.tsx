@@ -79,10 +79,10 @@ const BookTaskCard: React.FC<BookTaskCardProps> = ({ task, isCompleted, progress
 
     return (
         <div className={`
-      relative p-4 rounded-xl border-2 transition-all duration-300
+      card relative transition-all duration-300
       ${isCompleted
-                ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-700'
-                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg'
+                ? 'opacity-80'
+                : 'hover:shadow-md'
             }
     `}>
             {/* Completion Badge */}
@@ -116,7 +116,7 @@ const BookTaskCard: React.FC<BookTaskCardProps> = ({ task, isCompleted, progress
                 </div>
             </div>
 
-            {/* Progress Bar (for action challenges) */}
+            {/* Progress Bar for Action Challenges */}
             {task.type === 'action_challenge' && progress !== undefined && progress > 0 && !isCompleted && (
                 <div className="mb-3">
                     <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
@@ -154,13 +154,11 @@ const BookTaskCard: React.FC<BookTaskCardProps> = ({ task, isCompleted, progress
             <button
                 onClick={onStart}
                 disabled={isCompleted}
-                className={`
-          w-full py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200
-          ${isCompleted
-                        ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-                    }
-        `}
+                className={`w-full ${
+                  isCompleted
+                    ? 'btn btn--ghost opacity-60 cursor-not-allowed'
+                    : 'btn'
+                }`}
             >
                 {isCompleted ? t('library.tasks.completed') : t('library.tasks.start')}
             </button>

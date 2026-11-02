@@ -21,12 +21,20 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
       "@sentry/react": [
         "./src/stubs/sentry-react.ts"
       ]
     }
   },
   "include": [
-    "src"
+    "src",
+    "tests"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "scratch",
+    "temp_games_inspect"
   ]
 }

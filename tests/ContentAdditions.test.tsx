@@ -2,8 +2,10 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import { useAppStore } from '@/store';
+import { useEducationStore } from '@/store/educationStore';
 import BookLibrary from '@/features/library/components/BookLibrary';
 import KidMap from '@/features/hq/components/KidMap';
 import GameMenu from '@/features/game/components/GameMenu';
@@ -27,7 +29,7 @@ const createMockUser = (tier: any = 'founder'): User => ({
   level: 1,
   streak: 1,
   lastActivityDate: '2024-01-01',
-  bizCoins: 100,
+  ppTokens: 100,
   currentModuleId: 'mod_1',
   completedLessonIds: [],
   readBookIds: [],
@@ -38,15 +40,20 @@ const createMockUser = (tier: any = 'founder'): User => ({
   unlockedSkills: [],
   portfolio: [],
   equippedItems: [],
+  placedItems: [],
+  properties: [],
   subscriptionStatus: tier === 'intern' ? 'FREE' : 'PREMIUM',
   subscriptionTier: tier,
   energy: 5,
   lastEnergyRefill: Date.now()
 });
 
+import i18n from '@/lib/i18n';
+
 describe('Content Additions Pipeline', () => {
-  beforeEach(() => {
-    useAppStore.setState({ user: null, library: [], lessons: [], games: [] });
+  beforeEach(async () => {
+    await i18n.changeLanguage('en');
+    useAppStore.setState({ user: null, library: [], games: [] });
   });
 
   // 1. New Book Addition
@@ -68,7 +75,11 @@ describe('Content Additions Pipeline', () => {
       library: [newBook]
     });
 
-    const { unmount } = render(<BookLibrary />);
+    const { unmount } = render(
+      <MemoryRouter>
+        <BookLibrary />
+      </MemoryRouter>
+    );
 
     // Check Title
     expect(screen.getByText('The Crypto Kid')).toBeInTheDocument();
@@ -77,11 +88,11 @@ describe('Content Additions Pipeline', () => {
     // Check Image (SmartImage renders img tag with alt)
     const img = screen.getByAltText('The Crypto Kid');
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', 'http://test/img.png');
+    expect(img).toHaveAttribute('src', 'http://test/img.png?v=2');
 
     // Check Lock Status (Founder should see "Read Summary", not "Unlock")
     expect(screen.queryByText('Premium Only')).not.toBeInTheDocument();
-    expect(screen.getByText('Read Summary')).toBeInTheDocument();
+    expect(screen.getAllByText('Read Summary').length).toBeGreaterThan(0);
 
     unmount();
 
@@ -94,14 +105,18 @@ describe('Content Additions Pipeline', () => {
       library: [...paddingBooks, newBook]
     });
 
-    render(<BookLibrary />);
+    render(
+      <MemoryRouter>
+        <BookLibrary />
+      </MemoryRouter>
+    );
 
     // The Crypto Kid is now at index 4 (>= 3)
     // We verify the lock mechanism triggers.
     // In BookLibrary, locked items have an overlay containing "Premium Only" and a button saying "Unlock".
     // Since we have multiple books, finding specific text can be broad, but finding it AT ALL confirms logic is active.
     expect(screen.getAllByText('Premium Only').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Unlock').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Unlock Premium').length).toBeGreaterThan(0);
   });
 
   // 2. New Lesson/Module
@@ -118,11 +133,16 @@ describe('Content Additions Pipeline', () => {
 
     useAppStore.setState({
       user: createMockUser('founder'),
+    });
+    useEducationStore.setState({
       lessons: [newLesson],
-      assignments: []
     });
 
-    render(<KidMap onStartLesson={() => { }} />);
+    render(
+      <MemoryRouter>
+        <KidMap onStartLesson={() => { }} />
+      </MemoryRouter>
+    );
 
     // KidMap groups by topic_tag. 
     // It attempts to translate `crypto_basics` (derived from Crypto Basics).
@@ -134,7 +154,7 @@ describe('Content Additions Pipeline', () => {
 
     // Verify it shows lesson count (0/1 Lessons)
     // We use a regex match to be flexible with UI spacing
-    expect(screen.getByText(/0\/1/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/0\/1/i).length).toBeGreaterThan(0);
   });
 
   // 3. New Game Addition
@@ -157,7 +177,11 @@ describe('Content Additions Pipeline', () => {
       games: [newGame]
     });
 
-    const { unmount } = render(<GameMenu onSelectGame={() => { }} />);
+    const { unmount } = render(
+      <MemoryRouter>
+        <GameMenu onSelectGame={() => { }} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Stock Hero')).toBeInTheDocument();
     expect(screen.getByText('PREMIUM ONLY')).toBeInTheDocument();
@@ -170,7 +194,11 @@ describe('Content Additions Pipeline', () => {
       games: [newGame]
     });
 
-    render(<GameMenu onSelectGame={() => { }} />);
+    render(
+      <MemoryRouter>
+        <GameMenu onSelectGame={() => { }} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Stock Hero')).toBeInTheDocument();
     expect(screen.getByText('TYCOON ONLY')).toBeInTheDocument();

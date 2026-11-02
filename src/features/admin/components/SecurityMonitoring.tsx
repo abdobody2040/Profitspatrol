@@ -15,6 +15,43 @@ interface SecurityEvent {
     created_at: string;
 }
 
+
+const SAMPLE_SECURITY_EVENTS: SecurityEvent[] = [
+    {
+        id: 'sec_1',
+        event_type: 'rate_limit_exceeded',
+        severity: 'medium',
+        user_id: 'user_dev_01',
+        session_id: 'sess_1',
+        event_data: { endpoint: '/api/v1/projects/submit', attempts: 5 },
+        ip_address: '127.0.0.1',
+        user_agent: 'Mozilla/5.0 Chrome',
+        created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+    },
+    {
+        id: 'sec_2',
+        event_type: 'prompt_injection',
+        severity: 'high',
+        user_id: null,
+        session_id: 'sess_2',
+        event_data: { prompt: 'System prompt override attempt blocked by AI firewall' },
+        ip_address: '127.0.0.1',
+        user_agent: 'Mozilla/5.0 Chrome',
+        created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString()
+    },
+    {
+        id: 'sec_3',
+        event_type: 'unauthorized_access',
+        severity: 'low',
+        user_id: null,
+        session_id: 'sess_3',
+        event_data: { route: '/admin', redirect: '/login' },
+        ip_address: '127.0.0.1',
+        user_agent: 'Mozilla/5.0 Chrome',
+        created_at: new Date(Date.now() - 1000 * 60 * 300).toISOString()
+    }
+];
+
 export const SecurityMonitoring = () => {
     const [events, setEvents] = useState<SecurityEvent[]>([]);
     const [loading, setLoading] = useState(true);

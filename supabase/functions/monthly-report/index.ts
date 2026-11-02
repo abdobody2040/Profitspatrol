@@ -1,14 +1,14 @@
+// @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// ─── HTML Email Template ──────────────────────────────────────────────────────
 function buildEmail(data: {
     parentName: string;
     kidName: string;
     month: string;
     xpEarned: number;
     level: number;
-    bizCoins: number;
+    ppTokens: number;
     lessonsCompleted: number;
     gigsCompleted: number;
     topAchievement: string;
@@ -16,7 +16,7 @@ function buildEmail(data: {
 }): string {
     const {
         parentName, kidName, month, xpEarned, level,
-        bizCoins, lessonsCompleted, gigsCompleted, topAchievement, streakDays
+        ppTokens, lessonsCompleted, gigsCompleted, topAchievement, streakDays
     } = data;
 
     return `
@@ -25,7 +25,7 @@ function buildEmail(data: {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KidCapHQ Monthly Report</title>
+  <title>Profits Patrol Monthly Report</title>
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4ff; margin: 0; padding: 0; }
     .wrapper { max-width: 600px; margin: 32px auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
@@ -55,7 +55,7 @@ function buildEmail(data: {
   <div class="wrapper">
     <div class="header">
       <h1>📊 Monthly Progress Report</h1>
-      <p>${kidName}'s KidCapHQ Journey · ${month}</p>
+      <p>${kidName}'s Profits Patrol Journey · ${month}</p>
       <span class="badge">Level ${level} CEO 🏆</span>
     </div>
 
@@ -68,8 +68,8 @@ function buildEmail(data: {
           <p class="lbl">XP Earned</p>
         </div>
         <div class="stat-card">
-          <p class="val">🪙${bizCoins.toLocaleString()}</p>
-          <p class="lbl">BizCoins</p>
+          <p class="val">💰${ppTokens.toLocaleString()}</p>
+          <p class="lbl">PP Tokens</p>
         </div>
         <div class="stat-card">
           <p class="val">📚${lessonsCompleted}</p>
@@ -108,7 +108,7 @@ function buildEmail(data: {
     </div>
 
     <div class="footer">
-      KidCapHQ · Teaching kids the language of business 🚀<br/>
+      Profits Patrol · Teaching kids the language of business 🚀<br/>
       You're receiving this because you're linked as ${kidName}'s parent/guardian.
       <br/><a href="#" style="color:#9ca3af;">Unsubscribe</a>
     </div>
@@ -118,7 +118,6 @@ function buildEmail(data: {
   `.trim();
 }
 
-// ─── Edge Function Handler ────────────────────────────────────────────────────
 serve(async (req) => {
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
@@ -159,7 +158,7 @@ serve(async (req) => {
             month,
             xpEarned: profile.xp ?? 0,
             level: profile.level ?? 1,
-            bizCoins: profile.biz_coins ?? 0,
+            ppTokens: profile.pp_tokens ?? 0,
             lessonsCompleted: profile.lessons_completed ?? 0,
             gigsCompleted: profile.gigs_completed ?? 0,
             topAchievement: profile.top_achievement ?? 'Completed first business lesson!',
@@ -183,7 +182,7 @@ serve(async (req) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                from: 'KidCapHQ <reports@kidcaphq.com>',
+                from: 'Profits Patrol <reports@kidcaphq.com>',
                 to: parentEmail,
                 subject: `📊 ${emailData.kidName}'s Monthly Progress Report — ${month}`,
                 html,

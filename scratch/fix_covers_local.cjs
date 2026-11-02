@@ -46,11 +46,9 @@ function download(url, dest) {
 }
 
 async function main() {
-  console.log('Downloading exclusive book covers...\n');
   for (const book of exclusiveCovers) {
     const dest = path.join(BOOKS_DIR, book.filename);
     if (fs.existsSync(dest)) {
-      console.log('  SKIP (exists):', book.filename);
       continue;
     }
     const url = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
@@ -60,7 +58,6 @@ async function main() {
       if (size < 1000) {
         // Open Library returned a tiny "no cover" image
         fs.unlinkSync(dest);
-        console.log('  ⚠️  No cover on OpenLibrary for', book.id, '— will use default');
       } else {
         console.log('  ✅', book.filename, '(' + size + ' bytes)');
       }
@@ -70,7 +67,6 @@ async function main() {
   }
 
   // Now fix classicBooks.ts coverUrls to use local paths
-  console.log('\nFixing classicBooks.ts coverUrls to local paths...');
   const CLASSIC_PATH = path.join(__dirname, '../src/features/library/data/classicBooks.ts');
   let classic = fs.readFileSync(CLASSIC_PATH, 'utf8');
 
@@ -189,10 +185,8 @@ async function main() {
     if (classic !== before) fixCount++;
   }
   fs.writeFileSync(CLASSIC_PATH, classic, 'utf8');
-  console.log(`Fixed ${fixCount} coverUrl entries to use local paths`);
 
   // Fix moreBooks.ts for exclusive books that were downloaded
-  console.log('\nFixing moreBooks.ts coverUrls...');
   const MORE_PATH = path.join(__dirname, '../src/features/library/data/moreBooks.ts');
   let more = fs.readFileSync(MORE_PATH, 'utf8');
   let moreFixCount = 0;
@@ -205,13 +199,10 @@ async function main() {
     more = more.replace(re, (m, pre) => `${pre}coverUrl: "${localPath}"`);
     if (more !== before) {
       moreFixCount++;
-      console.log('  Updated:', book.id, '→', localPath);
     }
   }
   fs.writeFileSync(MORE_PATH, more, 'utf8');
-  console.log(`Fixed ${moreFixCount} exclusive book coverUrls`);
 
-  console.log('\n✅ All done!');
 }
 
 main().catch(console.error);

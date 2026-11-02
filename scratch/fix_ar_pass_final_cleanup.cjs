@@ -54,4 +54,3 @@ Object.keys(t).forEach(eng => {
 });
 
 fs.writeFileSync(arPath, content, 'utf8');
-console.log('Final Sections Arabic translation pass complete.');

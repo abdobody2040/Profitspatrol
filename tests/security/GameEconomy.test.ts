@@ -5,8 +5,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useAppStore } from '../../src/store';
-import { UserRole } from '../../src/types';
+import { useAppStore } from '@/store';
+import { useEducationStore } from '@/store/educationStore';
+import { UserRole, User } from '@/types';
 import { Logger } from '../../src/services/logger';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -33,61 +34,63 @@ vi.mock('../../src/services/SoundService', () => ({
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const makeKidUser = (overrides: Record<string, unknown> = {}) => ({
-    id: 'kid_1',
+const makeKidUser = (overrides: Partial<User> = {}): User => ({
+    id: 'kid_123',
+    name: 'Kid',
+    username: 'kid',
     role: UserRole.KID,
-    name: 'Leo',
-    bizCoins: 500,
+    ppTokens: 500,
     xp: 0, level: 1, streak: 1,
     lastActivityDate: new Date().toISOString().split('T')[0],
     completedLessonIds: [],
     readBookIds: [],
-    badges: [], inventory: [] as string[], settings: { soundEnabled: false },
+    badges: [], inventory: [] as string[], settings: { dailyGoalMinutes: 15, soundEnabled: false, musicEnabled: false, themeColor: 'green', themeMode: 'light' },
     hqLevel: 'hq_garage',
     unlockedSkills: [], portfolio: [] as any[], equippedItems: [], placedItems: [],
     subscriptionStatus: 'FREE', subscriptionTier: 'intern',
     energy: 5, lastEnergyRefill: Date.now(), properties: [],
     ...overrides,
-});
+} as User);
 
 beforeEach(() => {
-    useAppStore.setState({ user: null, users: [], classrooms: [], classroom: null });
+    useAppStore.setState({ user: null, users: [] });
+    useEducationStore.setState({ classrooms: [], classroom: null });
     vi.clearAllMocks();
 });
 
 // ─── Purchase Integrity ───────────────────────────────────────────────────────
 
 describe('buyItem() — purchase atomicity (Pillar #4)', () => {
-    it('ECONOMY: buying deducts exact cost from bizCoins', () => {
-        const user = makeKidUser({ bizCoins: 500 });
+    it('ECONOMY: buying deducts exact cost from ppTokens', () => {
+        const user = makeKidUser({ ppTokens: 500 });
         useAppStore.setState({ user: user as any, users: [user as any] });
 
         const item = { id: 'item_hat', type: 'AVATAR', cost: 200, name: 'Hat' } as any;
         useAppStore.getState().buyItem(item);
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(300);
+        expect(useAppStore.getState().user?.ppTokens).toBe(300);
         expect(useAppStore.getState().user?.inventory).toContain('item_hat');
     });
 
     it('ECONOMY: purchase blocked when insufficient funds', () => {
-        const user = makeKidUser({ bizCoins: 100 });
+        const user = makeKidUser({ ppTokens: 100 });
         useAppStore.setState({ user: user as any, users: [user as any] });
 
         const item = { id: 'item_expensive', type: 'AVATAR', cost: 500, name: 'Expensive' } as any;
         useAppStore.getState().buyItem(item);
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(100);
+        expect(useAppStore.getState().user?.ppTokens).toBe(100);
         expect(useAppStore.getState().user?.inventory).not.toContain('item_expensive');
     });
 
     it('ECONOMY: duplicate avatar purchase is idempotent (no double-charge)', () => {
-        const user = makeKidUser({ bizCoins: 1000, inventory: ['item_sunglasses'] });
+        const user = makeKidUser({ ppTokens: 1000, inventory: ['item_sunglasses'] });
         useAppStore.setState({ user: user as any, users: [user as any] });
 
         const item = { id: 'item_sunglasses', type: 'AVATAR', cost: 100, name: 'Sunglasses' } as any;
         useAppStore.getState().buyItem(item);
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(1000); // no deduction
+        expect(useAppStore.getState().user?.ppTokens).toBe(1000); // no deduction
         const inv = useAppStore.getState().user?.inventory ?? [];
         expect(inv.filter((i: string) => i === 'item_sunglasses').length).toBe(1); // no duplicate
     });
@@ -99,7 +102,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
     it('ECONOMY: backward clock skew yields 0 income and warns', () => {
         const futureDate = new Date(Date.now() + 9_999_999).toISOString();
         const user = makeKidUser({
-            bizCoins: 100,
+            ppTokens: 100,
             portfolio: [{ businessId: 'BIZ_01_LEMONADE', managerLevel: 1, lastCollected: futureDate }],
         });
         useAppStore.setState({ user: user as any, users: [user as any] });
@@ -107,7 +110,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
         const income = useAppStore.getState().collectIdleIncome('BIZ_01_LEMONADE');
 
         expect(income).toBe(0);
-        expect(useAppStore.getState().user?.bizCoins).toBe(100);
+        expect(useAppStore.getState().user?.ppTokens).toBe(100);
         expect(Logger.warn).toHaveBeenCalledWith(
             expect.stringContaining('Clock Skew'),
             expect.any(Object)
@@ -119,7 +122,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
         // without a server-time confirmation (Supabase not configured in tests).
         const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
         const user = makeKidUser({
-            bizCoins: 0,
+            ppTokens: 0,
             portfolio: [{ businessId: 'BIZ_01_LEMONADE', managerLevel: 1, lastCollected: twoDaysAgo }],
         });
         useAppStore.setState({ user: user as any, users: [user as any] });
@@ -136,7 +139,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
         // 24h elapsed is under the 25h threshold — no server check, full 24h cap applies.
         const justOver24h = new Date(Date.now() - 24 * 60 * 60 * 1000 - 60_000).toISOString();
         const user = makeKidUser({
-            bizCoins: 0,
+            ppTokens: 0,
             portfolio: [{ businessId: 'BIZ_01_LEMONADE', managerLevel: 1, lastCollected: justOver24h }],
         });
         useAppStore.setState({ user: user as any, users: [user as any] });
@@ -151,7 +154,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
     it('ECONOMY: no income when only 1 second has passed', () => {
         const justNow = new Date(Date.now() - 1_000).toISOString();
         const user = makeKidUser({
-            bizCoins: 100,
+            ppTokens: 100,
             portfolio: [{ businessId: 'BIZ_01_LEMONADE', managerLevel: 1, lastCollected: justNow }],
         });
         useAppStore.setState({ user: user as any, users: [user as any] });
@@ -159,7 +162,7 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
         const income = useAppStore.getState().collectIdleIncome('BIZ_01_LEMONADE');
 
         expect(income).toBe(0);
-        expect(useAppStore.getState().user?.bizCoins).toBe(100);
+        expect(useAppStore.getState().user?.ppTokens).toBe(100);
     });
 });
 
@@ -168,22 +171,22 @@ describe('collectIdleIncome() — clock-skew protection (Pillar #4)', () => {
 describe('claimDailySpin() — idempotency (Pillar #4)', () => {
     it('ECONOMY: second spin claim on same day yields no coins', () => {
         const today = new Date().toISOString().split('T')[0];
-        const user = makeKidUser({ bizCoins: 0, lastSpinDate: today });
+        const user = makeKidUser({ ppTokens: 0, lastSpinDate: today });
         useAppStore.setState({ user: user as any, users: [user as any] });
 
         useAppStore.getState().claimDailySpin({ type: 'coins', value: 500, id: 'coins_500' });
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(0);
+        expect(useAppStore.getState().user?.ppTokens).toBe(0);
     });
 
     it('ECONOMY: first spin of the day awards the correct amount', () => {
         const yesterday = new Date(Date.now() - 86_400_000).toISOString().split('T')[0];
-        const user = makeKidUser({ bizCoins: 0, lastSpinDate: yesterday });
+        const user = makeKidUser({ ppTokens: 0, lastSpinDate: yesterday });
         useAppStore.setState({ user: user as any, users: [user as any] });
 
         useAppStore.getState().claimDailySpin({ type: 'coins', value: 200, id: 'coins_200' });
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(200);
+        expect(useAppStore.getState().user?.ppTokens).toBe(200);
     });
 });
 

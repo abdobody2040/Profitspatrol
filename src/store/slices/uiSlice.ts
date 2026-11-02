@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { CMSContent } from '../../types';
 
 const DEFAULT_CMS_CONTENT: CMSContent = {
@@ -34,7 +34,7 @@ const DEFAULT_CMS_CONTENT: CMSContent = {
     customPages: []
 };
 
-export type GlobalModalType = 'spin' | 'weeklyChallenge' | 'bizPulse' | 'corpHub' | 'stockMarket' | 'avatar' | 'seasonalEvent' | 'parentReport' | null;
+export type GlobalModalType = 'spin' | 'weeklyChallenge' | 'bizPulse' | 'corpHub' | 'stockMarket' | 'avatar' | 'seasonalEvent' | 'parentReport' | 'dailyMissions' | null;
 
 export interface UiSlice {
     cmsContent: CMSContent;

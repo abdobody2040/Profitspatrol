@@ -1,0 +1,810 @@
+[
+  {
+    "num": 0,
+    "title": "MASTER DIRECTIVE",
+    "startLine": 16,
+    "endLine": 54,
+    "subsections": []
+  },
+  {
+    "num": 1,
+    "title": "PRODUCT VISION",
+    "startLine": 55,
+    "endLine": 101,
+    "subsections": [
+      "1.1 Core Vision"
+    ]
+  },
+  {
+    "num": 2,
+    "title": "PRODUCT PRINCIPLES",
+    "startLine": 102,
+    "endLine": 161,
+    "subsections": [
+      "P1 — Experience Before Explanation",
+      "P2 — Learn by Doing"
+    ]
+  },
+  {
+    "num": 3,
+    "title": "TARGET AUDIENCES",
+    "startLine": 162,
+    "endLine": 223,
+    "subsections": [
+      "Junior Mode",
+      "Explorer Mode"
+    ]
+  },
+  {
+    "num": 4,
+    "title": "THE FOUR MAIN HEROES",
+    "startLine": 224,
+    "endLine": 370,
+    "subsections": [
+      "4.1 OLLIE — PLAN"
+    ]
+  },
+  {
+    "num": 5,
+    "title": "REX — THE RIVAL",
+    "startLine": 371,
+    "endLine": 414,
+    "subsections": [
+      "Role",
+      "Personality"
+    ]
+  },
+  {
+    "num": 6,
+    "title": "NPC SYSTEM",
+    "startLine": 415,
+    "endLine": 448,
+    "subsections": []
+  },
+  {
+    "num": 7,
+    "title": "CHARACTER HIERARCHY",
+    "startLine": 449,
+    "endLine": 490,
+    "subsections": []
+  },
+  {
+    "num": 8,
+    "title": "WORLD STRUCTURE",
+    "startLine": 491,
+    "endLine": 520,
+    "subsections": [
+      "District 1 — Money District"
+    ]
+  },
+  {
+    "num": 9,
+    "title": "DISTRICT 2 — BUILDERS DISTRICT",
+    "startLine": 521,
+    "endLine": 545,
+    "subsections": []
+  },
+  {
+    "num": 10,
+    "title": "DISTRICT 3 — RISK & WEALTH",
+    "startLine": 546,
+    "endLine": 566,
+    "subsections": []
+  },
+  {
+    "num": 11,
+    "title": "DISTRICT 4 — OPERATIONS",
+    "startLine": 567,
+    "endLine": 586,
+    "subsections": []
+  },
+  {
+    "num": 12,
+    "title": "DISTRICT 5 — INNOVATION",
+    "startLine": 587,
+    "endLine": 606,
+    "subsections": []
+  },
+  {
+    "num": 13,
+    "title": "DISTRICT 6 — LEADERSHIP",
+    "startLine": 607,
+    "endLine": 626,
+    "subsections": []
+  },
+  {
+    "num": 14,
+    "title": "DISTRICT 7 — STRATEGY",
+    "startLine": 627,
+    "endLine": 646,
+    "subsections": []
+  },
+  {
+    "num": 15,
+    "title": "DISTRICT 8 — LAUNCH & SCALE",
+    "startLine": 647,
+    "endLine": 666,
+    "subsections": []
+  },
+  {
+    "num": 16,
+    "title": "WORLD PROGRESSION",
+    "startLine": 667,
+    "endLine": 706,
+    "subsections": []
+  },
+  {
+    "num": 17,
+    "title": "HOME SCREEN 2.0",
+    "startLine": 707,
+    "endLine": 743,
+    "subsections": []
+  },
+  {
+    "num": 18,
+    "title": "WORLD MAP",
+    "startLine": 744,
+    "endLine": 761,
+    "subsections": []
+  },
+  {
+    "num": 19,
+    "title": "CORE GAME LOOP",
+    "startLine": 762,
+    "endLine": 793,
+    "subsections": []
+  },
+  {
+    "num": 20,
+    "title": "CURRICULUM REBUILD",
+    "startLine": 794,
+    "endLine": 821,
+    "subsections": []
+  },
+  {
+    "num": 21,
+    "title": "EXISTING MODULES",
+    "startLine": 822,
+    "endLine": 852,
+    "subsections": []
+  },
+  {
+    "num": 22,
+    "title": "COMPETENCY SYSTEM",
+    "startLine": 853,
+    "endLine": 907,
+    "subsections": []
+  },
+  {
+    "num": 23,
+    "title": "MASTERY LEVELS",
+    "startLine": 908,
+    "endLine": 931,
+    "subsections": []
+  },
+  {
+    "num": 24,
+    "title": "ADAPTIVE LEARNING",
+    "startLine": 932,
+    "endLine": 970,
+    "subsections": []
+  },
+  {
+    "num": 25,
+    "title": "GAME ARCHITECTURE",
+    "startLine": 971,
+    "endLine": 992,
+    "subsections": []
+  },
+  {
+    "num": 26,
+    "title": "GAME INTEGRATION",
+    "startLine": 993,
+    "endLine": 1012,
+    "subsections": []
+  },
+  {
+    "num": 27,
+    "title": "GAME RESULT MODEL",
+    "startLine": 1013,
+    "endLine": 1032,
+    "subsections": []
+  },
+  {
+    "num": 28,
+    "title": "CONSEQUENCE ENGINE",
+    "startLine": 1033,
+    "endLine": 1075,
+    "subsections": []
+  },
+  {
+    "num": 29,
+    "title": "\"WHY?\" SYSTEM",
+    "startLine": 1076,
+    "endLine": 1096,
+    "subsections": []
+  },
+  {
+    "num": 30,
+    "title": "PERSISTENT BUSINESS",
+    "startLine": 1097,
+    "endLine": 1122,
+    "subsections": []
+  },
+  {
+    "num": 31,
+    "title": "BUSINESS LOOP",
+    "startLine": 1123,
+    "endLine": 1146,
+    "subsections": []
+  },
+  {
+    "num": 32,
+    "title": "BUSINESS TYPES",
+    "startLine": 1147,
+    "endLine": 1174,
+    "subsections": []
+  },
+  {
+    "num": 33,
+    "title": "BUSINESS ECONOMY",
+    "startLine": 1175,
+    "endLine": 1199,
+    "subsections": []
+  },
+  {
+    "num": 34,
+    "title": "PASSIVE INCOME / REAL ESTATE",
+    "startLine": 1200,
+    "endLine": 1234,
+    "subsections": []
+  },
+  {
+    "num": 35,
+    "title": "REX COMPETITION SYSTEM",
+    "startLine": 1235,
+    "endLine": 1266,
+    "subsections": []
+  },
+  {
+    "num": 36,
+    "title": "NPC LIVING WORLD",
+    "startLine": 1267,
+    "endLine": 1297,
+    "subsections": []
+  },
+  {
+    "num": 37,
+    "title": "CHARACTER RELATIONSHIPS",
+    "startLine": 1298,
+    "endLine": 1333,
+    "subsections": []
+  },
+  {
+    "num": 38,
+    "title": "CHARACTER DIALOGUE ENGINE",
+    "startLine": 1334,
+    "endLine": 1363,
+    "subsections": []
+  },
+  {
+    "num": 39,
+    "title": "CHARACTER EMOTION SYSTEM",
+    "startLine": 1364,
+    "endLine": 1382,
+    "subsections": []
+  },
+  {
+    "num": 40,
+    "title": "MISSION ENGINE",
+    "startLine": 1383,
+    "endLine": 1407,
+    "subsections": []
+  },
+  {
+    "num": 41,
+    "title": "DAILY CHALLENGES",
+    "startLine": 1408,
+    "endLine": 1427,
+    "subsections": []
+  },
+  {
+    "num": 42,
+    "title": "WEEKLY CHALLENGES",
+    "startLine": 1428,
+    "endLine": 1441,
+    "subsections": []
+  },
+  {
+    "num": 43,
+    "title": "ACHIEVEMENT SYSTEM",
+    "startLine": 1442,
+    "endLine": 1473,
+    "subsections": []
+  },
+  {
+    "num": 44,
+    "title": "COLLECTIBLES",
+    "startLine": 1474,
+    "endLine": 1488,
+    "subsections": []
+  },
+  {
+    "num": 45,
+    "title": "HQ 2.0",
+    "startLine": 1489,
+    "endLine": 1519,
+    "subsections": []
+  },
+  {
+    "num": 46,
+    "title": "HQ SKILL TREE",
+    "startLine": 1520,
+    "endLine": 1549,
+    "subsections": []
+  },
+  {
+    "num": 47,
+    "title": "KAMI'S EXPERIMENT LAB",
+    "startLine": 1550,
+    "endLine": 1582,
+    "subsections": []
+  },
+  {
+    "num": 48,
+    "title": "FAILURE & RECOVERY",
+    "startLine": 1583,
+    "endLine": 1607,
+    "subsections": []
+  },
+  {
+    "num": 49,
+    "title": "CAPSTONE — BUILD YOUR BUSINESS",
+    "startLine": 1608,
+    "endLine": 1641,
+    "subsections": []
+  },
+  {
+    "num": 50,
+    "title": "KNOWLEDGE HUB",
+    "startLine": 1642,
+    "endLine": 1676,
+    "subsections": []
+  },
+  {
+    "num": 51,
+    "title": "SOCIAL RESPONSIBILITY",
+    "startLine": 1677,
+    "endLine": 1695,
+    "subsections": []
+  },
+  {
+    "num": 52,
+    "title": "SUSTAINABILITY",
+    "startLine": 1696,
+    "endLine": 1716,
+    "subsections": []
+  },
+  {
+    "num": 53,
+    "title": "CRYPTO & FUTURE OF MONEY",
+    "startLine": 1717,
+    "endLine": 1731,
+    "subsections": []
+  },
+  {
+    "num": 54,
+    "title": "ADVANCED BUSINESS CONTENT",
+    "startLine": 1732,
+    "endLine": 1746,
+    "subsections": []
+  },
+  {
+    "num": 55,
+    "title": "ADAPTIVE AGE CONTENT",
+    "startLine": 1747,
+    "endLine": 1766,
+    "subsections": []
+  },
+  {
+    "num": 56,
+    "title": "AVATAR SYSTEM",
+    "startLine": 1767,
+    "endLine": 1791,
+    "subsections": []
+  },
+  {
+    "num": 57,
+    "title": "ASSET REGISTRY",
+    "startLine": 1792,
+    "endLine": 1823,
+    "subsections": []
+  },
+  {
+    "num": 58,
+    "title": "CHARACTER IMAGE REQUIREMENT",
+    "startLine": 1824,
+    "endLine": 1842,
+    "subsections": []
+  },
+  {
+    "num": 59,
+    "title": "DATA ARCHITECTURE",
+    "startLine": 1843,
+    "endLine": 1888,
+    "subsections": []
+  },
+  {
+    "num": 60,
+    "title": "PLAYER PROFILE",
+    "startLine": 1889,
+    "endLine": 1913,
+    "subsections": []
+  },
+  {
+    "num": 61,
+    "title": "SAVE SYSTEM",
+    "startLine": 1914,
+    "endLine": 1933,
+    "subsections": []
+  },
+  {
+    "num": 62,
+    "title": "AUTHENTICATION",
+    "startLine": 1934,
+    "endLine": 1948,
+    "subsections": []
+  },
+  {
+    "num": 63,
+    "title": "PARENT DASHBOARD 2.0",
+    "startLine": 1949,
+    "endLine": 1967,
+    "subsections": []
+  },
+  {
+    "num": 64,
+    "title": "PARENT LEARNING MOMENTS",
+    "startLine": 1968,
+    "endLine": 1981,
+    "subsections": []
+  },
+  {
+    "num": 65,
+    "title": "TEACHER SYSTEM",
+    "startLine": 1982,
+    "endLine": 1997,
+    "subsections": []
+  },
+  {
+    "num": 66,
+    "title": "REAL-WORLD MISSIONS",
+    "startLine": 1998,
+    "endLine": 2023,
+    "subsections": []
+  },
+  {
+    "num": 67,
+    "title": "SEASON SYSTEM",
+    "startLine": 2024,
+    "endLine": 2040,
+    "subsections": []
+  },
+  {
+    "num": 68,
+    "title": "MONETIZATION",
+    "startLine": 2041,
+    "endLine": 2058,
+    "subsections": []
+  },
+  {
+    "num": 69,
+    "title": "MONETIZATION PRINCIPLE",
+    "startLine": 2059,
+    "endLine": 2073,
+    "subsections": []
+  },
+  {
+    "num": 70,
+    "title": "ARABIC + ENGLISH",
+    "startLine": 2074,
+    "endLine": 2091,
+    "subsections": []
+  },
+  {
+    "num": 71,
+    "title": "LOCALIZATION ARCHITECTURE",
+    "startLine": 2092,
+    "endLine": 2114,
+    "subsections": []
+  },
+  {
+    "num": 72,
+    "title": "TECHNICAL REQUIREMENTS",
+    "startLine": 2115,
+    "endLine": 2136,
+    "subsections": []
+  },
+  {
+    "num": 73,
+    "title": "RESPONSIVE DESIGN",
+    "startLine": 2137,
+    "endLine": 2158,
+    "subsections": []
+  },
+  {
+    "num": 74,
+    "title": "NAVIGATION",
+    "startLine": 2159,
+    "endLine": 2177,
+    "subsections": []
+  },
+  {
+    "num": 75,
+    "title": "GAME LAUNCH ARCHITECTURE",
+    "startLine": 2178,
+    "endLine": 2209,
+    "subsections": []
+  },
+  {
+    "num": 76,
+    "title": "ERROR HANDLING",
+    "startLine": 2210,
+    "endLine": 2239,
+    "subsections": []
+  },
+  {
+    "num": 77,
+    "title": "GAME REGISTRY",
+    "startLine": 2240,
+    "endLine": 2264,
+    "subsections": []
+  },
+  {
+    "num": 78,
+    "title": "FEATURE FLAGS",
+    "startLine": 2265,
+    "endLine": 2284,
+    "subsections": []
+  },
+  {
+    "num": 79,
+    "title": "ANALYTICS",
+    "startLine": 2285,
+    "endLine": 2307,
+    "subsections": []
+  },
+  {
+    "num": 80,
+    "title": "PERFORMANCE",
+    "startLine": 2308,
+    "endLine": 2322,
+    "subsections": []
+  },
+  {
+    "num": 81,
+    "title": "ACCESSIBILITY",
+    "startLine": 2323,
+    "endLine": 2346,
+    "subsections": []
+  },
+  {
+    "num": 82,
+    "title": "SECURITY",
+    "startLine": 2347,
+    "endLine": 2371,
+    "subsections": []
+  },
+  {
+    "num": 83,
+    "title": "CONTENT ADMIN SYSTEM",
+    "startLine": 2372,
+    "endLine": 2392,
+    "subsections": []
+  },
+  {
+    "num": 84,
+    "title": "CONTENT VERSIONING",
+    "startLine": 2393,
+    "endLine": 2416,
+    "subsections": []
+  },
+  {
+    "num": 85,
+    "title": "MIGRATION STRATEGY",
+    "startLine": 2417,
+    "endLine": 2447,
+    "subsections": [
+      "Phase 0 — Audit"
+    ]
+  },
+  {
+    "num": 86,
+    "title": "PHASE 1 — FOUNDATION",
+    "startLine": 2448,
+    "endLine": 2466,
+    "subsections": []
+  },
+  {
+    "num": 87,
+    "title": "PHASE 2 — CONTENT ARCHITECTURE",
+    "startLine": 2467,
+    "endLine": 2489,
+    "subsections": []
+  },
+  {
+    "num": 88,
+    "title": "PHASE 3 — CHARACTER + WORLD",
+    "startLine": 2490,
+    "endLine": 2506,
+    "subsections": []
+  },
+  {
+    "num": 89,
+    "title": "PHASE 4 — GAME + MASTERY",
+    "startLine": 2507,
+    "endLine": 2525,
+    "subsections": []
+  },
+  {
+    "num": 90,
+    "title": "PHASE 5 — BUSINESS SIMULATION",
+    "startLine": 2526,
+    "endLine": 2542,
+    "subsections": []
+  },
+  {
+    "num": 91,
+    "title": "PHASE 6 — LIVING WORLD",
+    "startLine": 2543,
+    "endLine": 2556,
+    "subsections": []
+  },
+  {
+    "num": 92,
+    "title": "PHASE 7 — ADVANCED SYSTEMS",
+    "startLine": 2557,
+    "endLine": 2570,
+    "subsections": []
+  },
+  {
+    "num": 93,
+    "title": "PHASE 8 — PARENT + TEACHER",
+    "startLine": 2571,
+    "endLine": 2583,
+    "subsections": []
+  },
+  {
+    "num": 94,
+    "title": "PHASE 9 — POLISH",
+    "startLine": 2584,
+    "endLine": 2600,
+    "subsections": []
+  },
+  {
+    "num": 95,
+    "title": "PHASE 10 — LAUNCH READINESS",
+    "startLine": 2601,
+    "endLine": 2653,
+    "subsections": []
+  },
+  {
+    "num": 96,
+    "title": "QA MATRIX",
+    "startLine": 2654,
+    "endLine": 2671,
+    "subsections": []
+  },
+  {
+    "num": 97,
+    "title": "ACCEPTANCE CRITERIA",
+    "startLine": 2672,
+    "endLine": 2728,
+    "subsections": []
+  },
+  {
+    "num": 98,
+    "title": "WHAT NOT TO DO",
+    "startLine": 2729,
+    "endLine": 2768,
+    "subsections": []
+  },
+  {
+    "num": 99,
+    "title": "DESIGN LANGUAGE",
+    "startLine": 2769,
+    "endLine": 2793,
+    "subsections": []
+  },
+  {
+    "num": 100,
+    "title": "CHARACTER ART DIRECTION",
+    "startLine": 2794,
+    "endLine": 2820,
+    "subsections": []
+  },
+  {
+    "num": 101,
+    "title": "CHARACTER ASSET SYSTEM",
+    "startLine": 2821,
+    "endLine": 2843,
+    "subsections": []
+  },
+  {
+    "num": 102,
+    "title": "BUSINESS DASHBOARD",
+    "startLine": 2844,
+    "endLine": 2861,
+    "subsections": []
+  },
+  {
+    "num": 103,
+    "title": "CHILD-FRIENDLY ECONOMICS",
+    "startLine": 2862,
+    "endLine": 2881,
+    "subsections": []
+  },
+  {
+    "num": 104,
+    "title": "REWARD ECONOMY",
+    "startLine": 2882,
+    "endLine": 2898,
+    "subsections": []
+  },
+  {
+    "num": 105,
+    "title": "NO PAY-TO-WIN EDUCATION",
+    "startLine": 2899,
+    "endLine": 2912,
+    "subsections": []
+  },
+  {
+    "num": 106,
+    "title": "DAILY PLAYER EXPERIENCE",
+    "startLine": 2913,
+    "endLine": 2946,
+    "subsections": []
+  },
+  {
+    "num": 107,
+    "title": "LONG-TERM PLAYER JOURNEY",
+    "startLine": 2947,
+    "endLine": 2980,
+    "subsections": []
+  },
+  {
+    "num": 108,
+    "title": "FINAL PRODUCT STRUCTURE",
+    "startLine": 2981,
+    "endLine": 3017,
+    "subsections": []
+  },
+  {
+    "num": 109,
+    "title": "IMPLEMENTATION STATUS FILE",
+    "startLine": 3018,
+    "endLine": 3063,
+    "subsections": []
+  },
+  {
+    "num": 110,
+    "title": "CHANGELOG",
+    "startLine": 3064,
+    "endLine": 3084,
+    "subsections": []
+  },
+  {
+    "num": 111,
+    "title": "AI CODER MASTER INSTRUCTION",
+    "startLine": 3085,
+    "endLine": 3176,
+    "subsections": []
+  },
+  {
+    "num": 112,
+    "title": "FINAL DEFINITION OF DONE",
+    "startLine": 3177,
+    "endLine": 3228,
+    "subsections": []
+  }
+]

@@ -3,65 +3,36 @@ import { motion } from 'framer-motion';
 import TheTankMode from './TheTankMode';
 import CoopPitchMode from './CoopPitchMode';
 import { useTranslation } from 'react-i18next';
+import { Sparkles } from 'lucide-react';
 
 // ─── TheTankPage ──────────────────────────────────────────────────────────────
-// Wrapper that adds a Solo / Co-op tab switcher above the Tank experience.
-// The active mode is rendered below the tab bar.
+// Wrapper that provides the Solo / Co-op game mode switcher above The Tank experience.
 
 type TankMode = 'SOLO' | 'COOP';
 
 const TheTankPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
     const [mode, setMode] = useState<TankMode>('SOLO');
 
     return (
-        <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            background: '#0f172a',
-            overflow: 'hidden',
-        }}>
+        <div className="w-full h-full flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white overflow-hidden relative transition-colors duration-200">
             {/* ── Mode Toggle Bar ── */}
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '14px 20px 0',
-                gap: 0,
-                flexShrink: 0,
-                zIndex: 10,
-            }}>
-                <div style={{
-                    display: 'inline-flex',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1.5px solid rgba(255,255,255,0.1)',
-                    borderRadius: 50,
-                    padding: 4,
-                    gap: 4,
-                }}>
+            <div className="flex items-center justify-center pt-3 pb-2 px-4 z-20 shrink-0 bg-white/80 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-900/60 backdrop-blur-md">
+                <div className="inline-flex bg-slate-200/70 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-800 rounded-full p-1.5 gap-1.5 shadow-sm dark:shadow-lg">
                     {/* Solo Mode Button */}
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => setMode('SOLO')}
-                        style={{
-                            padding: '10px 28px',
-                            borderRadius: 50,
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontWeight: 800,
-                            fontSize: 14,
-                            transition: 'all 0.2s',
-                            background: mode === 'SOLO'
-                                ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
-                                : 'transparent',
-                            color: mode === 'SOLO' ? '#fff' : 'rgba(255,255,255,0.4)',
-                            boxShadow: mode === 'SOLO' ? '0 4px 16px rgba(59,130,246,0.4)' : 'none',
-                        }}
+                        className={`px-5 sm:px-6 py-2 rounded-full font-black text-xs md:text-sm transition-all flex items-center gap-2 cursor-pointer ${
+                            mode === 'SOLO'
+                                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md'
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/50'
+                        }`}
                     >
-                        🎤 {t('coop_pitch.solo_pitch', 'Solo Pitch')}
+                        <span>🎤</span>
+                        <span>{t('coop_pitch.solo_pitch', isAr ? 'عرض فردي' : 'Solo Pitch')}</span>
                     </motion.button>
 
                     {/* Co-op Mode Button */}
@@ -69,35 +40,16 @@ const TheTankPage: React.FC = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => setMode('COOP')}
-                        style={{
-                            padding: '10px 28px',
-                            borderRadius: 50,
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontWeight: 800,
-                            fontSize: 14,
-                            transition: 'all 0.2s',
-                            background: mode === 'COOP'
-                                ? 'linear-gradient(135deg, #7c3aed, #4f46e5)'
-                                : 'transparent',
-                            color: mode === 'COOP' ? '#fff' : 'rgba(255,255,255,0.4)',
-                            boxShadow: mode === 'COOP' ? '0 4px 16px rgba(99,102,241,0.4)' : 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 7,
-                        }}
+                        className={`px-5 sm:px-6 py-2 rounded-full font-black text-xs md:text-sm transition-all flex items-center gap-2 cursor-pointer ${
+                            mode === 'COOP'
+                                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/50'
+                        }`}
                     >
-                        🤝 {t('coop_pitch.coop_pitch', 'Co-op Pitch')}
-                        {/* NEW badge */}
-                        <span style={{
-                            fontSize: 9,
-                            background: '#f59e0b',
-                            color: '#000',
-                            fontWeight: 900,
-                            padding: '1px 6px',
-                            borderRadius: 6,
-                            letterSpacing: '0.4px',
-                        }}>
+                        <span>🤝</span>
+                        <span>{t('coop_pitch.coop_pitch', isAr ? 'عرض تعاوني' : 'Co-op Pitch')}</span>
+                        <span className="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded-md tracking-wider flex items-center gap-0.5 shadow-sm">
+                            <Sparkles size={10} />
                             {t('coop_pitch.badge_new', 'NEW')}
                         </span>
                     </motion.button>
@@ -105,7 +57,7 @@ const TheTankPage: React.FC = () => {
             </div>
 
             {/* ── Mode Content ── */}
-            <div style={{ flex: 1, overflow: 'auto', position: 'relative' }}>
+            <div className="flex-1 overflow-auto relative">
                 {mode === 'SOLO' ? <TheTankMode /> : <CoopPitchMode />}
             </div>
         </div>

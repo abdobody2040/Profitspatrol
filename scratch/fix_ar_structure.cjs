@@ -33,10 +33,6 @@ function fixObjectToArrays(text) {
         changed = false;
         passes++;
         
-        // Match: key: { '0': ... }
-        // We look for patterns where a block starts with { and contains '0':
-        // Then we replace the outer { } with [ ] and remove the '0': '1': etc.
-        
         const pattern = /(\w+):\s*{(\s+)'0':\s*/g;
         
         // However, a simple regex replace might break nested structures.
@@ -48,7 +44,6 @@ function fixObjectToArrays(text) {
         keys.forEach(key => {
             const keyRegex = new RegExp(`(${key}):\\s*{(\\s+)'0':`, 'g');
             if (keyRegex.test(text)) {
-                console.log(`Fixing structure for key: ${key}`);
                 // Find the full block for this key
                 // This is a bit complex with regex, but since we know the format is consistent:
                 // We'll find the matching closing brace.
@@ -86,7 +81,6 @@ function manualFix(text) {
         // though hq_levels doesn't use '0'.
         
         if (body.includes("'0':")) {
-            console.log(`Converting ${key} to array...`);
             // Remove '0': '1': etc.
             let newBody = body.replace(/^\s*['"]\d+['"]:\s*/gm, '');
             return `${key}: [${newBody}]`;
@@ -100,7 +94,6 @@ function manualFix(text) {
 const fixedContent = manualFix(content);
 if (fixedContent !== content) {
     fs.writeFileSync(arPath, fixedContent, 'utf8');
-    console.log('Successfully converted object-style arrays to true arrays in ar.ts');
 } else {
-    console.log('No changes needed or regex failed to match.');
+    console.error('No changes needed or regex failed to match.');
 }

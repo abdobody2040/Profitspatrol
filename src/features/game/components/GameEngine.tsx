@@ -1,9 +1,10 @@
 import React, { useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../../store';
 import { BusinessSimulation } from '../../../types';
 import { motion } from 'framer-motion';
-import { ArrowLeft, X, Loader2 } from 'lucide-react';
+import { X, Loader2 } from "lucide-react";
 import GameTutorialModal from './common/GameTutorialModal';
 import GameResultModal from './common/GameResultModal';
 
@@ -31,6 +32,7 @@ const TimelineTemplate = React.lazy(() => import('./game-templates/TimelineTempl
 const TradingTemplate = React.lazy(() => import('./game-templates/TradingTemplate'));
 const DefenseTemplate = React.lazy(() => import('./game-templates/DefenseTemplate'));
 const StreamerTemplate = React.lazy(() => import('./game-templates/StreamerTemplate'));
+const ConveyorTemplate = React.lazy(() => import('./game-templates/ConveyorTemplate'));
 
 interface GameEngineProps {
     gameId: string;
@@ -40,7 +42,9 @@ interface GameEngineProps {
 
 const GameEngine: React.FC<GameEngineProps> = ({ gameId, onExit, previewConfig }) => {
     const { games, completeGame } = useAppStore();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.language.startsWith('ar');
+    const navigate = useNavigate();
     const [showTutorial, setShowTutorial] = useState(true);
 
     // Result Modal State
@@ -186,7 +190,8 @@ const GameEngine: React.FC<GameEngineProps> = ({ gameId, onExit, previewConfig }
             case 'action_rhythm': return <RhythmTemplate key={gameKey} {...props} />;
             case 'grid_territory': return <GridTemplate key={gameKey} {...props} />;
             case 'puzzle_repair': return <RepairTemplate key={gameKey} {...props} />;
-            case 'production_conveyor': return <QualityControlTemplate key={gameKey} {...props} />;
+            case 'production_conveyor': return <ConveyorTemplate key={gameKey} {...props} />;
+            case 'recycle_game': return <ConveyorTemplate key={gameKey} {...props} />;
             case 'matching_pattern': return <MatchingTemplate key={gameKey} {...props} />;
             case 'physics_balance': return <PhysicsTemplate key={gameKey} {...props} />;
             case 'office_tower': return <OfficeTemplate key={gameKey} {...props} />;
@@ -207,8 +212,23 @@ const GameEngine: React.FC<GameEngineProps> = ({ gameId, onExit, previewConfig }
     // @ts-ignore
     const gameDesc = (gameConfig.descriptionKey ? t(gameConfig.descriptionKey) : gameConfig.description) as string;
 
+    const getCategoryLabel = (cat: string) => {
+        if (cat === 'Retail & Food') return t('arcade.cat_retail');
+        if (cat === 'Services & E-Commerce') return t('arcade.cat_service');
+        if (cat === 'Production & Manufacturing') return t('arcade.cat_production');
+        if (cat === 'Creative & Events') return t('arcade.cat_creative');
+        if (cat === 'Digital & Tech') return t('arcade.cat_tech');
+        if (cat === 'Social Impact') return t('arcade.cat_social');
+        if (cat === 'Tycoon Exclusive') return t('arcade.cat_tycoon');
+        if (cat === 'Marketing') return t('arcade.cat_marketing' as any);
+        return cat;
+    };
+
     return (
-        <div className="fixed inset-0 bg-gray-900 z-[100] flex flex-col">
+        <div 
+            dir={isRTL ? "rtl" : "ltr"}
+            className="fixed inset-0 bg-[#FAF8F5] dark:bg-[#070b16] text-slate-800 dark:text-slate-100 z-[100] flex flex-col transition-colors duration-200"
+        >
             {/* Tutorial Overlay */}
             {showTutorial && (
                 <GameTutorialModal
@@ -232,29 +252,49 @@ const GameEngine: React.FC<GameEngineProps> = ({ gameId, onExit, previewConfig }
             />
 
             {/* Global Game Header */}
-            <div className="bg-gray-800 p-4 flex items-center justify-between shadow-md z-10 shrink-0">
-                <div className="flex items-center gap-4 text-white">
+            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b-2 border-amber-200/80 dark:border-slate-800 px-4 py-3 flex items-center justify-between shadow-sm z-10 shrink-0">
+                <div className="flex items-center gap-3">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/dashboard')}
+                        className="relative group shrink-0 w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center shadow-sm"
+                        title={t('nav.overview', 'Dashboard')}
+                    >
+                        <img 
+                            src="/assets/ollie_head.png" 
+                            alt="Ollie" 
+                            className="w-7 h-7 object-contain drop-shadow-sm" 
+                        />
+                    </motion.button>
                     <button
                         onClick={onExit}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-sm shrink-0"
+                        className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-red-200 dark:border-red-900/50 text-red-500 dark:text-red-400 shadow-[0_3px_0_#fca5a5] dark:shadow-[0_3px_0_#7f1d1d] hover:bg-red-50 dark:hover:bg-red-950/30 active:translate-y-1 active:shadow-none flex items-center justify-center transition-all cursor-pointer shrink-0"
+                        title={t('games.exit', 'Exit')}
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                     <div>
-                        <h1 className="font-black text-lg">{gameConfig.name}</h1>
-                        <div className="text-xs text-gray-400 font-bold uppercase tracking-widest">{gameConfig.category}</div>
+                        <h1 className="font-black text-base sm:text-lg text-slate-900 dark:text-white leading-tight">{gameTitle}</h1>
+                        <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100/70 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-300/60 dark:border-amber-800/60 inline-block mt-0.5">
+                            {getCategoryLabel(gameConfig.category)}
+                        </span>
                     </div>
                 </div>
-                <button onClick={() => setShowTutorial(true)} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs font-bold text-gray-300">
-                    ? Help
+                <button 
+                    onClick={() => setShowTutorial(true)} 
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-50 dark:bg-slate-800 border-2 border-amber-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 text-xs font-black text-amber-900 dark:text-amber-200 shadow-[0_2px_0_#fde68a] dark:shadow-[0_2px_0_#1e293b] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                    <span className="text-amber-600 font-black">?</span>
+                    <span>{t('nav.help', isRTL ? 'مساعدة' : 'Help')}</span>
                 </button>
             </div>
 
-            <div className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-900 relative">
+            <div className="flex-1 overflow-auto bg-[#FAF8F5] dark:bg-[#070b16] p-2 sm:p-4 flex flex-col items-center justify-center relative">
                 <Suspense fallback={
-                    <div className="flex flex-col items-center justify-center h-full text-white">
+                    <div className="flex flex-col items-center justify-center h-full text-amber-600 dark:text-amber-400">
                         <Loader2 className="animate-spin mb-2" size={48} />
-                        <p className="font-bold">Loading Game Engine...</p>
+                        <p className="font-bold">{t('common.loading', 'Loading...')}</p>
                     </div>
                 }>
                     {renderGameContent()}

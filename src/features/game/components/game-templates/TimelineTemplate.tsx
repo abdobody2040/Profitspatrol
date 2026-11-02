@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, Reorder } from 'framer-motion';
+import { Reorder } from "framer-motion";
 import { Clock, Star, Calendar } from 'lucide-react';
 import { BusinessSimulation, TimelineEvent } from '../../../../types';
 

@@ -1,19 +1,23 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { UniversalLessonUnit } from '../../../types';
 import { useAppStore } from '../../../store';
 import { useGameStore } from '../../../store/gameStore';
 import { getOwlyExplanation, chatWithOllie } from '../../../lib/gemini';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, ArrowRight, Coins, Zap, RotateCcw, Filter, Star, Info, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import { X, Check, ArrowRight, Coins, Zap, RotateCcw, Filter, Star, Info, Loader2, Sparkles } from "lucide-react";
 import ModuleRecap from './ModuleRecap';
 import EnergyBar from '../../game/components/EnergyBar';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../lib/i18n';
+
 import ProjectSubmitter from './ProjectSubmitter';
 import ProjectResultCard from './ProjectResultCard'; // Ensure imports
+import { VoiceNarrationButton } from '../../../components/ui/VoiceNarrationButton';
 import { launchBossScenario } from '../../scenarios/utils/bossLauncher';
 import { Logger } from '../../../services/logger';
+import { SoundService } from '../../../lib/sound';
 import { useEducationStore } from "../../../store/educationStore";
+import { MODULE_MAP } from '../../hq/data/modules';
 
 interface EngineProps {
     units: UniversalLessonUnit[];
@@ -26,9 +30,62 @@ interface EngineProps {
 
 type Phase = 'LEARN' | 'CHALLENGE' | 'FEEDBACK' | 'COMPLETE' | 'PROJECT' | 'PROJECT_RESULT';
 
+// Helper: Extract a pedagogical clue specifically tied to the current lesson concept
+const generateLessonSubjectiveHint = (
+    headline: string,
+    body: string,
+    question: string,
+    correctAnswer: string,
+    wrongAnswer: string,
+    language: string
+): string => {
+    const isAr = language === 'ar';
+    const cleanBody = body.replace(/\*\*/g, '').trim();
+
+    // Split into sentences
+    const sentences = cleanBody
+        .split(/(?<=[.!?؟\n])\s+/)
+        .map(s => s.trim())
+        .filter(s => s.length > 5);
+
+    // Look for sentence matching key words from the correct answer
+    const answerWords = correctAnswer
+        .replace(/[()[\]،,]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2);
+
+    let matchedSentence = sentences.find(s =>
+        answerWords.some(w => s.toLowerCase().includes(w.toLowerCase()))
+    );
+
+    // Fallback: look for sentence explaining question keywords
+    if (!matchedSentence) {
+        const questionWords = question
+            .replace(/[()[\]،,؟?]/g, ' ')
+            .split(/\s+/)
+            .filter(w => w.length > 3);
+        matchedSentence = sentences.find(s =>
+            questionWords.some(w => s.toLowerCase().includes(w.toLowerCase()))
+        );
+    }
+
+    if (!matchedSentence && sentences.length > 0) {
+        matchedSentence = sentences[1] || sentences[0];
+    }
+
+    const rawInsight = matchedSentence || cleanBody.slice(0, 140);
+    const keyInsight = rawInsight.replace(/[.!?؟]+$/, '').trim();
+
+    if (isAr) {
+        return `أولي يهمس لك 🦉: لا بأس يا بطل، المحاولة تصنع الخبراء! في درس «${headline}»، تذكر دائماً: "${keyInsight}". فكّر في «${correctAnswer}» وستحلها بسهولة في المحاولة القادمة!`;
+    }
+
+    return `Ollie's Tip 🦉: Nice try, explorer! In "${headline}", remember: "${keyInsight}". Focus on "${correctAnswer}" and you'll get it next time!`;
+};
+
 const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProject, initialLessonId, onNextModule, bossGameId }) => {
     // Global Store Access
-    const { user, startScenario } = useAppStore();
+    const { user, startScenario, consumeEnergy, hasUnlimitedEnergy } = useAppStore();
     const { completeLesson } = useEducationStore();
     const { setActiveGameId } = useGameStore();
     const { t } = useTranslation();
@@ -37,6 +94,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
     const [difficultyFilter, setDifficultyFilter] = useState<number | 'ALL'>('ALL');
     const [showFilterMenu, setShowFilterMenu] = useState(false);
     const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+    const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
 
     // AI Tutor State (Tooltip)
     const [aiExplanation, setAiExplanation] = useState<string>('');
@@ -103,6 +161,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
     // Interaction State
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean>(false);
+    const [shuffleNonce, setShuffleNonce] = useState(0);
 
     // Load current unit
     const unit = activeUnits[currentIndex];
@@ -122,12 +181,18 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
         );
     }, [unit, t]);
 
-    // Helper: Shuffle answers
+    // Helper: Shuffle answers using true Fisher-Yates algorithm, re-shuffling on retries
     const shuffledOptions = useMemo(() => {
         if (!unit) return [];
-        const opts = [translatedCorrectAnswer, ...translatedDistractors];
-        return opts.sort(() => Math.random() - 0.5);
-    }, [translatedCorrectAnswer, translatedDistractors]);
+        const array = [translatedCorrectAnswer, ...translatedDistractors];
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }, [translatedCorrectAnswer, translatedDistractors, shuffleNonce, currentIndex, unit?.id]);
 
     // Helper: Translate Topic Tag
     const getTopicLabel = (tag: string) => {
@@ -149,6 +214,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
     // Handler: Advance Phase
     const handleNextPhase = () => {
         if (phase === 'LEARN') {
+            setShuffleNonce(prev => prev + 1);
             setPhase('CHALLENGE');
         } else if (phase === 'FEEDBACK') {
             if (!isCorrect) return;
@@ -178,6 +244,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
     };
 
     const handleRetryLesson = () => {
+        setShuffleNonce(prev => prev + 1);
         setPhase('LEARN');
         setSelectedAnswer(null);
         setIsCorrect(false);
@@ -193,29 +260,32 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
         setIsCorrect(correct);
 
         if (correct) {
+            if (user?.settings?.soundEnabled) {
+                SoundService.playSuccess();
+            }
             setSessionFunds(prev => prev + unit.game_rewards.currency_value);
             setSessionXP(prev => prev + unit.game_rewards.base_xp);
         } else {
+            // Deduct heart (energy) on failure and play sound
+            consumeEnergy();
+            if (user?.settings?.soundEnabled) {
+                SoundService.playError();
+            }
+
             setIsLoadingHint(true);
             try {
-                // ✅ SECURITY FIX (Prompt Injection): Child's raw answer is delimited so it is treated
-                // as DATA by the model, not as instructions. Strip any structural injection patterns.
-                const safeAnswer = answer.replace(/---/g, '').replace(/\*/g, '').slice(0, 500);
-                const safeQuestion = translatedQuestion.slice(0, 300);
-                const safeCorrect = translatedCorrectAnswer.slice(0, 300);
-                const query = [
-                    `Help a child understand why their quiz answer was wrong.`,
-                    `Question: "${safeQuestion}"`,
-                    `Child's answer: "${safeAnswer}"`,
-                    `Correct answer: "${safeCorrect}"`,
-                    `Explain in 1-2 simple, encouraging sentences why the correct answer is right.`
-                ].join('\n');
-                const hint = await chatWithOllie([], query);
+                const hint = generateLessonSubjectiveHint(
+                    translatedHeadline,
+                    translatedBody,
+                    translatedQuestion,
+                    translatedCorrectAnswer,
+                    answer,
+                    i18n.language
+                );
                 setFeedbackHint(hint);
             } catch (e) {
-                // ✅ SECURITY FIX: Raw Gemini API errors could expose request body (child's answer)
-                Logger.error('UniversalLessonEngine: AI feedback hint failed', e);
-                setFeedbackHint(t('engine.feedback_error', { defaultValue: "Oops! I couldn't load the hint, but try reading the briefing again." }));
+                Logger.error('UniversalLessonEngine: Hint generation failed', e);
+                setFeedbackHint(t('engine.check_briefing', { defaultValue: "تحقق من الإيجاز مرة أخرى!" }));
             } finally {
                 setIsLoadingHint(false);
             }
@@ -227,27 +297,41 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
     };
 
     // Handler: Key Term Click (AI Tutor)
-    const handleTermClick = async (term: string) => {
+    const handleTermClick = async (term: string, e: React.MouseEvent<HTMLButtonElement>) => {
         if (activeTooltip === term) {
             setActiveTooltip(null);
+            setTooltipPos(null);
             return;
         }
+
+        // Capture button position for viewport-aware fixed positioning
+        const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+        const bubbleWidth = 288;
+        const bubbleHeight = 160; // estimated
+        let left = rect.left + rect.width / 2 - bubbleWidth / 2;
+        // Clamp horizontally within viewport with 8px margin
+        left = Math.max(8, Math.min(left, window.innerWidth - bubbleWidth - 8));
+        // Position above the button; flip below if not enough space
+        let top = rect.top - bubbleHeight - 12;
+        if (top < 8) top = rect.bottom + 12;
+        setTooltipPos({ top, left });
 
         setActiveTooltip(term);
         setAiExplanation('');
         setIsLoadingExplanation(true);
 
         try {
-            const explanation = await getOwlyExplanation(term);
+            const explanation = await getOwlyExplanation(term, undefined, i18n.language);
             setAiExplanation(explanation);
         } catch (error) {
             // ✅ SECURITY FIX: Raw AI term explanation errors route through sanitized Logger
             Logger.error('UniversalLessonEngine: AI term explanation failed', error);
-            setAiExplanation("Ollie is taking a nap. Try again later!");
+            setAiExplanation(i18n.language === 'ar' ? 'أولي يستريح الآن. حاول مرة أخرى لاحقاً!' : 'Ollie is taking a nap. Try again later!');
         } finally {
             setIsLoadingExplanation(false);
         }
     };
+
 
     const getDifficultyColor = (level: number) => {
         switch (level) {
@@ -260,9 +344,9 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
 
     const getDifficultyLabel = (level: number) => {
         switch (level) {
-            case 1: return 'Easy';
-            case 2: return 'Medium';
-            case 3: return 'Hard';
+            case 1: return t('easy', { defaultValue: 'Easy' });
+            case 2: return t('medium', { defaultValue: 'Medium' });
+            case 3: return t('hard', { defaultValue: 'Hard' });
             default: return '';
         }
     };
@@ -277,43 +361,15 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
             if (part.startsWith('**') && part.endsWith('**')) {
                 const term = part.slice(2, -2);
                 return (
-                    <span key={index} className="relative inline-block mx-1 z-10">
+                    <span key={index} className="relative inline-block mx-1">
                         <motion.button
                             whileHover={{ scale: 1.05, color: "#b45309" }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleTermClick(term)}
+                            onClick={(e) => handleTermClick(term, e)}
                             className={`font-bold border-b-2 border-dashed border-yellow-400 cursor-pointer transition-colors px-1 rounded
-                              ${activeTooltip === term ? 'bg-yellow-200 text-yellow-900' : 'text-gray-800 dark:text-white hover:bg-yellow-50 dark:hover:bg-gray-700'}`}
+                              ${activeTooltip === term ? 'bg-yellow-200 text-yellow-900 dark:bg-yellow-500/20 dark:text-yellow-200' : 'text-gray-800 dark:text-white hover:bg-yellow-50 dark:hover:bg-gray-700'}`}
                         >
                             {term} <Info size={10} className="inline align-top ms-0.5 opacity-50" />
                         </motion.button>
-
-                        <AnimatePresence>
-                            {activeTooltip === term && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                                    className="absolute bottom-full start-0 mb-3 w-72 max-w-[min(288px,80vw)] bg-gray-900 text-white text-sm p-4 rounded-2xl shadow-2xl z-50 border-2 border-yellow-500/30"
-                                    style={{ maxHeight: '220px', overflowY: 'auto' }}
-                                >
-                                    <div className="flex items-center justify-center gap-2 mb-3 text-yellow-400 font-bold uppercase tracking-widest text-xs border-b border-gray-700 pb-2">
-                                        <Sparkles size={14} /> Ollie's Definition
-                                    </div>
-                                    <div className="font-medium leading-relaxed text-gray-200 whitespace-normal break-words">
-                                        {isLoadingExplanation ? (
-                                            <div className="flex flex-col items-center justify-center py-4 gap-3">
-                                                <Loader2 className="animate-spin text-yellow-400" size={24} />
-                                                <span className="text-gray-400 text-xs font-bold">Asking the owl...</span>
-                                            </div>
-                                        ) : (
-                                            aiExplanation || "Click to ask Ollie!"
-                                        )}
-                                    </div>
-                                    <div className="absolute top-full start-6 border-8 border-transparent border-t-gray-900"></div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
                     </span>
                 );
             }
@@ -323,7 +379,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
 
     if (activeUnits.length === 0 && phase !== 'COMPLETE') {
         return (
-            <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+            <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[300] p-4">
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full text-center">
                     <h3 className="text-2xl font-black text-gray-800 dark:text-white mb-2">No Lessons Found</h3>
                     <p className="text-gray-500 dark:text-gray-400 mb-6">There are no lessons with this difficulty level.</p>
@@ -341,7 +397,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
 
 
     return (
-        <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+        <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-[300] p-4">
             <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
 
                 {/* Header: HUD */}
@@ -351,7 +407,7 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
 
                         <div className="flex items-center gap-2">
                             <span className="font-bold text-gray-400 text-sm uppercase tracking-widest hidden sm:block">
-                                {unit ? getTopicLabel(unit.topic_tag) : t('engine.mission_complete', { defaultValue: 'Mission Complete' })}
+                                {unit ? (MODULE_MAP.get(unit.topic_tag) ? t(`curriculum.${MODULE_MAP.get(unit.topic_tag)!.projectCode}`, { defaultValue: unit.topic_tag }) : unit.topic_tag) : t('engine.mission_complete', { defaultValue: 'Mission Complete' })}
                             </span>
 
                             {/* Filter Dropdown */}
@@ -414,7 +470,10 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
                                 className="space-y-6"
                             >
                                 <div className="flex items-center justify-between">
-                                    <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider">{t('engine.briefing', { defaultValue: 'Briefing' })}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider">{t('engine.briefing', { defaultValue: 'Briefing' })}</span>
+                                        <VoiceNarrationButton characterId="ollie" textToSpeak={`${translatedHeadline}. ${translatedBody}`} size="sm" />
+                                    </div>
                                     <div className={`flex items-center gap-1 px-3 py-1 rounded-full border ${getDifficultyColor(unit.difficulty)}`}>
                                         <div className="flex">{[...Array(unit.difficulty)].map((_, i) => <Star key={i} size={10} fill="currentColor" />)}</div>
                                         <span className="text-xs font-black uppercase ms-1">{getDifficultyLabel(unit.difficulty)}</span>
@@ -509,16 +568,37 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
                                     </>
                                 ) : (
                                     <>
-                                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
                                             <X size={48} strokeWidth={4} />
                                         </motion.div>
-                                        <h2 className="text-3xl font-black text-gray-800 dark:text-white">{t('engine.mission_failed', { defaultValue: 'Mission Failed' })}</h2>
+                                        <h2 className="text-3xl font-black text-gray-800 dark:text-white">{t('engine.mission_failed', { defaultValue: 'فشلت المهمة' })}</h2>
+                                        
+                                        {/* Heart Loss Feedback */}
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: -4 }} 
+                                            animate={{ opacity: 1, y: 0 }} 
+                                            className="inline-flex items-center gap-2 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 px-4 py-1.5 rounded-full border border-red-200 dark:border-red-800/60 font-bold text-sm shadow-sm mt-2"
+                                        >
+                                            <span className="text-base">💔</span>
+                                            <span>{t('engine.heart_lost', { defaultValue: 'فقدت قلباً!' })}</span>
+                                            <span className="text-xs bg-red-200/60 dark:bg-red-900/60 px-2 py-0.5 rounded-full font-mono">
+                                                {hasUnlimitedEnergy() ? '∞' : `${Math.max(0, user?.energy ?? 0)} ${t('engine.hearts_remaining', { defaultValue: 'قلوب متبقية' })}`}
+                                            </span>
+                                        </motion.div>
+
                                         <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 p-4 rounded-xl mx-4 text-start flex gap-3 mt-4">
-                                            <div className="text-3xl">🦉</div>
+                                            <div className="text-3xl shrink-0">🦉</div>
                                             <div>
-                                                <div className="text-xs font-bold text-yellow-600 dark:text-yellow-400 uppercase mb-1">{t('engine.ollie_tip', { defaultValue: "Ollie's Tip" })}</div>
-                                                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                    {isLoadingHint ? "Analyzing..." : feedbackHint || t('engine.check_briefing', { defaultValue: "Check the briefing again!" })}
+                                                <div className="text-xs font-bold text-yellow-600 dark:text-yellow-400 uppercase mb-1">{t('engine.ollie_tip', { defaultValue: "نصيحة أولي" })}</div>
+                                                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                                                    {isLoadingHint ? (
+                                                        <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 py-1">
+                                                            <Loader2 className="animate-spin" size={16} />
+                                                            <span>{t('engine.analyzing_hint', { defaultValue: 'أولي يجهز نصيحة خاصة لك...' })}</span>
+                                                        </div>
+                                                    ) : (
+                                                        feedbackHint || t('engine.check_briefing', { defaultValue: "تحقق من الإيجاز مرة أخرى!" })
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -619,13 +699,69 @@ const UniversalLessonEngine: React.FC<EngineProps> = ({ units, onExit, hasProjec
                                 {currentIndex < activeUnits.length - 1 ? t('engine.next_lesson', { defaultValue: 'Next Lesson' }) : t('engine.next_unit', { defaultValue: 'Next Unit' })} <ArrowRight size={20} />
                             </button>
                         ) : (
-                            <button onClick={handleRetryLesson} className="flex items-center gap-2 bg-orange-500 text-white px-8 py-3 rounded-2xl font-black shadow-[0_4px_0_0_rgba(194,65,12,1)] btn-juicy">
-                                <RotateCcw size={20} /> {t('engine.retry', { defaultValue: 'Retry' })}
-                            </button>
+                            hasUnlimitedEnergy() || (user?.energy ?? 0) > 0 ? (
+                                <button onClick={handleRetryLesson} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-2xl font-black shadow-[0_4px_0_0_rgba(194,65,12,1)] btn-juicy transition-all">
+                                    <RotateCcw size={20} /> {t('engine.retry', { defaultValue: 'إعادة المحاولة' })}
+                                </button>
+                            ) : (
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800">
+                                        ⚠️ {t('engine.out_of_hearts', { defaultValue: 'نفدت القلوب! انتظر الشحن' })}
+                                    </span>
+                                    <button onClick={onExit} className="flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-2xl font-bold transition-all text-sm shadow-md">
+                                        <X size={16} /> {t('close', { defaultValue: 'إغلاق' })}
+                                    </button>
+                                </div>
+                            )
                         )
                     )}
                 </div>
             </div>
+
+            {/* ── Ollie Definition Bubble (fixed, viewport-aware, never clips) ── */}
+            <AnimatePresence>
+                {activeTooltip && tooltipPos && (
+                    <>
+                        {/* Invisible dismiss overlay */}
+                        <div
+                            className="fixed inset-0 z-[399]"
+                            onClick={() => { setActiveTooltip(null); setTooltipPos(null); }}
+                        />
+                        <motion.div
+                            key="ollie-bubble"
+                            initial={{ opacity: 0, y: 8, scale: 0.92 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.92 }}
+                            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                            style={{ top: tooltipPos.top, left: tooltipPos.left, width: 288 }}
+                            className="fixed z-[400] bg-white dark:bg-gray-900 text-gray-800 dark:text-white text-sm p-4 rounded-2xl shadow-2xl border-2 border-yellow-400 dark:border-yellow-500/60"
+                        >
+                            {/* Header */}
+                            <div className="flex items-center justify-center gap-2 mb-3 text-yellow-600 dark:text-yellow-400 font-bold uppercase tracking-widest text-xs border-b border-yellow-100 dark:border-gray-700 pb-2">
+                                <Sparkles size={14} />
+                                {t('engine.ollie_definition', { defaultValue: "Ollie's Definition" })}
+                            </div>
+                            {/* Term label */}
+                            <div className="text-center font-black text-base text-gray-900 dark:text-white mb-2">
+                                {activeTooltip}
+                            </div>
+                            {/* Body */}
+                            <div className="font-medium leading-relaxed text-gray-700 dark:text-gray-200 whitespace-normal break-words text-center">
+                                {isLoadingExplanation ? (
+                                    <div className="flex flex-col items-center justify-center py-4 gap-3">
+                                        <Loader2 className="animate-spin text-yellow-500 dark:text-yellow-400" size={24} />
+                                        <span className="text-gray-400 dark:text-gray-400 text-xs font-bold">
+                                            {t('engine.ollie_asking', { defaultValue: 'Asking the owl...' })}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    aiExplanation || t('engine.ollie_cta', { defaultValue: 'Click to ask Ollie!' })
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             <style>{`
         .shake-animation { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }

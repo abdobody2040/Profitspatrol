@@ -8,12 +8,13 @@ import { Clock, BookOpen, Flame, Bell, Music, RefreshCw, Check, UserPlus, Zap, T
 import { FamilyManager } from '../../family/components/FamilyManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { UserRole } from '../../../types';
+import { User, UserRole } from '../../../types';
 import BountyList from './BountyList';
 import CreateBountyModal from './CreateBountyModal';
 import YearEndReport from '../../profile/components/YearEndReport';
 import { useDashboardStats } from '../../../hooks/useDashboardStats';
 import { resolveSubject, getLinkedChildren } from '../../../utils/userUtils';
+import { HeroMentorshipParentCard } from './HeroMentorshipParentCard';
 
 const ParentDashboard: React.FC = () => {
     const { user, users, updateUser, upgradeSubscription, library } = useAppStore();
@@ -53,9 +54,63 @@ const ParentDashboard: React.FC = () => {
     // Guard: Return null if user doesn't exist
     if (!user) return null;
 
+    const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+
     // ── Resolve which profile to display (pure util — no mutation) ──────────
-    const subject = resolveSubject(user, users);
     const linkedChildren = getLinkedChildren(user.id, users);
+    const hasLinkedChild = linkedChildren.length > 0;
+    const isParentUnlinked = user.role === UserRole.PARENT && !hasLinkedChild;
+
+    // Rich sample preview child for parents who have not connected a child yet
+    const sampleChild: User = {
+        id: 'sample_child_preview',
+        name: 'Alex (Sample Explorer)',
+        username: 'alex_explorer',
+        role: UserRole.KID,
+        xp: 2850,
+        level: 7,
+        streak: 6,
+        lastActivityDate: new Date().toISOString().split('T')[0],
+        ppTokens: 420,
+        currentModuleId: 'module_03',
+        completedLessonIds: ['lesson_budget_1', 'lesson_save_1', 'lesson_invest_1', 'lesson_brand_1'],
+        readBookIds: ['b1', 'b2'],
+        badges: ['badge_first_saver', 'badge_budget_boss'],
+        inventory: ['item_desk', 'item_laptop'],
+        unlockedSkills: ['STRATEGY', 'CHARISMA', 'EFFICIENCY'],
+        portfolio: [],
+        equippedItems: [],
+        placedItems: [],
+        properties: [],
+        hqLevel: '3',
+        subscriptionStatus: 'PREMIUM',
+        subscriptionTier: 'founder',
+        energy: 5,
+        lastEnergyRefill: Date.now(),
+        settings: {
+            soundEnabled: true,
+            musicEnabled: true,
+            dailyGoalMinutes: 15,
+            themeColor: 'blue',
+            themeMode: 'light',
+            ageMode: 'explorer',
+        }
+    };
+
+    // Pick active subject: explicit child selection -> linked child -> sample child fallback
+    let subject: User;
+    if (user.role === UserRole.PARENT) {
+        if (hasLinkedChild) {
+            subject = (selectedChildId ? linkedChildren.find(c => c.id === selectedChildId) : null)
+                || resolveSubject(user, users)
+                || linkedChildren[0];
+        } else {
+            subject = sampleChild;
+        }
+    } else {
+        subject = resolveSubject(user, users);
+    }
+
     const isPremium = user.subscriptionStatus === 'PREMIUM';
 
     // ── Domain stats (all O(1) HashMaps, memoised inside hook) ───────────────
@@ -105,72 +160,6 @@ const ParentDashboard: React.FC = () => {
         setIsProcessing(false);
     };
 
-    // Fallback UI for parent with no linked child (after all hooks are called)
-    if (user.role === UserRole.PARENT && linkedChildren.length === 0) {
-        return (
-            <div className="max-w-4xl mx-auto py-12 px-4">
-                <div className="text-center mb-12">
-                    <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <UserPlus size={48} />
-                    </div>
-                    <h2 className="text-4xl font-black text-gray-800 dark:text-white mb-4">{t('parent.connect_child_title')}</h2>
-                    <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                        {t('parent.no_child_desc')}
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                    {/* Left: Invite Code Manager */}
-                    <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                        <div className="absolute top-0 end-0 p-4 opacity-5">
-                            <Users size={120} />
-                        </div>
-                        <FamilyManager />
-                    </div>
-
-                    {/* Right: Steps & Upgrades */}
-                    <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-3xl border border-blue-100 dark:border-blue-800">
-                            <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-4">How to Connect:</h3>
-                            <ul className="space-y-4">
-                                <li className="flex gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center font-bold shrink-0">1</div>
-                                    <p className="text-blue-800 dark:text-blue-200 font-medium">{t('parent.connect_step_1')}</p>
-                                </li>
-                                <li className="flex gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center font-bold shrink-0">2</div>
-                                    <p className="text-blue-800 dark:text-blue-200 font-medium">{t('parent.connect_step_2')}</p>
-                                </li>
-                                <li className="flex gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-blue-200 text-blue-800 flex items-center justify-center font-bold shrink-0">3</div>
-                                    <p className="text-blue-800 dark:text-blue-200 font-medium">{t('parent.connect_step_3')}</p>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-8 rounded-3xl text-white shadow-lg relative overflow-hidden">
-                            <div className="relative z-10">
-                                <h3 className="text-2xl font-black mb-2 flex items-center gap-2">
-                                    <Award /> {t('parent.unlock_premium_title')}
-                                </h3>
-                                <p className="mb-6 opacity-90 font-medium">{t('parent.unlock_premium_desc')}</p>
-                                <button
-                                    onClick={handleUpgradeClick}
-                                    className="bg-white text-orange-600 font-black py-3 px-6 rounded-xl shadow-lg hover:scale-105 transition-transform w-full"
-                                >
-                                    {t('parent.btn_upgrade')}
-                                </button>
-                            </div>
-                            <div className="absolute -bottom-4 -end-4 opacity-20 rotate-12">
-                                <Award size={120} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <>
 
@@ -197,52 +186,117 @@ const ParentDashboard: React.FC = () => {
             </AnimatePresence>
 
             <div className="space-y-8 pb-20">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h2 className="text-3xl font-black text-gray-800 dark:text-white">
-                                {user.role === UserRole.KID ? "CEO Report Card" : user.role === UserRole.ADMIN ? "Admin Preview: Parent View" : t('parent.title')}
-                            </h2>
-                            {user.role === UserRole.PARENT && (
-                                <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border-2 ${user.subscriptionStatus === 'PREMIUM'
-                                    ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700/50'
-                                    : 'bg-gray-100 text-gray-600 border-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
-                                    }`}>
-                                    {user.subscriptionStatus === 'PREMIUM'
-                                        ? `Premium: ${user.subscriptionTier?.replace('tier_', '') || 'Active'} ${user.billingCycle ? `(${user.billingCycle})` : ''}`
-                                        : 'Free Plan'}
-                                </div>
-                            )}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] shadow-xl border-4 border-white dark:border-gray-700">
+                    <div className="flex items-center gap-6">
+                        <div className="hidden md:block">
+                            <motion.img 
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                src="/assets/ollie_head.png" 
+                                className="w-24 h-24 object-contain drop-shadow-2xl" 
+                            />
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
-                            {user.role === UserRole.KID ? t('parent.track_empire_growth') : user.role === UserRole.ADMIN ? "Previewing mock parent interface for Admin." : t('parent.monitoring')}
-                            <span className="text-kid-accent font-bold ms-1">{subject.name}</span>
-                        </p>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-4xl font-black text-gray-800 dark:text-white tracking-tight">
+                                    {user.role === UserRole.KID ? "CEO Report Card" : user.role === UserRole.ADMIN ? "Admin Preview: Parent View" : t('parent.title')}
+                                </h2>
+                                {user.role === UserRole.PARENT && (
+                                    <div className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border-2 shadow-sm ${user.subscriptionStatus === 'PREMIUM'
+                                        ? 'bg-yellow-400 text-yellow-900 border-white'
+                                        : 'bg-gray-100 text-gray-600 border-gray-200'
+                                        }`}>
+                                        {user.subscriptionStatus === 'PREMIUM'
+                                            ? `✨ PREMIUM`
+                                            : 'FREE PLAN'}
+                                    </div>
+                                )}
+                            </div>
+                            <p className="text-gray-500 dark:text-gray-400 font-bold text-lg mt-1">
+                                {user.role === UserRole.KID ? t('parent.track_empire_growth') : user.role === UserRole.ADMIN ? "Previewing mock parent interface for Admin." : t('parent.monitoring')}
+                                <span className="text-kid-accent font-black ms-2 text-xl">{subject.name}</span>
+                                {isParentUnlinked && (
+                                    <span className="text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-3 py-1 rounded-full ms-2">
+                                        Sample Child Preview
+                                    </span>
+                                )}
+                            </p>
+                        </div>
                     </div>
                     {user.role === UserRole.PARENT && (
-                        <button className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
-                            <RefreshCw size={18} /> {t('parent.sync')}
-                        </button>
+                        <div className="flex items-center gap-3">
+                            {hasLinkedChild && linkedChildren.length > 1 && (
+                                <select
+                                    value={subject.id}
+                                    onChange={(e) => setSelectedChildId(e.target.value)}
+                                    className="bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl px-4 py-2.5 font-bold text-gray-800 dark:text-white outline-none shadow-sm"
+                                >
+                                    {linkedChildren.map((c) => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            )}
+                            <button className="bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-2xl font-black shadow-[0_4px_0_0_rgba(209,213,219,1)] btn-juicy flex items-center gap-2 transition-all border-2 border-gray-100">
+                                <RefreshCw size={18} /> {t('parent.sync')}
+                            </button>
+                        </div>
                     )}
                 </div>
 
+                {/* Connect Child Banner for Unlinked Parents */}
+                {isParentUnlinked && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-[2rem] p-6 md:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-blue-400/40"
+                    >
+                        <div className="flex items-center gap-5">
+                            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                                <UserPlus size={36} className="text-white drop-shadow" />
+                            </div>
+                            <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <h3 className="text-2xl font-black">{t('parent.connect_child_title', "Connect Your Child's Account")}</h3>
+                                    <span className="bg-yellow-400 text-yellow-950 text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">
+                                        ACTION NEEDED
+                                    </span>
+                                </div>
+                                <p className="text-blue-100 text-sm md:text-base font-medium mt-1 max-w-2xl">
+                                    {t('parent.no_child_desc', "Share your invite code with your child so their live gameplay and learning analytics appear here. You are currently exploring a sample student preview!")}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="shrink-0 flex items-center gap-3 w-full md:w-auto">
+                            <button 
+                                onClick={() => {
+                                    const el = document.getElementById('family-manager-section');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="w-full md:w-auto bg-white text-indigo-700 hover:bg-blue-50 font-black px-6 py-3.5 rounded-2xl transition shadow-lg flex items-center justify-center gap-2 text-sm btn-juicy"
+                            >
+                                <Users size={18} /> {t('parent.view_invite_code', 'Get Family Invite Code')}
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* Premium Upsell Banner for Free Users */}
                 {!isPremium && user.role === UserRole.PARENT && (
-                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-6 rounded-3xl text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-8 rounded-[2.5rem] text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group">
                         <div className="relative z-10 flex-1">
-                            <h3 className="text-2xl font-black mb-1 flex items-center gap-2">
-                                <Award /> {t('parent.unlock_premium_title')}
+                            <h3 className="text-3xl font-black mb-2 flex items-center gap-3">
+                                <Award className="animate-bounce" /> {t('parent.unlock_premium_title')}
                             </h3>
-                            <p className="opacity-90 font-medium">{t('parent.unlock_premium_desc')}</p>
+                            <p className="text-lg opacity-90 font-bold leading-relaxed">{t('parent.unlock_premium_desc')}</p>
                         </div>
                         <button
                             onClick={handleUpgradeClick}
-                            className="bg-white text-orange-600 font-black py-3 px-8 rounded-xl shadow-lg hover:scale-105 transition-transform whitespace-nowrap relative z-10"
+                            className="bg-white text-orange-600 font-black py-4 px-10 rounded-2xl shadow-[0_6px_0_0_rgba(255,255,255,0.4)] btn-juicy text-lg relative z-10"
                         >
                             {t('parent.btn_upgrade')}
                         </button>
-                        <div className="absolute top-0 end-0 opacity-20 rotate-12 -translate-y-4 translate-x-4 pointer-events-none">
-                            <Award size={120} />
+                        <div className="absolute top-0 end-0 opacity-20 rotate-12 -translate-y-4 translate-x-4 pointer-events-none group-hover:scale-125 transition-transform duration-700">
+                            <Award size={180} />
                         </div>
                     </div>
                 )}
@@ -306,6 +360,9 @@ const ParentDashboard: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Hero Mentorship & Real-World Learning Moments */}
+                <HeroMentorshipParentCard childName={subject.name} />
+
                 {/* Books Read List */}
                 {booksRead.length > 0 && (
                     <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-3xl p-6">
@@ -335,7 +392,12 @@ const ParentDashboard: React.FC = () => {
                 </div>
 
                 {/* Family Management Section */}
-                <div className="mb-8">
+                <div 
+                    id="family-manager-section" 
+                    className={`mb-8 scroll-mt-24 transition-all rounded-3xl ${
+                        isParentUnlinked ? 'ring-4 ring-blue-500/30' : ''
+                    }`}
+                >
                     <FamilyManager />
                 </div>
 

@@ -47,7 +47,7 @@ vi.mock('../../src/services/SoundService', () => ({
 
 // Reset store between tests
 beforeEach(() => {
-    useAppStore.setState({ user: null, users: [], classrooms: [], classroom: null });
+    useAppStore.setState({ user: null, users: [] });
     vi.clearAllMocks();
 });
 
@@ -89,7 +89,7 @@ describe('RBAC — impersonateUser()', () => {
     it('SECURITY: ADMIN user CAN impersonate (valid admin tool)', () => {
         const adminUser = { id: 'admin_1', role: UserRole.ADMIN, name: 'Admin' } as any;
         const kidUser = { id: 'kid_1', role: UserRole.KID, name: 'Leo', classId: undefined } as any;
-        useAppStore.setState({ user: adminUser, users: [adminUser, kidUser], classrooms: [] });
+        useAppStore.setState({ user: adminUser, users: [adminUser, kidUser] });
 
         useAppStore.getState().impersonateUser('kid_1');
 
@@ -101,7 +101,7 @@ describe('RBAC — updateUser() whitelist', () => {
     it('SECURITY: kid cannot escalate their own role via updateUser()', () => {
         const kidUser = {
             id: 'kid_1', role: UserRole.KID, name: 'Leo',
-            bizCoins: 100, settings: { soundEnabled: true }, xp: 0, level: 1
+            ppTokens: 100, settings: { soundEnabled: true }, xp: 0, level: 1
         } as any;
         useAppStore.setState({ user: kidUser, users: [kidUser] });
 
@@ -110,26 +110,26 @@ describe('RBAC — updateUser() whitelist', () => {
         expect(useAppStore.getState().user?.role).toBe(UserRole.KID);
     });
 
-    it('SECURITY: kid cannot arbitrarily increase own bizCoins via updateUser()', () => {
+    it('SECURITY: kid cannot arbitrarily increase own ppTokens via updateUser()', () => {
         const kidUser = {
             id: 'kid_1', role: UserRole.KID, name: 'Leo',
-            bizCoins: 100, settings: { soundEnabled: true }
+            ppTokens: 100, settings: { soundEnabled: true }
         } as any;
         useAppStore.setState({ user: kidUser, users: [kidUser] });
 
-        useAppStore.getState().updateUser('kid_1', { bizCoins: 9_999_999 } as any);
+        useAppStore.getState().updateUser('kid_1', { ppTokens: 9_999_999 } as any);
 
-        expect(useAppStore.getState().user?.bizCoins).toBe(100);
+        expect(useAppStore.getState().user?.ppTokens).toBe(100);
     });
 
     it('SECURITY: user cannot update a different user without admin rights', () => {
-        const kidUser = { id: 'kid_1', role: UserRole.KID, name: 'Leo', bizCoins: 100 } as any;
-        const otherKid = { id: 'kid_2', role: UserRole.KID, name: 'Sam', bizCoins: 200 } as any;
+        const kidUser = { id: 'kid_1', role: UserRole.KID, name: 'Leo', ppTokens: 100 } as any;
+        const otherKid = { id: 'kid_2', role: UserRole.KID, name: 'Sam', ppTokens: 200 } as any;
         useAppStore.setState({ user: kidUser, users: [kidUser, otherKid] });
 
-        useAppStore.getState().updateUser('kid_2', { bizCoins: 0 } as any);
+        useAppStore.getState().updateUser('kid_2', { ppTokens: 0 } as any);
 
-        const samCoins = useAppStore.getState().users.find((u: any) => u.id === 'kid_2')?.bizCoins;
+        const samCoins = useAppStore.getState().users.find((u: any) => u.id === 'kid_2')?.ppTokens;
         expect(samCoins).toBe(200);
         expect(Logger.warn).toHaveBeenCalledWith(
             expect.stringContaining('[Security] Unauthorized Update Attempt'),
@@ -139,7 +139,7 @@ describe('RBAC — updateUser() whitelist', () => {
 
     it('SECURITY: admin CAN update another user', () => {
         const adminUser = { id: 'admin_1', role: UserRole.ADMIN, name: 'Admin' } as any;
-        const kidUser = { id: 'kid_1', role: UserRole.KID, name: 'Leo', bizCoins: 100, settings: {} } as any;
+        const kidUser = { id: 'kid_1', role: UserRole.KID, name: 'Leo', ppTokens: 100, settings: {} } as any;
         useAppStore.setState({ user: adminUser, users: [adminUser, kidUser] });
 
         useAppStore.getState().updateUser('kid_1', { name: 'Leonardo' } as any);

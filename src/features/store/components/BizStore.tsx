@@ -1,16 +1,17 @@
-
 import React, { useState } from 'react';
 import { useAppStore } from '../../../store';
 import { SHOP_ITEMS } from '../../../data/constants';
-import { ShoppingBag, Coins, Check, Zap, Shirt } from 'lucide-react';
+import { Coins, Check, Zap, Shirt } from "lucide-react";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 const BizStore: React.FC = () => {
   const { user, buyItem } = useAppStore();
   const [filter, setFilter] = useState<'AVATAR' | 'CONSUMABLE' | 'POWERUP'>('AVATAR');
   const [showToast, setShowToast] = useState(false);
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   const handleBuy = (item: any) => {
     buyItem(item);
@@ -25,8 +26,8 @@ const BizStore: React.FC = () => {
     return item.type === 'CONSUMABLE' || item.type === 'POWERUP';
   });
 
-  // Safety check: ensure bizCoins is treated as a number
-  const safeCoins = typeof user.bizCoins === 'number' ? user.bizCoins : 0;
+  // Safety check: ensure ppTokens is treated as a number
+  const safeCoins = typeof user.ppTokens === 'number' ? user.ppTokens : 0;
   const formattedCoins = new Intl.NumberFormat('en-US').format(safeCoins);
 
   return (
@@ -77,7 +78,7 @@ const BizStore: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {filteredItems.map((item) => {
           const isOwned = user.inventory.includes(item.id) && item.type !== 'CONSUMABLE' && item.type !== 'POWERUP';
           const canAfford = safeCoins >= item.cost;
@@ -85,33 +86,33 @@ const BizStore: React.FC = () => {
           return (
             <motion.div
               key={item.id}
-              whileHover={{ y: -5 }}
-              className={`bg-white dark:bg-gray-800 rounded-3xl p-6 border-2 flex flex-col items-center text-center shadow-sm transition-colors relative overflow-hidden
+              whileHover={{ y: -3 }}
+              className={`bg-white dark:bg-gray-800 rounded-3xl p-4 md:p-6 border-2 flex flex-col items-center text-center shadow-sm transition-colors relative overflow-hidden
                 ${isOwned ? 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900' : 'border-gray-100 dark:border-gray-700 hover:border-kid-accent'}
               `}
             >
-              <div className="w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center text-5xl mb-4 border-2 border-dashed border-gray-200 dark:border-gray-600">
+              <div className="w-16 h-16 md:w-24 md:h-24 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center text-4xl md:text-5xl mb-3 md:mb-4 border-2 border-dashed border-gray-200 dark:border-gray-600">
                 {item.icon}
               </div>
 
-              <h3 className="text-xl font-black text-gray-800 dark:text-white mb-1">{t(`store_items.${item.id}.name` as any)}</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm font-bold mb-6 flex-1">{t(`store_items.${item.id}.desc` as any)}</p>
+              <h3 className="text-sm md:text-xl font-black text-gray-800 dark:text-white mb-1">{t(`store_items.${item.id}.name` as any)}</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm font-bold mb-3 md:mb-6 flex-1">{t(`store_items.${item.id}.desc` as any)}</p>
 
               {isOwned ? (
-                <button disabled className="w-full py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 font-bold flex items-center justify-center gap-2 cursor-default">
-                  <Check size={20} /> {t('store.owned')}
+                <button disabled className="w-full py-2 md:py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 font-bold flex items-center justify-center gap-2 cursor-default text-sm">
+                  <Check size={16} /> {t('store.owned')}
                 </button>
               ) : (
                 <button
                   onClick={() => handleBuy(item)}
                   disabled={!canAfford}
-                  className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 btn-juicy shadow-[0_4px_0_0_rgba(0,0,0,0.1)]
+                  className={`w-full py-2 md:py-3 rounded-xl font-bold flex items-center justify-center gap-2 btn-juicy shadow-[0_4px_0_0_rgba(0,0,0,0.1)] text-sm md:text-base
                       ${canAfford
                       ? 'bg-kid-primary text-yellow-900 shadow-[0_4px_0_0_rgba(202,138,4,1)] hover:bg-yellow-400'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed shadow-none'}
                     `}
                 >
-                  <Coins size={18} /> {new Intl.NumberFormat('en-US').format(item.cost)}
+                  <Coins size={16} /> {new Intl.NumberFormat('en-US').format(item.cost)}
                 </button>
               )}
             </motion.div>

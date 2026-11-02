@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Check, Star, Download, Share2, Loader2, Lock } from 'lucide-react';
+import { Trophy, Check, Star, Download, Loader2, Lock } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { User, UniversalLessonUnit } from '../../../types';
 

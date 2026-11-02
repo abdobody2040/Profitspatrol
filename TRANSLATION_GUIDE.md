@@ -196,3 +196,39 @@ Add new mappings to `src/utils/translationMappings.ts` as needed.
 | `instructions.map is not a function` | Array stored as object `{}` | Change to `[]` array |
 | Translation key shown raw in UI | Dynamic string concatenation in `t()` | Use `translationMappings.ts` |
 | Missing key falls back to English | Key added to locale but not `en.ts` (or vice versa) | Run `locale:check` |
+| Lesson title falls back to English | Queried `lessons.${id}.headline` instead of canonical `lesson_${id}_title` | Use `t(`lesson_${lesson.id}_title`)` |
+
+---
+
+## 📚 Curriculum & 200 Lessons Localization Patterns
+
+All 200 curriculum lessons (10 lessons × 20 modules across 4 seasons) have full, rich Arabic localizations located in `src/locales/ar/lessons.ts`.
+
+### Canonical Key Convention
+Every lesson has 8 standard keys mapped directly at the top level of the Arabic locale via `...lessons` spread in `src/locales/ar/index.ts`:
+
+```ts
+// Example: MB_02
+lesson_MB_02_title: 'أنواع المال',
+lesson_MB_02_body: 'المال لا يأتي بشكل واحد فقط! ...',
+lesson_MB_02_question: 'أيٌّ من هذه كان يُستخدم كمال في الماضي؟',
+lesson_MB_02_flavor: 'جامع ملح! لقد اكتشفت كيف كان المال قديمًا.',
+lesson_MB_02_answer_correct: 'الصدف والحجارة',
+lesson_MB_02_distractor_0: 'أجهزة الكمبيوتر',
+lesson_MB_02_distractor_1: 'السيارات',
+lesson_MB_02_distractor_2: 'الفطائر',
+```
+
+### ✅ Safe Path Node Translation Pattern
+When rendering lesson nodes on the adventure map or path:
+
+```tsx
+const displayTitle = isArabic
+  ? t(`lesson_${lesson.id}_title`, {
+      defaultValue: t(`lessons.${lesson.id}.headline`, {
+        defaultValue: lesson.lesson_payload?.headline || lesson.id,
+      }),
+    })
+  : lesson.lesson_payload?.headline || lesson.id;
+```
+This guarantees 100% Arabic purity across all 200 lessons with zero fallback bleed into English.

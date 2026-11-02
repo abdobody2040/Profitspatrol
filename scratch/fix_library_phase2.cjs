@@ -8,7 +8,6 @@ const badStart = src.indexOf('\n    exclusive_books: {');
 const badEnd = src.indexOf('\n  },\n} as const;');
 if (badStart !== -1 && badStart < badEnd) {
   src = src.slice(0, badStart) + '\n  },\n} as const;';
-  console.log('Removed previous bad injection');
 }
 
 // Use string arrays (no trailing commas inside) to avoid template literal issues
@@ -87,12 +86,10 @@ if (libRe.test(src)) {
     return before + "      exclusive_banner_desc: 'كتب مختارة بعناية متاحة داخل بروفيتس باترول فقط — من القصص الكلاسيكية إلى أدلة رواد الأعمال الشباب!',\n      school_license_unlocked: 'تم الفتح عبر رخصة المدرسة',\n    },\n    " + after;
   });
   fs.writeFileSync(AR_PATH, src, 'utf8');
-  console.log('✅ library keys added to ar.ts library section');
 } else {
-  console.log('⚠️  library section pattern not found, skipping');
+  console.error('⚠️  library section pattern not found, skipping');
 }
 
 // Syntax check
 const js = src.replace('export const ar', 'const ar').replace('} as const;', '}');
-try { new Function(js); console.log('✅ ar.ts syntax OK'); }
 catch(e) { console.error('❌ SYNTAX ERROR:', e.message); }

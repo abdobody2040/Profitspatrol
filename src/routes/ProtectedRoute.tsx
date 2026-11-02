@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { useEducationStore } from '../store/educationStore';
 import { UserRole } from '../types';
-import Layout from '../components/layout/Layout';
 import { Lock } from 'lucide-react';
 import { Logger } from '../services/logger';
-import DynamicPage from '../features/marketing/components/DynamicPage';
+import { SkeletonPageLoader } from '../components/ui/SkeletonPageLoader';
+
+const Layout = React.lazy(() => import('../components/layout/Layout'));
+const DynamicPage = React.lazy(() => import('../features/marketing/components/DynamicPage'));
 
 // Helper components defined outside to prevent remounts
 export const ProtectedRoute = ({ children, onNavigate, lockoutEnabled = false }: { children: JSX.Element, onNavigate: (path: string) => void, lockoutEnabled?: boolean }) => {
-    const { user } = useAppStore();
+    const { user, isAuthLoading } = useAppStore();
     const { classrooms } = useEducationStore();
     const location = useLocation();
 
@@ -22,6 +24,13 @@ export const ProtectedRoute = ({ children, onNavigate, lockoutEnabled = false }:
         if (path === '') return 'map';
         return path;
     };
+
+    // ✅ BUG FIX — Auto-Login to Admin:
+    // While the Supabase session check is in progress, render a skeleton loader
+    // instead of making routing decisions based on potentially stale localStorage data.
+    if (isAuthLoading) {
+        return <SkeletonPageLoader />;
+    }
 
     if (!user) {
         return <Navigate to="/login" replace />;
@@ -37,20 +46,22 @@ export const ProtectedRoute = ({ children, onNavigate, lockoutEnabled = false }:
             // Monday-Friday (1-5), 8:00 AM to 2:59 PM (hours 8 to 14)
             if (day >= 1 && day <= 5 && hours >= 8 && hours < 15) {
                 return (
-                    <Layout activeTab={getActiveTab()} onNavigate={onNavigate}>
-                        <div className="flex flex-col items-center justify-center p-20 text-center min-h-[60vh]">
-                            <div className="w-24 h-24 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 mx-auto">
-                                <Lock size={48} />
+                    <Suspense fallback={<SkeletonPageLoader />}>
+                        <Layout activeTab={getActiveTab()} onNavigate={onNavigate}>
+                            <div className="flex flex-col items-center justify-center p-20 text-center min-h-[60vh]">
+                                <div className="w-24 h-24 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                                    <Lock size={48} />
+                                </div>
+                                <h2 className="text-3xl font-black text-gray-800 mb-4">School Hours Active</h2>
+                                <p className="text-gray-500 font-medium max-w-md mx-auto">
+                                    Your teacher has restricted access to games, stores, and social features during school hours (8 AM - 3 PM). Return to the Map to complete your assignments!
+                                </p>
+                                <button onClick={() => onNavigate('/map')} className="mt-8 px-6 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-lg">
+                                    Back to Learning Map
+                                </button>
                             </div>
-                            <h2 className="text-3xl font-black text-gray-800 mb-4">School Hours Active</h2>
-                            <p className="text-gray-500 font-medium max-w-md mx-auto">
-                                Your teacher has restricted access to games, stores, and social features during school hours (8 AM - 3 PM). Return to the Map to complete your assignments!
-                            </p>
-                            <button onClick={() => onNavigate('/map')} className="mt-8 px-6 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-lg">
-                                Back to Learning Map
-                            </button>
-                        </div>
-                    </Layout>
+                        </Layout>
+                    </Suspense>
                 );
             }
         }
@@ -74,8 +85,14 @@ export const RoleProtectedRoute = ({
     allowedRoles: UserRole[],
     lockoutEnabled?: boolean
 }) => {
-    const { user } = useAppStore();
+    const { user, isAuthLoading } = useAppStore();
     const location = useLocation();
+
+    // ✅ BUG FIX — Auto-Login to Admin:
+    // Same guard as ProtectedRoute — wait for session check before routing.
+    if (isAuthLoading) {
+        return <SkeletonPageLoader />;
+    }
 
     // Not authenticated — redirect to login
     if (!user) {
@@ -106,7 +123,11 @@ export const DynamicPageWrapper = ({ cmsContent, onBack }: any) => {
     const page = cmsContent.customPages.find((p: any) => p.slug === slug);
 
     if (page) {
-        return <DynamicPage page={page} onBack={onBack} />;
+        return (
+            <Suspense fallback={<SkeletonPageLoader />}>
+                <DynamicPage page={page} onBack={onBack} />
+            </Suspense>
+        );
     }
     return <div className="p-10 text-center">Page not found. <button onClick={onBack} className="text-blue-500 underline">Go Home</button></div>;
 };

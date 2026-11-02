@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store';
 import { useTranslation } from 'react-i18next';
-import { X, Volume2, VolumeX, Moon, Sun, Download, Trash2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, Volume2, VolumeX, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { PrivacySettings } from '../../features/settings/components/PrivacySettings';
 
@@ -95,6 +95,39 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                     >
                                         <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${user.settings.musicEnabled ? 'start-6' : 'start-1'}`} />
                                     </button>
+                                </div>
+
+                                {/* Age Mode Switcher */}
+                                <div className="p-4 bg-orange-50/60 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 rounded-2xl space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm">
+                                            {t('settings.age_mode', { defaultValue: 'Adventure Mode (Age)' })}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            onClick={() => updateUserSettings({ ageMode: 'junior' })}
+                                            className={`py-2 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 ${
+                                                (user.settings.ageMode || 'junior') === 'junior'
+                                                    ? 'bg-[#FF8A00] text-white shadow-md'
+                                                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                                            }`}
+                                        >
+                                            <span>🐣</span>
+                                            <span>Junior (6–9)</span>
+                                        </button>
+                                        <button
+                                            onClick={() => updateUserSettings({ ageMode: 'explorer' })}
+                                            className={`py-2 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 ${
+                                                user.settings.ageMode === 'explorer'
+                                                    ? 'bg-[#0EA5E9] text-white shadow-md'
+                                                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                                            }`}
+                                        >
+                                            <span>🚀</span>
+                                            <span>Explorer (9–12)</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

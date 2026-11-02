@@ -2,15 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../store';
 import { UserRole } from '../../../types';
-// ✅ SECURITY NOTE: hashPassword removed — unused import, Supabase Auth handles
-// password hashing server-side (bcrypt). hashPassword was a client-side SHA-256
-// transitional utility that is no longer needed in this file.
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
 import { Logger } from '../../../services/logger';
 
 export const useAuthForm = () => {
     const { t } = useTranslation();
-    const { loginWithCredentials, registerUser } = useAppStore();
+    const { loginWithCredentials, registerUser, loginWithGoogle } = useAppStore();
 
     const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
     const [step, setStep] = useState(1);
@@ -23,7 +19,8 @@ export const useAuthForm = () => {
         email: '',
         password: '',
         inviteCode: new URLSearchParams(window.location.search).get('invite') || '', // Pre-fill if referred
-        consentGiven: false
+        consentGiven: false,
+        ageMode: 'junior' as 'junior' | 'explorer'
     });
 
     const [error, setError] = useState('');
@@ -42,9 +39,13 @@ export const useAuthForm = () => {
         try {
             // SECURITY: Send plain password to Supabase Auth
             // Supabase handles password hashing internally (bcrypt)
-            const success = await loginWithCredentials(formData.username, formData.password);
+            const result = await loginWithCredentials(formData.username, formData.password);
             
-            if (!success) {
+            if (result === 'EMAIL_NOT_CONFIRMED') {
+                setError(t('auth.error_email_not_confirmed' as any, {
+                    defaultValue: 'Please confirm your email address first. Check your inbox for a verification link.'
+                }));
+            } else if (!result) {
                 setError(t('auth.error_auth' as any));
             }
         } catch (err: any) {
@@ -88,6 +89,15 @@ export const useAuthForm = () => {
 
             if (validationError) {
                 setError(validationError);
+            } else if (selectedRole === UserRole.KID) {
+                const state = useAppStore.getState();
+                if (state.user) {
+                    state.updateUserSettings({
+                        ageMode: formData.ageMode,
+                        soundEnabled: true,
+                        hapticsEnabled: true
+                    });
+                }
             }
         } catch (err: any) {
             Logger.error("Registration Error", err);
@@ -97,29 +107,64 @@ export const useAuthForm = () => {
         }
     };
 
+    const handleGoogleCredential = async (credential: string) => {
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const success = await loginWithGoogle(
+                credential,
+                selectedRole,
+                formData.inviteCode
+            );
+            if (!success) {
+                setError(t('auth.error_auth' as any, 'Google Sign-In failed. Please try again.'));
+            }
+        } catch (err: any) {
+            Logger.error("Google Token Processing Failed", err);
+            setError(err.message || 'Google Sign-In processing error');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleGoogleLogin = async () => {
-        if (!isSupabaseConfigured()) {
-            setError("Google Login requires Supabase configuration (VITE_SUPABASE_URL).");
-            Logger.warn("Google Login attempted without Supabase config");
+        const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+        if (!googleClientId) {
+            setError("Google Sign-In requires VITE_GOOGLE_CLIENT_ID in your .env file.");
+            Logger.warn("Google Login attempted without VITE_GOOGLE_CLIENT_ID");
             return;
         }
-        try {
-            // ✅ SECURITY FIX: Added CSRF state parameter to prevent OAuth state fixation.
-            // Supabase passes this state parameter through the OAuth flow and verifies it
-            // on callback, preventing an attacker from substituting their own auth code.
-            const csrfState = crypto.randomUUID();
-            sessionStorage.setItem('oauth_csrf_state', csrfState);
 
-            const { error } = await supabase!.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    queryParams: { state: csrfState },
+        const google = (window as any).google;
+        if (!google?.accounts?.id) {
+            setError("Google Identity Services is loading. Please check your connection and try again.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            setError('');
+
+            google.accounts.id.initialize({
+                client_id: googleClientId,
+                callback: (res: any) => {
+                    if (res?.credential) {
+                        handleGoogleCredential(res.credential);
+                    } else {
+                        setIsSubmitting(false);
+                    }
                 },
             });
-            if (error) throw error;
+
+            google.accounts.id.prompt((notification: any) => {
+                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                    setIsSubmitting(false);
+                }
+            });
         } catch (err: any) {
-            Logger.error("Google Login Failed", err);
-            setError(err.message || 'Google Login Failed');
+            Logger.error("Google Login initialization failed", err);
+            setError(err.message || 'Failed to initialize Google Login');
+            setIsSubmitting(false);
         }
     };
 
@@ -132,6 +177,7 @@ export const useAuthForm = () => {
         isSubmitting,
         handleLogin,
         handleRegister,
-        handleGoogleLogin
+        handleGoogleLogin,
+        handleGoogleCredential
     };
 };

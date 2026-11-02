@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
-import { Building2, Users, Trophy, Plus, LogIn, Crown, Star, Zap, Coins, X, CheckCircle2, Circle, ChevronRight } from 'lucide-react';
+import { Building2, Users, Trophy, Plus, LogIn, Crown, Star, Zap, Coins, X, ChevronRight } from "lucide-react";
 import { useAppStore } from '../../../store';
 import type { Corporation } from '../../../types';
 
@@ -21,7 +21,7 @@ const CORP_EMOJIS = ['🏢', '🚀', '⚡', '🦁', '🌍', '💎', '🔥', '�
 // ─── Weekly Corp Missions ─────────────────────────────────────────────────────
 const CORP_MISSIONS = [
     { id: 'cm1', desc: 'Every member completes 1 lesson this week', reward: 200 },
-    { id: 'cm2', desc: 'Corp earns 1,000 combined BizCoins this week', reward: 300 },
+    { id: 'cm2', desc: 'Corp earns 1,000 combined P Tokens this week', reward: 300 },
     { id: 'cm3', desc: 'All members use the Daily Spin Wheel', reward: 150 },
     { id: 'cm4', desc: '3 members reach a new level this week', reward: 350 },
     { id: 'cm5', desc: 'Corp completes 5 Gig Central jobs combined', reward: 250 },
@@ -160,7 +160,7 @@ const CorpDetailView: React.FC<{ corp: Corporation; userId: string; onBack: () =
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{mission.desc}</p>
                 <div className="flex items-center gap-1 mt-2 text-xs font-bold text-yellow-600">
-                    <Coins size={12} /> Reward: +{mission.reward} BizCoins per member
+                    <Coins size={12} /> Reward: +{mission.reward} P Tokens per member
                 </div>
             </div>
 

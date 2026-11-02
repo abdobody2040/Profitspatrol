@@ -1,95 +1,151 @@
-# Deploying Profits Patrol to Hostinger
+# Profits Patrol — Hostinger Deployment Guide (hPanel)
 
-This guide covers how to build your application and deploy it to Hostinger Shared Hosting.
+This guide covers how to deploy and run **Profits Patrol** (React 19 Frontend + Laravel 11 REST API + MySQL Database) on **Hostinger Web or Cloud Hosting via hPanel** without requiring complex command-line operations.
 
-## Prerequisites
+---
 
-- [Node.js](https://nodejs.org/) installed on your computer.
-- A Hostinger account with a hosting plan (Shared Hosting, Cloud Hosting, or similar).
-- Access to your Hostinger Control Panel (hPanel).
+## 📦 Ready-to-Upload Deployment Packages
 
-## Step 1: Prepare Environment Variables
+Pre-built and packaged archives are generated in the `deploy_hostinger/` folder:
 
-Hostinger serves static files, so your environment variables (like Supabase keys) must be "baked in" during the build process.
+1. **`1_frontend_public_html.zip`**: Complete React single-page application (SPA), pre-compressed assets (Brotli & Gzip), fonts, icons, characters, and `.htaccess` rewrite configuration.
+2. **`2_backend_api.zip`**: Complete Laravel 11 API engine including pre-installed `vendor/` dependencies, database migrations, seeders, and the automated setup route.
 
-1. Create a file named `.env.production` in your project root (same level as `package.json`).
-2. Add your production keys. these should match your `.env` but for your production database if different:
-
-    ```env
-    VITE_SUPABASE_URL=your_supabase_project_url
-    VITE_SUPABASE_ANON_KEY=your_supabase_public_anon_key
-    VITE_AI_PROVIDER=gemini
-    ```
-
-## Step 2: Build the Application
-
-Open your terminal in the project folder and run:
-
-```bash
-npm install
+To regenerate these files at any time:
+```powershell
 npm run build
+powershell -ExecutionPolicy Bypass -File scripts/package-hostinger.ps1
 ```
 
-**What this does:**
+---
 
-- `npm install` ensures all dependencies are ready.
-- `npm run build` compiles your code into the `dist` folder. It optimizes debugging console logs, minifies code, and bundles everything for ensuring fast loading.
+## 🚀 4-Step Deployment Walkthrough
 
-> **Note:** If you see type errors during build, fix them or try `npm run build` again. The build command relies on `tsc` (TypeScript Compiler) to check for errors first.
+### Step 1: Upload the Frontend (Web App)
+1. Log in to your Hostinger **hPanel**.
+2. Navigate to **Websites** ➔ **Manage** ➔ **File Manager**.
+3. Open the **`public_html`** folder.
+   *(Note: If `public_html` has old default placeholder files, delete them for a clean install).*
+4. Click **Upload** and upload:
+   ```text
+   deploy_hostinger/1_frontend_public_html.zip
+   ```
+5. Right-click the uploaded `.zip` file and select **Extract** (extract directly into `public_html`).
+6. Delete the `.zip` archive to save disk space.
 
-## Step 3: Locate the Build Output
+> ✅ **Result**: Your frontend is immediately accessible at `https://profitspatrol.com`.
 
-After the build completes successfully, you will see a `dist` folder in your project directory. This folder contains everything you need to upload.
+---
 
-**Contents of `dist`:**
+### Step 2: Upload the Backend (Laravel API)
+1. In File Manager, navigate one level up (outside the `public_html` folder).
+2. Click **New Folder** and name it:
+   ```text
+   api_backend
+   ```
+3. Open `api_backend/` and upload:
+   ```text
+   deploy_hostinger/2_backend_api.zip
+   ```
+4. Right-click the `.zip` file, select **Extract**, and delete the `.zip` archive.
 
-- `index.html` (The entry point)
-- `assets/` (JavaScript, CSS, and images)
-- `.htaccess` (Created automatically for routing)
-- Other static files from your `public` folder.
+#### Configure Subdomain in hPanel:
+1. In hPanel, go to **Domains** ➔ **Subdomains**.
+2. Enter Subdomain name: `api`
+3. Check the box **Custom folder for subdomain**.
+4. In the folder path field, enter:
+   ```text
+   api_backend/public
+   ```
+5. Click **Create**.
 
-## Step 4: Upload to Hostinger
+> ✅ **Result**: Your API backend will now resolve securely at `https://api.profitspatrol.com`.
 
-1. **Log in to Hostinger hPanel**.
-2. Go to **Websites** and click **Manage** on your domain.
-3. Click on **File Manager**.
-4. Navigate to the **public_html** folder.
-    - *Note: If you are deploying to a subdomain, navigate to that subdomain's folder instead.*
-5. **Delete default files:** If `public_html` contains a `default.php` or empty `index.php` provided by Hostinger, allow you to delete it (unless you have other stuff running there).
-6. **Upload Files:**
-    - Open your local `dist` folder.
-    - Select **ALL** files and folders inside `dist` (including `assets`, `index.html`, and `.htaccess`).
-    - Drag and drop them into the Hostinger File Manager window inside `public_html`.
-    - **Alternatively:** Zip the contents of `dist` into `upload.zip`, upload that, and then right-click -> "Extract" in File Manager.
+---
 
-## Step 5: Verify Routing (.htaccess)
+### Step 3: MySQL Database Setup & Configuration
+1. In hPanel, go to **Databases** ➔ **MySQL Databases**.
+2. Create a new MySQL database:
+   - Database name (e.g., `u123456789_profitspatrol`)
+   - Database username (e.g., `u123456789_ppuser`)
+   - Strong database password
+3. Return to File Manager ➔ Open `api_backend/`.
+4. Open the `.env` file (enable *Show Hidden Files* in File Manager settings if hidden):
+   ```env
+   APP_NAME=ProfitsPatrol
+   APP_ENV=production
+   APP_KEY=base64:9vo5dSK6thXyz25zUqY/knTEfp7x9crFxi5EJWYJTN4=
+   APP_DEBUG=false
+   APP_URL=https://api.profitspatrol.com
 
-Since this is a Single Page Application (SPA), we need to tell the server to always load `index.html` regardless of the URL path (e.g., `/dashboard` or `/login`).
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_database_username
+   DB_PASSWORD=your_database_password
 
-We have already added a `.htaccess` file to your `public` folder, which should have been copied to `dist`. Ensure this file exists in your `public_html` on Hostinger.
+   # Google OAuth Credentials
+   GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   ```
+5. Save changes.
 
-**Content of .htaccess:**
+---
 
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
+### Step 4: 1-Click Database Migration & Seeding
+No SSH terminal access required! Run the automated installer directly from your web browser:
+
+👉 **`https://api.profitspatrol.com/api/v1/setup-database`**
+
+You will receive a JSON confirmation:
+```json
+{
+  "success": true,
+  "message": "Database tables and initial seeds created successfully!"
+}
 ```
 
-## Step 6: Test Your Site
+> ✅ **Result**: All 22 relational tables, default curriculum, seed companies, and default administrator (`admin@profitspatrol.com` / `Admin@123456`) are initialized.
 
-Visit your domain (e.g., `www.your-domain.com`).
+---
 
-- The app should load.
-- Try refreshing the page while on a sub-page (like `/dashboard`). If it loads `index.html` and the app renders, your `.htaccess` is working correctly.
-- If you get a 404 error on refresh, check that `.htaccess` is present and properly uploaded.
+## 🔑 Google OAuth Sign-In Setup
 
-## Troubleshooting
+To enable Google Single Sign-On (SSO):
 
-- **White Screen / App Not Loading:** Check the browser console (F12 -> Console). static file 404s mean you might have uploaded the *folder* `dist` instead of the *contents* of `dist`. Ensure `index.html` is directly inside `public_html`.
-- **Environment Variables Missing:** If API calls fail, ensure you created `.env.production` **before** running `npm run build`. The build process replaces the variables with the actual values.
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project ➔ **APIs & Services** ➔ **Credentials**.
+3. Create **OAuth 2.0 Client ID** (Web Application):
+   - **Authorized JavaScript Origins:**
+     - `https://profitspatrol.com`
+     - `https://www.profitspatrol.com`
+   - **Authorized Redirect URIs:**
+     - `https://api.profitspatrol.com/api/v1/auth/google/callback`
+4. Copy the **Client ID** and **Client Secret**:
+   - In `api_backend/.env`:
+     ```env
+     GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=your_client_secret
+     ```
+   - In frontend `.env.production` (rebuild frontend if updated):
+     ```env
+     VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
+     ```
+
+---
+
+## 🔄 Routine Updates Workflow
+
+Whenever you modify code locally:
+
+```powershell
+# 1. Compile fresh production bundle
+npm run build
+
+# 2. Package archives
+powershell -ExecutionPolicy Bypass -File scripts/package-hostinger.ps1
+```
+
+- If you updated frontend only: Upload and extract `deploy_hostinger/1_frontend_public_html.zip` in `public_html/`.
+- If you updated backend only: Upload and extract `deploy_hostinger/2_backend_api.zip` in `api_backend/`.

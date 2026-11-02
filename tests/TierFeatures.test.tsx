@@ -3,9 +3,10 @@ import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, renderHook, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { useAppStore } from '../src/store';
 import { useEnergy } from '../src/hooks/useEnergy';
-import { User, UserRole } from '../src/types';
+import { UserRole, User } from '@/types';
 import OllieChat from '../src/features/game/components/OllieChat';
 import Layout from '../src/components/layout/Layout';
 import Headquarters from '../src/features/hq/components/Headquarters';
@@ -24,32 +25,9 @@ vi.mock('../src/services/SoundService', () => ({
   },
 }));
 
-// Mock Translations
-vi.mock('react-i18next', () => {
-  const t = (key: string) => key;
-  const i18n = {
-    language: 'en',
-    changeLanguage: vi.fn(),
-  };
-  return {
-    useTranslation: () => ({ t, i18n })
-  };
-});
 
-// Mock React Router
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useLocation: () => ({ pathname: '/' }),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>,
-  Routes: ({ children }: any) => <div>{children}</div>,
-  Route: ({ element }: any) => element,
-  BrowserRouter: ({ children }: any) => <div>{children}</div>,
-  Navigate: () => null,
-  Outlet: () => null,
-}));
 
 // Store and useEnergy are used from real implementation
-vi.mock('../src/lib/sound');
 vi.mock('../src/services/geminiService');
 
 vi.mock('../src/features/marketing/components/StripePaymentPage', () => ({
@@ -91,7 +69,7 @@ const createMockUser = (tier: any, energy = 5, role = UserRole.KID): User => ({
   level: 1,
   streak: 1,
   lastActivityDate: '2023-01-01',
-  bizCoins: 100,
+  ppTokens: 100,
   currentModuleId: 'mod_1',
   completedLessonIds: [],
   readBookIds: [],
@@ -111,12 +89,16 @@ const createMockUser = (tier: any, energy = 5, role = UserRole.KID): User => ({
 });
 
 
+import i18n from '../src/lib/i18n';
+
 describe('Tier Feature Validation', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en');
     useAppStore.setState({ user: null, users: [], games: [] });
-    localStorage.clear();
+    try { localStorage.clear(); } catch { /* jsdom adapter may not support clear() */ }
     vi.clearAllMocks();
   });
+
 
   // 1. Intern (Free)
   describe('Intern Tier (Free)', () => {
@@ -136,9 +118,13 @@ describe('Tier Feature Validation', () => {
     it('blocks AI chat after free limit', () => {
       const user = createMockUser('intern');
       useAppStore.setState({ user, users: [user] });
-      localStorage.setItem('ollie_free_sample_used', 'true');
+      try { localStorage.setItem('ollie_free_sample_used', 'true'); } catch { /* custom adapter */ }
 
-      render(<OllieChat />);
+      render(
+        <MemoryRouter>
+          <OllieChat />
+        </MemoryRouter>
+      );
 
       // Floating button click to open
       const toggleButtons = screen.getAllByRole('button');
@@ -146,8 +132,7 @@ describe('Tier Feature Validation', () => {
       const toggleBtn = toggleButtons[toggleButtons.length - 1];
       fireEvent.click(toggleBtn);
 
-      // Expect "Hire Ollie" button using its translation key
-      expect(screen.getByText('chat.hire_button')).toBeInTheDocument();
+      expect(screen.getByText('Hire Ollie (Unlock AI)')).toBeInTheDocument();
     });
 
 
@@ -173,8 +158,7 @@ describe('Tier Feature Validation', () => {
       useAppStore.setState({ user, users: [user] });
 
       render(<EnergyBar />);
-      // In unlimited mode, EnergyBar renders a badge with "Energy" text instead of countdown
-      expect(screen.getByText('Unlimited')).toBeInTheDocument();
+      expect(screen.getByText('UNLIMITED')).toBeInTheDocument();
     });
 
     it('grants access to Custom HQ features', () => {
@@ -182,6 +166,7 @@ describe('Tier Feature Validation', () => {
       useAppStore.setState({ user, users: [user] });
 
       render(<Headquarters />);
+      fireEvent.click(screen.getByText('HQ Builder'));
 
       // The customize button title changes based on access
       // "Change Theme" vs "Locked (Founder Only)"
@@ -192,14 +177,15 @@ describe('Tier Feature Validation', () => {
 
   // 3. Board Member ($119)
   describe('Board Member Tier ($119)', () => {
-
-
-    it('inherits infinite energy', () => {
+    it('energy_is_not_decremented_after_consume', () => {
       const user = createMockUser('board', 5);
       useAppStore.setState({ user, users: [user] });
 
       const { result } = renderHook(() => useEnergy());
-      expect(result.current.isUnlimited).toBe(true);
+
+      act(() => { result.current.consumeEnergy(); });
+
+      expect(useAppStore.getState().user?.energy).toBe(5);
     });
   });
 
@@ -209,15 +195,18 @@ describe('Tier Feature Validation', () => {
       const user = createMockUser('tycoon');
       useAppStore.setState({ user, users: [user] });
       // Even if "used" flag is set from previous tier
-      localStorage.setItem('ollie_free_sample_used', 'true');
+      try { localStorage.setItem('ollie_free_sample_used', 'true'); } catch { /* custom adapter */ }
 
-      render(<OllieChat />);
+      render(
+        <MemoryRouter>
+          <OllieChat />
+        </MemoryRouter>
+      );
       const toggleButtons = screen.getAllByRole('button');
       const toggleBtn = toggleButtons[toggleButtons.length - 1];
       fireEvent.click(toggleBtn);
 
-      // Should see input, check for placeholder text for Tycoons
-      const input = screen.getByPlaceholderText(/Ask your executive consultant/i);
+      const input = screen.getByPlaceholderText('Ask your executive consultant...');
       expect(input).toBeInTheDocument();
     });
 
@@ -237,11 +226,7 @@ describe('Tier Feature Validation', () => {
       const onSelect = vi.fn();
       render(<GameMenu onSelectGame={onSelect} />);
 
-      // Filter to 'Tycoon Exclusive' category or just find the game card
-      // Since it's a grid, we can find by translation key
-      const gameTitle = screen.getByText('games.negotiation.title');
-
-      // Click the card (parent button)
+      const gameTitle = screen.getByText('Negotiation Battle');
       const gameCard = gameTitle.closest('button');
       fireEvent.click(gameCard!);
 

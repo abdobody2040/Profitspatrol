@@ -1,15 +1,17 @@
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
-import { DailyMission, DailyMissionsState, DailyMissionCompletion } from '../../types';
+import type { AppState } from '../types';
+import { DailyMission, DailyMissionsState, DailyMissionCompletion, MissionActionType } from '../../types';
+import { calculateCompetencyDelta } from '../../domain/mastery/masteryCalculator';
 
-// ─── Mission Pool ──────────────────────────────────────────────────────────────
-// We keep a large pool and pick 3 per day deterministically (based on date seed)
-const MISSION_POOL: DailyMission[] = [
+// ─── General Daily Mission Pool ────────────────────────────────────────────────
+export const MISSION_POOL: DailyMission[] = [
   {
     id: 'dm_lesson_1',
     icon: '📚',
     title: 'Student Mindset',
+    titleAr: 'عقلية المتعلم',
     description: 'Complete 1 lesson today',
+    descriptionAr: 'أكمل درساً تعليمياً واحداً اليوم',
     actionType: 'COMPLETE_LESSON',
     targetCount: 1,
     xpReward: 30,
@@ -19,7 +21,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_lesson_2',
     icon: '🎓',
     title: 'Power Learner',
+    titleAr: 'المتعلم المتميز',
     description: 'Complete 3 lessons today',
+    descriptionAr: 'أكمل 3 دروس تعليمية اليوم',
     actionType: 'COMPLETE_LESSON',
     targetCount: 3,
     xpReward: 100,
@@ -29,7 +33,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_gig_1',
     icon: '💼',
     title: 'Hustle Time',
+    titleAr: 'وقت العمل الحر',
     description: 'Complete 1 gig in Gig Central',
+    descriptionAr: 'أنجز عملاً حراً واحداً في مركز الأعمال',
     actionType: 'PLAY_GIG',
     targetCount: 1,
     xpReward: 25,
@@ -39,7 +45,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_gig_2',
     icon: '⚡',
     title: 'Side Hustle Pro',
+    titleAr: 'محترف الأعمال الحرة',
     description: 'Complete 3 gigs in Gig Central',
+    descriptionAr: 'أنجز 3 أعمال حرة في مركز الأعمال',
     actionType: 'PLAY_GIG',
     targetCount: 3,
     xpReward: 80,
@@ -49,7 +57,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_book_1',
     icon: '📖',
     title: 'Bookworm',
+    titleAr: 'قارئ نهم',
     description: 'Read a book in the library',
+    descriptionAr: 'اقرأ كتاباً من مكتبة المعرفة',
     actionType: 'READ_BOOK',
     targetCount: 1,
     xpReward: 20,
@@ -59,7 +69,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_game_1',
     icon: '🎮',
     title: 'Game On!',
+    titleAr: 'تحدي الألعاب',
     description: 'Complete 1 business game',
+    descriptionAr: 'العب لعبة أعمال واحدة بنجاح',
     actionType: 'COMPLETE_GAME',
     targetCount: 1,
     xpReward: 30,
@@ -69,7 +81,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_game_2',
     icon: '🏆',
     title: 'Arcade Boss',
+    titleAr: 'بطل الألعاب الريادية',
     description: 'Complete 2 business games',
+    descriptionAr: 'العب لعبتي أعمال بنجاح',
     actionType: 'COMPLETE_GAME',
     targetCount: 2,
     xpReward: 70,
@@ -79,7 +93,9 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_debate_1',
     icon: '🎤',
     title: 'Debate Master',
+    titleAr: 'سيد الإقناع والمناظرة',
     description: 'Win a Debate Dojo round',
+    descriptionAr: 'اربح جولة في مناظرات الأعمال',
     actionType: 'COMPLETE_DEBATE',
     targetCount: 1,
     xpReward: 50,
@@ -89,8 +105,10 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_coins_1',
     icon: '💰',
     title: 'Money Maker',
-    description: 'Earn 200 BizCoins from activities',
-    actionType: 'EARN_COINS',
+    titleAr: 'صانع الأموال',
+    description: 'Earn 200 P Tokens from activities',
+    descriptionAr: 'اجمع 200 رمز PP من أنشطتك',
+    actionType: 'EARN_ppTokens',
     targetCount: 200,
     xpReward: 40,
     coinReward: 60,
@@ -99,32 +117,146 @@ const MISSION_POOL: DailyMission[] = [
     id: 'dm_coins_2',
     icon: '🤑',
     title: 'Coin Collector',
-    description: 'Earn 500 BizCoins from activities',
-    actionType: 'EARN_COINS',
+    titleAr: 'جامع العملات',
+    description: 'Earn 500 P Tokens from activities',
+    descriptionAr: 'اجمع 500 رمز PP من أنشطتك',
+    actionType: 'EARN_ppTokens',
     targetCount: 500,
     xpReward: 90,
-    coinReward: 0, // reward is the coins themselves
+    coinReward: 0,
+  }
+];
+
+// ─── 8-District Competency Contracts Pool ──────────────────────────────────────
+export const DISTRICT_CONTRACTS_POOL: DailyMission[] = [
+  {
+    id: 'dc_money_1',
+    icon: '💰',
+    title: 'Startup Cash Flow Audit',
+    titleAr: 'تدقيق التدفق النقدي للشركات الناشئة',
+    description: 'Complete 1 lesson in Money District to master budgeting',
+    descriptionAr: 'أكمل درساً واحداً في حي النقود لاحتراف الميزانية',
+    actionType: 'DISTRICT_LESSON',
+    targetCount: 1,
+    xpReward: 60,
+    coinReward: 80,
+    districtId: 'money',
+    competencyId: 'budgeting',
+    competencyXpReward: 50,
+    isContract: true
   },
   {
-    id: 'dm_lesson_3',
-    icon: '🧠',
-    title: 'Knowledge Grind',
-    description: 'Complete 5 lessons today',
-    actionType: 'COMPLETE_LESSON',
-    targetCount: 5,
-    xpReward: 200,
-    coinReward: 300,
-  },
-  {
-    id: 'dm_gig_3',
+    id: 'dc_builders_1',
     icon: '🚀',
-    title: 'Gig Legend',
-    description: 'Complete 5 gigs in Gig Central',
-    actionType: 'PLAY_GIG',
-    targetCount: 5,
-    xpReward: 150,
-    coinReward: 200,
+    title: 'Builders Margin Analysis',
+    titleAr: 'تحليل هوامش ربح البناة',
+    description: 'Complete 1 lesson in Builders District to master pricing strategy',
+    descriptionAr: 'أكمل درساً واحداً في حي البناة لاحتراف تسعير المنتجات',
+    actionType: 'DISTRICT_LESSON',
+    targetCount: 1,
+    xpReward: 70,
+    coinReward: 90,
+    districtId: 'builders',
+    competencyId: 'pricing',
+    competencyXpReward: 50,
+    isContract: true
   },
+  {
+    id: 'dc_risk_1',
+    icon: '🛡️',
+    title: 'Scam Defense Protocol',
+    titleAr: 'بروتوكول التصدي للاحتيال المالي',
+    description: 'Complete 1 lesson in Risk District to protect your assets',
+    descriptionAr: 'أكمل درساً واحداً في حي الثروة والمخاطر لحماية أموالك',
+    actionType: 'DISTRICT_LESSON',
+    targetCount: 1,
+    xpReward: 80,
+    coinReward: 100,
+    districtId: 'risk',
+    competencyId: 'scam_defense',
+    competencyXpReward: 50,
+    isContract: true
+  },
+  {
+    id: 'dc_operations_1',
+    icon: '⚙️',
+    title: 'Supply Chain Optimization',
+    titleAr: 'تحسين سلاسل التوريد واللوجستيات',
+    description: 'Complete 1 operations task or manage business inventory',
+    descriptionAr: 'أكمل مهمة لوجستية أو أدر مخزون متجرك بنجاح',
+    actionType: 'DISTRICT_CONTRACT',
+    targetCount: 1,
+    xpReward: 75,
+    coinReward: 95,
+    districtId: 'operations',
+    competencyId: 'inventory',
+    competencyXpReward: 50,
+    isContract: true
+  },
+  {
+    id: 'dc_innovation_1',
+    icon: '💡',
+    title: 'Kami Lab Synthesis',
+    titleAr: 'توليف الابتكار في مختبر كيمي',
+    description: 'Synthesize 1 prototype in Kami Experiment Lab',
+    descriptionAr: 'اصنع نموذجاً أولياً واحداً في مختبر كيمي للابتكار',
+    actionType: 'PROTOTYPE_CRAFT',
+    targetCount: 1,
+    xpReward: 85,
+    coinReward: 110,
+    districtId: 'innovation',
+    competencyId: 'prototyping',
+    competencyXpReward: 60,
+    isContract: true
+  },
+  {
+    id: 'dc_leadership_1',
+    icon: '🤝',
+    title: 'Win-Win Negotiation Deal',
+    titleAr: 'صفقة التفاوض الرابحة للطرفين',
+    description: 'Win 1 debate round or complete 1 leadership lesson',
+    descriptionAr: 'اربح جولة مناظرة أو أكمل درساً في حي القيادة',
+    actionType: 'COMPLETE_DEBATE',
+    targetCount: 1,
+    xpReward: 90,
+    coinReward: 120,
+    districtId: 'leadership',
+    competencyId: 'negotiation',
+    competencyXpReward: 60,
+    isContract: true
+  },
+  {
+    id: 'dc_strategy_1',
+    icon: '♟️',
+    title: 'Rival Rex Market Showdown',
+    titleAr: 'مواجهة ريكس السوقية',
+    description: 'Confront Rival Rex in a district showdown',
+    descriptionAr: 'واجه المنافس ريكس في تحدي الأحياء التنافسي',
+    actionType: 'RIVAL_SHOWDOWN',
+    targetCount: 1,
+    xpReward: 100,
+    coinReward: 130,
+    districtId: 'strategy',
+    competencyId: 'competitive_strategy',
+    competencyXpReward: 75,
+    isContract: true
+  },
+  {
+    id: 'dc_launch_1',
+    icon: '👑',
+    title: 'Empire Sales Cycle',
+    titleAr: 'دورة مبيعات الإمبراطورية',
+    description: 'Simulate a day in your business store with positive sales',
+    descriptionAr: 'قم بمحاكاة يوم في متجرك وحقق مبيعات ناجحة',
+    actionType: 'BUSINESS_SALE',
+    targetCount: 1,
+    xpReward: 95,
+    coinReward: 125,
+    districtId: 'launch',
+    competencyId: 'global_vision',
+    competencyXpReward: 65,
+    isContract: true
+  }
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
@@ -133,9 +265,8 @@ function getTodayISO(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-/** Deterministic daily seed — same 3 missions for everyone on the same day */
+/** Deterministic daily seed — picks 3 daily missions */
 function pickTodaysMissions(today: string): DailyMission[] {
-  // Simple hash: sum char codes of date string
   const hash = today.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const pool = [...MISSION_POOL];
   const picked: DailyMission[] = [];
@@ -145,6 +276,21 @@ function pickTodaysMissions(today: string): DailyMission[] {
     picked.push(pool[idx]);
     pool.splice(idx, 1);
     seed = Math.floor(seed * 1.37 + 7) % 9999;
+  }
+  return picked;
+}
+
+/** Deterministic daily seed — picks 2 district competency contracts */
+function pickTodaysContracts(today: string): DailyMission[] {
+  const hash = today.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const pool = [...DISTRICT_CONTRACTS_POOL];
+  const picked: DailyMission[] = [];
+  let seed = hash + 19;
+  for (let i = 0; i < 2; i++) {
+    const idx = seed % pool.length;
+    picked.push(pool[idx]);
+    pool.splice(idx, 1);
+    seed = Math.floor(seed * 1.51 + 13) % 9999;
   }
   return picked;
 }
@@ -161,10 +307,14 @@ function buildInitialCompletions(missions: DailyMission[]): DailyMissionCompleti
 function freshDailyState(): DailyMissionsState {
   const today = getTodayISO();
   const missions = pickTodaysMissions(today);
+  const districtContracts = pickTodaysContracts(today);
+  const allMissions = [...missions, ...districtContracts];
+
   return {
     date: today,
     missions,
-    completions: buildInitialCompletions(missions),
+    districtContracts,
+    completions: buildInitialCompletions(allMissions),
   };
 }
 
@@ -172,8 +322,8 @@ function freshDailyState(): DailyMissionsState {
 
 export interface DailyMissionsSlice {
   dailyMissions: DailyMissionsState;
-  /** Called by action handlers (completeLesson, completeSideHustle, etc.) */
-  trackMissionProgress: (actionType: DailyMission['actionType'], amount?: number) => void;
+  /** Called by action handlers with optional districtId */
+  trackMissionProgress: (actionType: MissionActionType, amount?: number, districtId?: string) => void;
   claimMissionReward: (missionId: string) => void;
   /** Called on app mount to reset if day changed */
   refreshDailyMissions: () => void;
@@ -190,18 +340,31 @@ export const createDailyMissionsSlice: StateCreator<AppState, [], [], DailyMissi
     }
   },
 
-  trackMissionProgress: (actionType, amount = 1) => {
+  trackMissionProgress: (actionType, amount = 1, districtId?: string) => {
     const today = getTodayISO();
     set((state) => {
       // Auto-reset if new day
       const dm = state.dailyMissions.date !== today ? freshDailyState() : state.dailyMissions;
+      const allMissions = [...dm.missions, ...(dm.districtContracts || [])];
 
       const updatedCompletions = dm.completions.map((c) => {
-        const mission = dm.missions.find((m) => m.id === c.missionId);
-        // ✅ FIX: Skip if already completed — previously progress kept accumulating
-        // past targetCount on completed missions (with no practical consequence today,
-        // but opens the door to reward stacking bugs if claimedReward logic changes).
-        if (!mission || mission.actionType !== actionType || c.completed) return c;
+        const mission = allMissions.find((m) => m.id === c.missionId);
+        if (!mission || c.completed) return c;
+
+        // Check if action matches
+        let matches = false;
+        if (mission.actionType === actionType) {
+          if (districtId && mission.districtId) {
+            matches = mission.districtId === districtId;
+          } else {
+            matches = true;
+          }
+        } else if (actionType === 'COMPLETE_LESSON' && mission.actionType === 'DISTRICT_LESSON') {
+          matches = !districtId || !mission.districtId || mission.districtId === districtId;
+        }
+
+        if (!matches) return c;
+
         const newProgress = c.progress + amount;
         return {
           ...c,
@@ -223,7 +386,10 @@ export const createDailyMissionsSlice: StateCreator<AppState, [], [], DailyMissi
     set((state) => {
       const dm = state.dailyMissions;
       const completion = dm.completions.find((c) => c.missionId === missionId);
-      const mission = dm.missions.find((m) => m.id === missionId);
+      const mission = 
+        dm.missions.find((m) => m.id === missionId) || 
+        dm.districtContracts?.find((m) => m.id === missionId);
+
       if (!completion || !mission || !completion.completed || completion.claimedReward) return {};
 
       const user = state.user;
@@ -233,13 +399,40 @@ export const createDailyMissionsSlice: StateCreator<AppState, [], [], DailyMissi
         c.missionId === missionId ? { ...c, claimedReward: true } : c
       );
 
+      let updatedUser = {
+        ...user,
+        xp: (user.xp || 0) + mission.xpReward,
+        ppTokens: (user.ppTokens || 0) + mission.coinReward,
+      };
+
+      // If this is a district competency contract, award competency mastery XP!
+      if (mission.competencyId && mission.competencyXpReward) {
+        const currentComp = user.competencyMastery?.[mission.competencyId] || {
+          level: 1,
+          score: 0,
+          lastTestedAt: ''
+        };
+        const delta = calculateCompetencyDelta(
+          mission.competencyId,
+          currentComp.score,
+          mission.competencyXpReward
+        );
+        updatedUser = {
+          ...updatedUser,
+          competencyMastery: {
+            ...(user.competencyMastery || {}),
+            [mission.competencyId]: {
+              level: delta.newLevel,
+              score: delta.newXp,
+              lastTestedAt: new Date().toISOString()
+            }
+          }
+        };
+      }
+
       return {
         dailyMissions: { ...dm, completions: updatedCompletions },
-        user: {
-          ...user,
-          xp: user.xp + mission.xpReward,
-          bizCoins: user.bizCoins + mission.coinReward,
-        },
+        user: updatedUser,
       };
     });
   },

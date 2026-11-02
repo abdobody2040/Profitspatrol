@@ -13,6 +13,9 @@ export interface Judge {
     minEquity: number;
     maxValuationMultiplier: number;
     patience: number;
+    avatar?: string;
+    characterId?: 'cash' | 'tech' | 'vision' | 'eco' | 'trend';
+    accentColor?: string;
 }
 
 export interface Offer {
@@ -30,11 +33,66 @@ export interface PitchAnalysis {
 }
 
 export const JUDGES: Judge[] = [
-    { id: 'cash', nameKey: 'tank.judge_cash', styleKey: 'tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
-    { id: 'tech', nameKey: 'tank.judge_tech', styleKey: 'tank.style_tech', color: 'bg-blue-600', minEquity: 15, maxValuationMultiplier: 1.5, patience: 5 },
-    { id: 'vision', nameKey: 'tank.judge_vision', styleKey: 'tank.style_vision', color: 'bg-purple-600', minEquity: 20, maxValuationMultiplier: 1.2, patience: 4 },
-    { id: 'eco', nameKey: 'tank.judge_eco', styleKey: 'tank.style_eco', color: 'bg-emerald-500', minEquity: 10, maxValuationMultiplier: 1.0, patience: 6 },
-    { id: 'trend', nameKey: 'tank.judge_trend', styleKey: 'tank.style_trend', color: 'bg-pink-500', minEquity: 30, maxValuationMultiplier: 2.0, patience: 2 },
+    { 
+        id: 'cash', 
+        nameKey: 'tank.judge_cash', 
+        styleKey: 'tank.style_cash', 
+        color: 'bg-amber-600', 
+        accentColor: '#f59e0b',
+        minEquity: 25, 
+        maxValuationMultiplier: 0.8, 
+        patience: 3,
+        avatar: '/images/tank/judge_rex.jpg',
+        characterId: 'cash'
+    },
+    { 
+        id: 'tech', 
+        nameKey: 'tank.judge_tech', 
+        styleKey: 'tank.style_tech', 
+        color: 'bg-cyan-600', 
+        accentColor: '#06b6d4',
+        minEquity: 15, 
+        maxValuationMultiplier: 1.5, 
+        patience: 5,
+        avatar: '/images/tank/judge_kami.jpg',
+        characterId: 'tech'
+    },
+    { 
+        id: 'vision', 
+        nameKey: 'tank.judge_vision', 
+        styleKey: 'tank.style_vision', 
+        color: 'bg-blue-600', 
+        accentColor: '#3b82f6',
+        minEquity: 20, 
+        maxValuationMultiplier: 1.2, 
+        patience: 4,
+        avatar: '/images/tank/judge_ollie.jpg',
+        characterId: 'vision'
+    },
+    { 
+        id: 'eco', 
+        nameKey: 'tank.judge_eco', 
+        styleKey: 'tank.style_eco', 
+        color: 'bg-emerald-600', 
+        accentColor: '#10b981',
+        minEquity: 10, 
+        maxValuationMultiplier: 1.0, 
+        patience: 6,
+        avatar: '/images/tank/judge_filo.jpg',
+        characterId: 'eco'
+    },
+    { 
+        id: 'trend', 
+        nameKey: 'tank.judge_trend', 
+        styleKey: 'tank.style_trend', 
+        color: 'bg-pink-600', 
+        accentColor: '#ec4899',
+        minEquity: 30, 
+        maxValuationMultiplier: 2.0, 
+        patience: 2,
+        avatar: '/images/tank/judge_reema.jpg',
+        characterId: 'trend'
+    },
 ];
 
 export class TheTankEngine {

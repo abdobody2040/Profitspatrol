@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     -- Progression
     xp INTEGER DEFAULT 0,
     level INTEGER DEFAULT 1,
-    biz_coins INTEGER DEFAULT 100,
+    pp_tokens INTEGER DEFAULT 100,
     streak INTEGER DEFAULT 1,
     last_activity_date DATE DEFAULT CURRENT_DATE,
     
@@ -312,7 +312,7 @@ BEGIN
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
         COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-        COALESCE(NEW.raw_user_meta_data->>'role', 'kid')::text
+        LOWER(COALESCE(NEW.raw_user_meta_data->>'role', 'kid'))::text
     );
     RETURN NEW;
 END;
@@ -397,8 +397,74 @@ CREATE TRIGGER update_assignments_updated_at
     EXECUTE FUNCTION public.update_updated_at();
 
 -- ============================================
+-- ============================================
 -- 9. ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================
+
+-- DYNAMIC CLEANUP: Drop ALL existing policies on classrooms/members to ensure no "ghost" policies remain
+DO $$
+DECLARE
+    pol record;
+BEGIN
+    -- Drop all policies on classrooms
+    FOR pol IN SELECT policyname FROM pg_policies WHERE tablename = 'classrooms' AND schemaname = 'public' LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.classrooms', pol.policyname);
+    END LOOP;
+    -- Drop all policies on classroom_members
+    FOR pol IN SELECT policyname FROM pg_policies WHERE tablename = 'classroom_members' AND schemaname = 'public' LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.classroom_members', pol.policyname);
+    END LOOP;
+END
+$$;
+
+-- Security Definer Functions (Stable & Non-Recursive)
+CREATE OR REPLACE FUNCTION public.is_admin(usr_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+    -- Query profiles directly; SECURITY DEFINER bypasses RLS
+    SELECT EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE id = usr_id AND (role = 'ADMIN' OR role = 'admin')
+    );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_classroom_teacher(class_id UUID, usr_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+    -- Admins are effectively teachers of all classes
+    SELECT EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE id = usr_id AND (role = 'ADMIN' OR role = 'admin')
+    ) OR EXISTS (
+        SELECT 1 FROM public.classrooms
+        WHERE id = class_id AND teacher_id = usr_id
+    );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_classroom_student(class_id UUID, usr_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+    -- Admins can view assignments as if they were students
+    SELECT EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE id = usr_id AND (role = 'ADMIN' OR role = 'admin')
+    ) OR EXISTS (
+        SELECT 1 FROM public.classroom_members
+        WHERE classroom_id = class_id AND user_id = usr_id
+    );
+$$;
 
 -- Enable RLS on all tables
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -443,6 +509,7 @@ CREATE POLICY "profiles_select"
         id = (select auth.uid())
         OR parent_id = (select auth.uid())
         OR id = (select public.get_my_parent_id())
+        OR public.is_admin((select auth.uid()))
     );
 
 -- ONE INSERT policy
@@ -458,10 +525,12 @@ CREATE POLICY "profiles_update"
     USING (
         id = (select auth.uid())
         OR parent_id = (select auth.uid())
+        OR public.is_admin((select auth.uid()))
     )
     WITH CHECK (
         id = (select auth.uid())
         OR parent_id = (select auth.uid())
+        OR public.is_admin((select auth.uid()))
     );
 
 -- CLASSROOMS POLICIES
@@ -469,18 +538,18 @@ DROP POLICY IF EXISTS "Teachers can manage own classrooms" ON public.classrooms;
 CREATE POLICY "Teachers can manage own classrooms"
     ON public.classrooms FOR ALL
     TO authenticated
-    USING (teacher_id = (select auth.uid()));
+    USING (
+        teacher_id = (select auth.uid())
+        OR public.is_admin((select auth.uid()))
+    );
 
 DROP POLICY IF EXISTS "Students can view their classrooms" ON public.classrooms;
 CREATE POLICY "Students can view their classrooms"
     ON public.classrooms FOR SELECT
     TO authenticated
     USING (
-        EXISTS (
-            SELECT 1 FROM public.classroom_members cm
-            WHERE cm.classroom_id = public.classrooms.id
-            AND cm.user_id = (select auth.uid())
-        )
+        public.is_classroom_student(classroom_id, (select auth.uid()))
+        OR public.is_admin((select auth.uid()))
     );
 
 -- CLASSROOM MEMBERS POLICIES
@@ -489,11 +558,8 @@ CREATE POLICY "Teachers can manage classroom members"
     ON public.classroom_members FOR ALL
     TO authenticated
     USING (
-        EXISTS (
-            SELECT 1 FROM public.classrooms c
-            WHERE c.id = public.classroom_members.classroom_id
-            AND c.teacher_id = (select auth.uid())
-        )
+        public.is_classroom_teacher(classroom_id, (select auth.uid()))
+        OR public.is_admin((select auth.uid()))
     );
 
 DROP POLICY IF EXISTS "Students can view own membership" ON public.classroom_members;
@@ -508,11 +574,8 @@ CREATE POLICY "Teachers can manage student groups"
     ON public.student_groups FOR ALL
     TO authenticated
     USING (
-        EXISTS (
-            SELECT 1 FROM public.classrooms c
-            WHERE c.id = public.student_groups.classroom_id
-            AND c.teacher_id = (select auth.uid())
-        )
+        public.is_classroom_teacher(classroom_id, (select auth.uid()))
+        OR public.is_admin((select auth.uid()))
     );
 
 -- RUBRICS POLICIES
@@ -520,7 +583,7 @@ DROP POLICY IF EXISTS "Teachers can manage own rubrics" ON public.rubrics;
 CREATE POLICY "Teachers can manage own rubrics"
     ON public.rubrics FOR ALL
     TO authenticated
-    USING (teacher_id = (select auth.uid()));
+    USING (teacher_id = (select auth.uid()) OR public.is_admin((select auth.uid())));
 
 -- ASSIGNMENTS POLICIES
 DROP POLICY IF EXISTS "Teachers can manage assignments" ON public.assignments;
@@ -528,11 +591,8 @@ CREATE POLICY "Teachers can manage assignments"
     ON public.assignments FOR ALL
     TO authenticated
     USING (
-        EXISTS (
-            SELECT 1 FROM public.classrooms c
-            WHERE c.id = public.assignments.classroom_id
-            AND c.teacher_id = (select auth.uid())
-        )
+        public.is_classroom_teacher(classroom_id, (select auth.uid()))
+        OR public.is_admin((select auth.uid()))
     );
 
 DROP POLICY IF EXISTS "Students can view classroom assignments" ON public.assignments;
@@ -540,11 +600,8 @@ CREATE POLICY "Students can view classroom assignments"
     ON public.assignments FOR SELECT
     TO authenticated
     USING (
-        EXISTS (
-            SELECT 1 FROM public.classroom_members cm
-            WHERE cm.classroom_id = public.assignments.classroom_id
-            AND cm.user_id = (select auth.uid())
-        )
+        public.is_classroom_student(classroom_id, (select auth.uid()))
+        OR public.is_admin((select auth.uid()))
     );
 
 -- SUBMISSIONS POLICIES
@@ -559,7 +616,8 @@ CREATE POLICY "Teachers can view and grade submissions"
     ON public.submissions FOR ALL
     TO authenticated
     USING (
-        EXISTS (
+        public.is_admin((select auth.uid()))
+        OR EXISTS (
             SELECT 1 FROM public.assignments a
             JOIN public.classrooms c ON c.id = a.classroom_id
             WHERE a.id = public.submissions.assignment_id

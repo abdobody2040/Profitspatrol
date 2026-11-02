@@ -1,19 +1,59 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAppStore } from '../../../store';
+import { useAppStore } from '../../../store/useAppStore';
 import { UserRole, User, BusinessSimulation, Classroom, Assignment, Submission, CMSContent, CustomPage, ContentBlock, Book, SubscriptionTier } from '../../../types';
 import { ReportsDashboard } from '../../dashboard/components/reports/ReportsDashboard';
 import {
-    Trash2, Edit, Plus, Save, X, BookOpen, Gamepad2, Users,
-    AlertTriangle, Play, Coins, Star, Trophy, RefreshCcw,
-    School, ClipboardList, FileText, LogIn, LayoutDashboard, Globe, Image as ImageIcon,
-    LayoutTemplate, ArrowUp, ArrowDown, Eye, ArrowLeft, Loader2, Sparkles, Book as BookIcon, Github, Download, BarChart3, Bot, GraduationCap,
-    Video as VideoIcon, Shield, ToggleLeft, ToggleRight, Zap, Flag, Store, Medal, MessageSquare, Home
-} from 'lucide-react';
+    Trash2,
+    Edit,
+    Plus,
+    Save,
+    X,
+    BookOpen,
+    Users,
+    AlertTriangle,
+    Play,
+    Coins,
+    Star,
+    Trophy,
+    RefreshCcw,
+    School,
+    ClipboardList,
+    FileText,
+    LogIn,
+    LayoutDashboard,
+    Globe,
+    Image as ImageIcon,
+    Database,
+    Eye,
+    ArrowLeft,
+    Loader2,
+    Sparkles,
+    Book as BookIcon,
+    GitBranch,
+    Download,
+    BarChart3,
+    Bot,
+    GraduationCap,
+    Video as VideoIcon,
+    Shield,
+    ToggleLeft,
+    ToggleRight,
+    Zap,
+    Flag,
+    Store,
+    Medal,
+    MessageSquare,
+    Home,
+} from "lucide-react";
 import { FURNITURE_ITEMS } from '../../hq/data/furniture';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { AppFeatureFlags } from '../../../store/slices/adminConfigSlice';
-import GameEngine from '../../game/components/GameEngine';
-import RubricEditor from '../../education/components/RubricEditor'; // Import RubricEditor
+import { CANONICAL_ARCADE_GAMES } from '../../games/registry/canonicalRegistry';
+import type { UnifiedGameDefinition } from '../../games/types';
+
+const GameEngine = React.lazy(() => import('../../game/components/GameEngine'));
+const UnifiedGameShell = React.lazy(() => import('../../games/runtime/UnifiedGameShell').then(m => ({ default: m.UnifiedGameShell })));
+const RubricEditor = React.lazy(() => import('../../education/components/RubricEditor'));
 import AdminProjectPanel from './AdminProjectPanel';
 import AdminVideoManager from './AdminVideoManager';
 import AdminLiveSessionManager from './AdminLiveSessionManager';
@@ -29,18 +69,36 @@ import { WhitelistBlacklistManager } from '../../dashboard/components/WhitelistB
 import { Logger } from '../../../services/logger';
 import { useEducationStore } from "../../../store/educationStore";
 import { useSocialStore } from "../../../store/socialStore";
-import { useEconomyStore } from "../../../store/economyStore";
+
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 const AdminDashboard: React.FC = () => {
     const { t } = useTranslation();
-    const { user, users, activeScenario, login, games, addGame, updateGame, deleteGame, addUser, updateUser, updateUserAdmin, deleteUser, fetchAllUsers, cmsContent, updateCMSContent, impersonateUser, economyConfig, updateEconomyConfig, updateSpinPrize, resetEconomyConfig, featureFlags, setFeatureFlag, resetFeatureFlags, furnitureOverrides, setFurnitureOverride, resetFurnitureOverride, debateTopicsAdmin, addDebateTopic, updateDebateTopic, deleteDebateTopic, badgeDefinitions, addBadgeDefinition, updateBadgeDefinition, deleteBadgeDefinition, adminAwardBadge, adminGrantCoins, library, addBook, updateBook, removeBook, exclusiveBooks, addExclusiveBook, updateExclusiveBook, deleteExclusiveBook, resetExclusiveBooks } = useAppStore();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const { user, users, activeScenario, login, games, addGame, updateGame, deleteGame, addUser, updateUser, updateUserAdmin, deleteUser, fetchAllUsers, cmsContent, updateCMSContent, impersonateUser, economyConfig, updateEconomyConfig, updateSpinPrize, resetEconomyConfig, featureFlags, setFeatureFlag, resetFeatureFlags, furnitureOverrides, setFurnitureOverride, resetFurnitureOverride, debateTopicsAdmin, addDebateTopic, updateDebateTopic, deleteDebateTopic, badgeDefinitions, addBadgeDefinition, updateBadgeDefinition, deleteBadgeDefinition, adminAwardBadge, adminGrantTokens, library, addBook, updateBook, removeBook, exclusiveBooks, addExclusiveBook, updateExclusiveBook, deleteExclusiveBook, resetExclusiveBooks } = useAppStore();
     const { bounties } = useSocialStore();
     // Removed economyLedger and globalMetrics due to TS2339
 
-    const { classrooms, assignments, submissions, deleteAssignment, deleteSubmission, deleteClassroom, addClassroom, updateClassroom, fetchAllClassrooms, updateSubmission, addLesson, updateLesson, deleteLesson, lessons } = useEducationStore();
-    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'USERS' | 'CLASSES' | 'CONTENT' | 'LIBRARY' | 'VIDEOS' | 'SESSIONS' | 'WORK' | 'CMS' | 'ANALYTICS' | 'GRADING' | 'SECURITY' | 'ECONOMY' | 'LEADERBOARD' | 'SOCIAL' | 'HQ' | 'FLAGS'>('OVERVIEW');
+    const { classrooms, assignments, submissions, deleteAssignment, deleteSubmission, deleteClassroom, addClassroom, updateClassroom, fetchAllClassrooms, updateSubmission, addLesson, updateLesson, deleteLesson, lessons, setViewingClassroom } = useEducationStore();
+    
+    // Tab State (Initialized from URL)
+    const urlTab = searchParams.get('tab') as any;
+    const validTabs = ['OVERVIEW', 'USERS', 'CLASSES', 'CONTENT', 'LIBRARY', 'VIDEOS', 'SESSIONS', 'WORK', 'CMS', 'ANALYTICS', 'GRADING', 'SECURITY', 'ECONOMY', 'LEADERBOARD', 'SOCIAL', 'HQ', 'FLAGS'];
+    const initialTab = validTabs.includes(urlTab) ? urlTab : 'OVERVIEW';
+    
+    const [activeTab, setActiveTabState] = useState<typeof initialTab>(initialTab);
+
+    // Sync state with URL
+    const setActiveTab = (tab: typeof initialTab) => {
+        setActiveTabState(tab);
+        setSearchParams({ tab });
+    };
+
     const [securityTab, setSecurityTab] = useState<'MONITORING' | 'MODERATION' | 'WHITELIST'>('MONITORING');
-    const [contentTab, setContentTab] = useState<'LESSONS' | 'GAMES'>('LESSONS');
+    const [contentTab, setContentTab] = useState<'LESSONS' | 'GAMES' | 'ARCADE'>('ARCADE');
+    const [previewArcadeGame, setPreviewArcadeGame] = useState<UnifiedGameDefinition | null>(null);
     const [workTab, setWorkTab] = useState<'ASSIGNMENTS' | 'SUBMISSIONS'>('ASSIGNMENTS');
     const [libraryTab, setLibraryTab] = useState<'ALL_BOOKS' | 'EXCLUSIVES'>('ALL_BOOKS');
 
@@ -50,21 +108,29 @@ const AdminDashboard: React.FC = () => {
     const [isUserSaving, setIsUserSaving] = useState(false);
     const [isClassSaving, setIsClassSaving] = useState(false);
 
-    // Auto-fetch from Supabase on mount
-    const refreshFromSupabase = useCallback(async () => {
+    // Auto-fetch from Backend on mount
+    const refreshFromBackend = useCallback(async () => {
         setIsSyncing(true);
         setSyncError(null);
         try {
-            await Promise.all([fetchAllUsers(), fetchAllClassrooms()]);
+            await Promise.allSettled([fetchAllUsers(), fetchAllClassrooms()]);
         } catch (e: any) {
-            setSyncError(e?.message || 'Sync failed');
+            const errMsg = e?.message || String(e);
+            setSyncError(errMsg);
+            if (errMsg.includes('DATABASE_NOT_INITIALIZED') || 
+                errMsg.includes('relation') || 
+                errMsg.includes('42P01') ||
+                errMsg.includes('profiles') ||
+                errMsg.includes('classrooms')) {
+                setShowSetupModal(true);
+            }
         } finally {
             setIsSyncing(false);
         }
     }, [fetchAllUsers, fetchAllClassrooms]);
 
     useEffect(() => {
-        refreshFromSupabase();
+        refreshFromBackend();
     }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
     // Editor State
@@ -97,6 +163,7 @@ const AdminDashboard: React.FC = () => {
 
     // Page Editing State
     const [editingPage, setEditingPage] = useState<CustomPage | null>(null);
+    const [showSetupModal, setShowSetupModal] = useState(false);
 
     // GitHub Sync State
     const [isPulling, setIsPulling] = useState(false);
@@ -282,7 +349,7 @@ const AdminDashboard: React.FC = () => {
                 role: UserRole.KID,
                 xp: 0,
                 level: 1,
-                bizCoins: 0,
+                ppTokens: 0,
                 streak: 0,
                 inventory: [],
                 completedLessonIds: [],
@@ -306,7 +373,7 @@ const AdminDashboard: React.FC = () => {
         if (!editingUser || !editingUser.name || !editingUser.username) return alert("Name and Username required!");
         const finalUser = {
             ...editingUser,
-            bizCoins: Number(editingUser.bizCoins) || 0,
+            ppTokens: Number(editingUser.ppTokens) || 0,
             xp: Number(editingUser.xp) || 0,
             level: Number(editingUser.level) || 1,
             subscriptionStatus: (editingUser.subscriptionTier === 'intern' ? 'FREE' : 'PREMIUM') as 'FREE' | 'PREMIUM'
@@ -556,18 +623,26 @@ const AdminDashboard: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 pb-20">
+        <div className="space-y-8 pb-32 max-w-[1600px] mx-auto px-4 pt-8">
             {/* Top Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-center bg-gray-900 text-white p-6 rounded-3xl shadow-lg gap-4">
-                <div>
-                    <h2 className="text-3xl font-black">{t('admin.dashboard.title')}</h2>
-                    <p className="text-gray-400 font-bold">{t('admin.dashboard.subtitle')}</p>
+            <div className="flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-[2.5rem] shadow-2xl gap-4 relative overflow-hidden">
+                {/* Ollie Mascot */}
+                <div className="absolute -bottom-4 -start-4 w-32 h-32 opacity-20 pointer-events-none">
+                    <img src="/assets/ollie_head.png" alt="" className="w-full h-full object-contain -rotate-12" />
+                </div>
+                
+                <div className="relative z-10">
+                    <h2 className="text-4xl font-black tracking-tight flex items-center gap-3">
+                        <Bot className="text-yellow-400 animate-pulse" />
+                        {t('admin.dashboard.title')}
+                    </h2>
+                    <p className="text-blue-100 font-bold text-lg">{t('admin.dashboard.subtitle')}</p>
                 </div>
                 <div className="flex flex-col xl:flex-row items-end xl:items-center gap-4 flex-1 justify-end w-full">
                     <div className="flex flex-col gap-4 flex-1 w-full">
                         {/* Core System Data */}
-                        <div className="flex flex-wrap gap-2 items-center bg-gray-800/50 p-2 rounded-xl">
-                            <span className="text-xs font-black tracking-widest text-gray-500 uppercase px-2 w-[120px]">Core Data:</span>
+                        <div className="flex flex-nowrap sm:flex-wrap overflow-x-auto no-scrollbar gap-2 items-center bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
+                            <span className="text-[10px] font-black tracking-widest text-blue-200 uppercase px-2 w-[120px] shrink-0">{t('admin.dashboard.categories.core_data')}:</span>
                             <TabButton active={activeTab === 'OVERVIEW'} onClick={() => setActiveTab('OVERVIEW')} icon={<LayoutDashboard size={14} />} label={t('admin.dashboard.tabs.overview')} />
                             <TabButton active={activeTab === 'ANALYTICS'} onClick={() => setActiveTab('ANALYTICS')} icon={<BarChart3 size={14} />} label={t('admin.dashboard.tabs.analytics')} />
                             <TabButton active={activeTab === 'USERS'} onClick={() => setActiveTab('USERS')} icon={<Users size={14} />} label={t('admin.dashboard.tabs.users')} />
@@ -575,8 +650,8 @@ const AdminDashboard: React.FC = () => {
                         </div>
 
                         {/* Content Engineering */}
-                        <div className="flex flex-wrap gap-2 items-center bg-gray-800/50 p-2 rounded-xl">
-                            <span className="text-xs font-black tracking-widest text-gray-500 uppercase px-2 w-[120px]">Content Engine:</span>
+                        <div className="flex flex-nowrap sm:flex-wrap overflow-x-auto no-scrollbar gap-2 items-center bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
+                            <span className="text-[10px] font-black tracking-widest text-blue-200 uppercase px-2 w-[120px] shrink-0">{t('admin.dashboard.categories.content_engine')}:</span>
                             <TabButton active={activeTab === 'CONTENT'} onClick={() => setActiveTab('CONTENT')} icon={<BookOpen size={14} />} label={t('admin.dashboard.tabs.content')} />
                             <TabButton active={activeTab === 'LIBRARY'} onClick={() => setActiveTab('LIBRARY')} icon={<BookIcon size={14} />} label={t('admin.dashboard.tabs.library')} />
                             <TabButton active={activeTab === 'VIDEOS'} onClick={() => setActiveTab('VIDEOS')} icon={<Play size={14} />} label={t('admin.dashboard.tabs.videos')} />
@@ -586,15 +661,15 @@ const AdminDashboard: React.FC = () => {
                         </div>
 
                         {/* Extensibility & Configuration */}
-                        <div className="flex flex-wrap gap-2 items-center bg-gray-800/50 p-2 rounded-xl">
-                            <span className="text-xs font-black tracking-widest text-gray-500 uppercase px-2 w-[120px]">System Config:</span>
+                        <div className="flex flex-nowrap sm:flex-wrap overflow-x-auto no-scrollbar gap-2 items-center bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
+                            <span className="text-[10px] font-black tracking-widest text-blue-200 uppercase px-2 w-[120px] shrink-0">{t('admin.dashboard.categories.system_config')}:</span>
                             <TabButton active={activeTab === 'CMS'} onClick={() => setActiveTab('CMS')} icon={<Globe size={14} />} label={t('admin.dashboard.tabs.cms')} />
-                            <TabButton active={activeTab === 'SECURITY'} onClick={() => setActiveTab('SECURITY')} icon={<Shield size={14} />} label="Security" />
-                            <TabButton active={activeTab === 'ECONOMY'} onClick={() => setActiveTab('ECONOMY')} icon={<Coins size={14} />} label="Economy" />
-                            <TabButton active={activeTab === 'LEADERBOARD'} onClick={() => setActiveTab('LEADERBOARD')} icon={<Medal size={14} />} label="Leaderboard" />
-                            <TabButton active={activeTab === 'SOCIAL'} onClick={() => setActiveTab('SOCIAL')} icon={<MessageSquare size={14} />} label="Social" />
-                            <TabButton active={activeTab === 'HQ'} onClick={() => setActiveTab('HQ')} icon={<Home size={14} />} label="HQ & Store" />
-                            <TabButton active={activeTab === 'FLAGS'} onClick={() => setActiveTab('FLAGS')} icon={<Flag size={14} />} label="Flags" />
+                            <TabButton active={activeTab === 'SECURITY'} onClick={() => setActiveTab('SECURITY')} icon={<Shield size={14} />} label={t('admin.dashboard.tabs.security')} />
+                            <TabButton active={activeTab === 'ECONOMY'} onClick={() => setActiveTab('ECONOMY')} icon={<Coins size={14} />} label={t('admin.dashboard.tabs.economy')} />
+                            <TabButton active={activeTab === 'LEADERBOARD'} onClick={() => setActiveTab('LEADERBOARD')} icon={<Medal size={14} />} label={t('admin.dashboard.tabs.leaderboard')} />
+                            <TabButton active={activeTab === 'SOCIAL'} onClick={() => setActiveTab('SOCIAL')} icon={<MessageSquare size={14} />} label={t('admin.dashboard.tabs.social')} />
+                            <TabButton active={activeTab === 'HQ'} onClick={() => setActiveTab('HQ')} icon={<Home size={14} />} label={t('admin.dashboard.tabs.hq_store')} />
+                            <TabButton active={activeTab === 'FLAGS'} onClick={() => setActiveTab('FLAGS')} icon={<Flag size={14} />} label={t('admin.dashboard.tabs.flags')} />
                         </div>
                     </div>
 
@@ -604,7 +679,7 @@ const AdminDashboard: React.FC = () => {
                         className={`flex items-center gap-2 px-6 py-4 rounded-xl font-bold transition-all bg-black text-white hover:bg-gray-800 border-2 border-gray-700 h-fit whitespace-nowrap shadow-xl shrink-0`}
                         title={t('admin.dashboard.actions.sync_repo')}
                     >
-                        {isPulling ? <Loader2 size={18} className="animate-spin" /> : <Github size={18} />}
+                        {isPulling ? <Loader2 size={18} className="animate-spin" /> : <GitBranch size={18} />}
                         <span className="hidden lg:inline">{isPulling ? 'Pulling...' : t('admin.dashboard.actions.sync_repo')}</span>
                     </button>
                 </div>
@@ -616,53 +691,65 @@ const AdminDashboard: React.FC = () => {
             {/* --- OVERVIEW TAB --- */}
             {activeTab === 'OVERVIEW' && (
                 <div className="space-y-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <StatCard label={t('admin.dashboard.stats.total_users')} value={stats.users} icon={<Users />} color="bg-blue-100 text-blue-700" />
-                        <StatCard label={t('admin.dashboard.stats.students')} value={stats.students} icon={<Star />} color="bg-yellow-100 text-yellow-700" />
-                        <StatCard label="Teachers" value={stats.teachers} icon={<GraduationCap />} color="bg-indigo-100 text-indigo-700" />
-                        <StatCard label={t('admin.dashboard.stats.classes')} value={stats.classes} icon={<School />} color="bg-purple-100 text-purple-700" />
-                        <StatCard label={t('admin.dashboard.stats.assignments')} value={stats.assignments} icon={<ClipboardList />} color="bg-green-100 text-green-700" />
-                        <StatCard label="Submissions" value={stats.submissions} icon={<FileText />} color="bg-teal-100 text-teal-700" />
-                        <StatCard label="Lessons" value={stats.lessons} icon={<BookOpen />} color="bg-orange-100 text-orange-700" />
-                        <StatCard label={t('admin.dashboard.stats.books')} value={stats.books} icon={<BookIcon />} color="bg-pink-100 text-pink-700" />
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <StatCard label={t('admin.dashboard.stats.total_users')} value={stats.users} icon={<Users />} color="bg-blue-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.students')} value={stats.students} icon={<Star />} color="bg-yellow-400 text-yellow-900" />
+                        <StatCard label={t('admin.dashboard.stats.teachers')} value={stats.teachers} icon={<GraduationCap />} color="bg-indigo-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.classes')} value={stats.classes} icon={<School />} color="bg-purple-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.assignments')} value={stats.assignments} icon={<ClipboardList />} color="bg-green-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.submissions')} value={stats.submissions} icon={<FileText />} color="bg-teal-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.lessons')} value={stats.lessons} icon={<BookOpen />} color="bg-orange-500 text-white" />
+                        <StatCard label={t('admin.dashboard.stats.books')} value={stats.books} icon={<BookIcon />} color="bg-pink-500 text-white" />
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <h4 className="font-black text-lg text-gray-800">{t('admin.dashboard.sections.data_management')}</h4>
-                            <p className="text-gray-500 font-medium">{t('admin.dashboard.actions.backup')}</p>
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] border-4 border-green-50 dark:border-gray-700 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6 group hover:border-green-100 transition-all">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-green-100 rounded-2xl group-hover:rotate-12 transition-transform">
+                                <Download className="text-green-600" size={24} />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-xl text-gray-800 dark:text-white uppercase tracking-tight">{t('admin.dashboard.sections.data_management')}</h4>
+                                <p className="text-gray-400 font-bold">Secure local backup of all system configurations</p>
+                            </div>
                         </div>
                         <button
                             onClick={handleDownloadBackup}
-                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-md transition-colors"
+                            className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-2 shadow-[0_6px_0_0_rgba(21,128,61,1)] active:scale-95 transition-all"
                         >
-                            <Download size={18} /> {t('admin.dashboard.actions.download')}
+                            <Download size={20} /> {t('admin.dashboard.actions.download')}
                         </button>
                     </div>
 
-                    <div className="bg-red-50 border-2 border-red-200 p-6 rounded-2xl flex justify-between items-center">
-                        <div className="flex items-center gap-4 text-red-800">
-                            <AlertTriangle size={32} />
+                    <div className="bg-red-50 border-4 border-red-100 p-8 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-2 opacity-5">
+                            <AlertTriangle size={120} />
+                        </div>
+                        <div className="flex items-center gap-6 text-red-800 relative z-10">
+                            <div className="p-4 bg-red-100 rounded-2xl">
+                                <AlertTriangle size={40} className="animate-bounce" />
+                            </div>
                             <div>
-                                <h4 className="font-black text-lg">{t('admin.dashboard.sections.emergency_zone')}</h4>
-                                <p className="font-bold opacity-80">Database corrupted? Reset everything.</p>
+                                <h4 className="font-black text-2xl uppercase tracking-tight">{t('admin.dashboard.sections.emergency_zone')}</h4>
+                                <p className="font-bold text-red-600/80">Database corrupted? Reset everything and start fresh.</p>
                             </div>
                         </div>
-                        <button onClick={handleHardReset} className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-md">
-                            <RefreshCcw size={18} /> {t('admin.dashboard.actions.factory_reset')}
+                        <button onClick={handleHardReset} className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-2 shadow-[0_6px_0_0_rgba(185,28,28,1)] active:scale-95 transition-all relative z-10">
+                            <RefreshCcw size={20} /> {t('admin.dashboard.actions.factory_reset')}
                         </button>
                     </div>
 
                     {/* AI Settings */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                            <Bot className="text-purple-500" /> {t('admin.dashboard.sections.ai_configuration')}
+                    <div className="bg-white dark:bg-gray-800 rounded-[2rem] p-8 shadow-xl border-4 border-purple-50 dark:border-gray-700 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-bl-full opacity-20 group-hover:scale-110 transition-transform"></div>
+                        <h3 className="text-2xl font-black text-gray-800 dark:text-white mb-6 flex items-center gap-3 relative z-10">
+                            <div className="p-2 bg-purple-100 rounded-xl"><Bot className="text-purple-600" /></div>
+                            {t('admin.dashboard.sections.ai_configuration')}
                         </h3>
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                        <div className="space-y-4 relative z-10">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-purple-50/50 dark:bg-gray-900 rounded-[1.5rem] border-2 border-purple-100/50 gap-4">
                                 <div>
-                                    <div className="font-bold text-gray-800 dark:text-white">Active Intelligence</div>
-                                    <div className="text-xs text-gray-500">Select which brain powers Ollie</div>
+                                    <div className="font-black text-gray-800 dark:text-white text-lg">Active Intelligence</div>
+                                    <div className="text-sm font-bold text-purple-600/60">Select which brain powers Ollie's mentorship</div>
                                 </div>
                                 <select
                                     id="ai-provider-select"
@@ -672,18 +759,21 @@ const AdminDashboard: React.FC = () => {
                                         setAIProvider(provider);
                                         window.location.reload();
                                     }}
-                                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-sm font-bold"
+                                    className="bg-white dark:bg-gray-800 border-4 border-purple-200 dark:border-gray-700 rounded-2xl px-6 py-3 text-sm font-black shadow-sm focus:ring-4 focus:ring-purple-200 outline-none transition-all"
                                     defaultValue={import.meta.env.VITE_AI_PROVIDER || 'gemini'}
                                 >
-                                    <option value="gemini">Google Gemini (Cloud)</option>
-                                    <option value="ollama">Ollama (Local)</option>
-                                    <option value="openrouter">OpenRouter (Gateway)</option>
-                                    <option value="deepseek">DeepSeek (Direct)</option>
+                                    <option value="gemini">✨ Google Gemini Pro</option>
+                                    <option value="ollama">🏠 Ollama (Local Engine)</option>
+                                    <option value="openrouter">🌐 OpenRouter Gateway</option>
+                                    <option value="deepseek">🐋 DeepSeek AI</option>
                                 </select>
                             </div>
-                            <p className="text-xs text-gray-400 italic">
-                                Note: Local AI requires Ollama running on port 11434.
-                            </p>
+                            <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                                <Zap className="text-amber-500 flex-shrink-0" size={16} />
+                                <p className="text-xs text-amber-700 font-bold">
+                                    Local AI requires Ollama running on port 11434. Cloud providers require a valid API Key in .env
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -691,11 +781,11 @@ const AdminDashboard: React.FC = () => {
 
             {/* --- USERS TAB --- */}
             {activeTab === 'USERS' && (
-                <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[32px] shadow-2xl border-4 border-gray-100 dark:border-gray-700 overflow-hidden">
                     {/* Sync Banner */}
                     {isSyncing && (
                         <div className="bg-blue-50 border-b border-blue-100 px-4 py-2 flex items-center gap-2 text-blue-700 text-sm font-bold">
-                            <Loader2 size={14} className="animate-spin" /> Syncing with Supabase...
+                            <Loader2 size={14} className="animate-spin" /> Syncing with Backend...
                         </div>
                     )}
                     {syncError && (
@@ -706,18 +796,18 @@ const AdminDashboard: React.FC = () => {
                     <div className="p-4 border-b bg-gray-50 flex justify-between items-center flex-wrap gap-2">
                         <div className="flex items-center gap-3">
                             <span className="font-bold text-gray-500">{displayedUsers.length} {t('admin.dashboard.stats.total_users')}</span>
-                            <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">● Supabase Live</span>
+                            <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">● Laravel Backend Live</span>
                             <button
-                                onClick={refreshFromSupabase}
+                                onClick={refreshFromBackend}
                                 disabled={isSyncing}
                                 className="text-gray-500 hover:text-blue-600 p-1 rounded hover:bg-blue-50 transition-colors"
-                                title="Refresh from Supabase"
+                                title="Refresh from Backend"
                             >
                                 <RefreshCcw size={16} className={isSyncing ? 'animate-spin' : ''} />
                             </button>
                         </div>
-                        <button onClick={() => openUserModal()} className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-700">
-                            <Plus size={16} /> {t('admin.dashboard.actions.add_user')}
+                        <button onClick={() => openUserModal()} className="btn-juicy btn-juicy-primary px-5 py-2.5 rounded-2xl flex items-center gap-2">
+                            <Plus size={18} /> {t('admin.dashboard.actions.add_user')}
                         </button>
                     </div>
                     <div className="overflow-x-auto">
@@ -736,8 +826,8 @@ const AdminDashboard: React.FC = () => {
                                 {displayedUsers.length === 0 && !isSyncing && (
                                     <tr><td colSpan={6} className="p-8 text-center text-gray-400">
                                         <div className="font-bold mb-1">No users found in the database.</div>
-                                        <div className="text-xs mb-3">This data comes directly from Supabase. Users register through the app sign-up flow.</div>
-                                        <button onClick={refreshFromSupabase} className="text-blue-600 underline">Refresh from Supabase</button>
+                                        <div className="text-xs mb-3">This data comes directly from the Laravel persistence API & SQLite backend database.</div>
+                                        <button onClick={refreshFromBackend} className="text-blue-600 underline">Refresh from Backend</button>
                                     </td></tr>
                                 )}
                                 {displayedUsers.map(u => (
@@ -761,18 +851,18 @@ const AdminDashboard: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="p-4 text-gray-500">
-                                            Lvl {u.level} • {u.bizCoins?.toLocaleString()} Coins
+                                            Lvl {u.level} • {u.ppTokens?.toLocaleString()} Coins
                                         </td>
                                         <td className="p-4 text-end flex justify-end gap-2">
-                                            <button onClick={() => handleImpersonate(u)} className="bg-purple-100 text-purple-600 p-2 rounded hover:bg-purple-200" title="Login As"><LogIn size={16} /></button>
-                                            <button onClick={() => openUserModal(u)} className="bg-blue-50 text-blue-600 p-2 rounded hover:bg-blue-100"><Edit size={16} /></button>
+                                            <button onClick={() => handleImpersonate(u)} className="btn-juicy bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-xl shadow-[0_4px_0_0_#9333ea] hover:shadow-[0_2px_0_0_#9333ea] hover:translate-y-[2px]" title="Login As"><LogIn size={16} /></button>
+                                            <button onClick={() => openUserModal(u)} className="btn-juicy bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-xl shadow-[0_4px_0_0_#2563eb] hover:shadow-[0_2px_0_0_#2563eb] hover:translate-y-[2px]"><Edit size={16} /></button>
                                             <button
                                                 onClick={async () => {
                                                     if (!confirm(`Delete user ${u.name}? This will remove their profile from the database.`)) return;
                                                     try { await deleteUser(u.id); await fetchAllUsers(); }
                                                     catch (e: any) { alert('Delete failed: ' + e.message); }
                                                 }}
-                                                className="bg-red-50 text-red-600 p-2 rounded hover:bg-red-100"
+                                                className="btn-juicy bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl shadow-[0_4px_0_0_#dc2626] hover:shadow-[0_2px_0_0_#dc2626] hover:translate-y-[2px]"
                                             ><Trash2 size={16} /></button>
                                         </td>
                                     </tr>
@@ -811,6 +901,13 @@ const AdminDashboard: React.FC = () => {
                                         <td className="p-4">{users.find(u => u.id === c.teacherId)?.name || <span className="text-red-400">Unknown ID: {c.teacherId}</span>}</td>
                                         <td className="p-4">{c.studentIds.length}</td>
                                         <td className="p-4 text-end flex justify-end gap-2">
+                                            <button 
+                                                onClick={() => { setViewingClassroom(c.id); navigate('/classroom'); }} 
+                                                className="bg-green-50 text-green-600 p-2 rounded hover:bg-green-100 transition-colors"
+                                                title="View as Teacher"
+                                            >
+                                                <School size={16} />
+                                            </button>
                                             <button onClick={() => openClassModal(c)} className="bg-blue-50 text-blue-600 p-2 rounded hover:bg-blue-100"><Edit size={16} /></button>
                                             <button onClick={() => { if (confirm('Delete Class?')) deleteClassroom(c.id); }} className="bg-red-50 text-red-600 p-2 rounded hover:bg-red-100"><Trash2 size={16} /></button>
                                         </td>
@@ -1046,7 +1143,7 @@ const AdminDashboard: React.FC = () => {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-black text-gray-500 uppercase mb-1">Cover Image URL</label>
-                                        <input type="url" value={editingExclusive.coverUrl || ''} onChange={e => setEditingExclusive(p => ({ ...p!, coverUrl: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl p-3 text-sm font-medium focus:border-violet-400 outline-none" placeholder="https://..." />
+                                        <input type="url" value={editingExclusive.coverUrl || ''} onChange={e => setEditingExclusive(p => ({ ...p!, coverUrl: e.target.value }))} className="w-full border-2 border-gray-200 rounded-xl p-3 text-sm font-medium focus:border-violet-400 outline-none" placeholder="Cover image URL" />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-black text-gray-500 uppercase mb-1">Category</label>
@@ -1241,11 +1338,13 @@ Content here..." />
             {/* --- GRADING TAB --- */}
             {activeTab === 'GRADING' && (
                 <div className="space-y-6">
-                    <RubricEditor onSave={(rubric) => {
-                        // ✅ SECURITY FIX: Rubric saved — route through Logger (not raw console)
-                        Logger.info('AdminDashboard: Rubric saved', { rubricId: rubric.id, teacherId: rubric.teacherId });
-                        alert('Rubric saved! Connect to Supabase to persist rubrics across sessions.');
-                    }} />
+                    <React.Suspense fallback={<div className="p-8 text-center text-gray-500 font-bold">Loading Rubric Editor...</div>}>
+                        <RubricEditor onSave={(rubric) => {
+                            // ✅ SECURITY FIX: Rubric saved — route through Logger (not raw console)
+                            Logger.info('AdminDashboard: Rubric saved', { rubricId: rubric.id, teacherId: rubric.teacherId });
+                            alert('Rubric saved! Connect to Laravel API to persist rubrics across sessions.');
+                        }} />
+                    </React.Suspense>
                 </div>
             )}
 
@@ -1271,6 +1370,29 @@ Content here..." />
                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button onClick={() => handleEditContent(l, l.id)} className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg"><Edit size={18} /></button>
                                     <button onClick={(e) => handleDeleteContent(e, l.id, 'LESSON')} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 size={18} /></button>
+                                </div>
+                            </div>
+                        ))}
+                        {contentTab === 'ARCADE' && CANONICAL_ARCADE_GAMES.map(ag => (
+                            <div key={ag.id} className="p-4 flex items-center justify-between hover:bg-gray-50 group">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white font-black flex items-center justify-center text-sm shadow-sm">
+                                        #{ag.stationNumber}
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-gray-800">{t(ag.titleKey as any, { defaultValue: ag.id })}</div>
+                                        <div className="text-xs text-gray-400 font-mono">
+                                            District: <span className="font-bold text-indigo-600">{ag.district}</span> • Tier: <span className="font-bold text-emerald-600">{ag.requiredTier}</span> • Age: {ag.ageRange[0]}-{ag.ageRange[1]}y
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => setPreviewArcadeGame(ag)} 
+                                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                    >
+                                        <Play size={14} /> Test Station
+                                    </button>
                                 </div>
                             </div>
                         ))}
@@ -1607,7 +1729,7 @@ Content here..." />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('admin.dashboard.modals.user.coins')}</label><input type="number" value={editingUser.bizCoins} onChange={e => setEditingUser({ ...editingUser, bizCoins: parseInt(e.target.value) })} className="w-full p-2 border-2 border-gray-200 rounded-xl font-bold" /></div>
+                                <div><label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('admin.dashboard.modals.user.coins')}</label><input type="number" value={editingUser.ppTokens} onChange={e => setEditingUser({ ...editingUser, ppTokens: parseInt(e.target.value) })} className="w-full p-2 border-2 border-gray-200 rounded-xl font-bold" /></div>
                                 <div><label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t('admin.dashboard.modals.user.level')}</label><input type="number" value={editingUser.level} onChange={e => setEditingUser({ ...editingUser, level: parseInt(e.target.value) })} className="w-full p-2 border-2 border-gray-200 rounded-xl font-bold" /></div>
                             </div>
                             <div>
@@ -1794,9 +1916,22 @@ Content here..." />
                 </div>
             )}
 
+            {/* Arcade Game Preview Modal */}
+            {previewArcadeGame && (
+                <div className="fixed inset-0 z-[300] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+                    <div className="w-full max-w-4xl h-[85vh] bg-slate-900 rounded-3xl overflow-hidden relative shadow-2xl border-4 border-slate-700">
+                        <React.Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white font-bold">Loading Game...</div>}>
+                            <UnifiedGameShell game={previewArcadeGame} onExit={() => setPreviewArcadeGame(null)} />
+                        </React.Suspense>
+                    </div>
+                </div>
+            )}
+
             {/* Game Preview */}
             {isPreviewingGame && editingId && (
-                <GameEngine gameId={editingId} onExit={() => setIsPreviewingGame(false)} previewConfig={JSON.parse(editJson)} />
+                <React.Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 text-white font-bold">Loading Engine...</div>}>
+                    <GameEngine gameId={editingId} onExit={() => setIsPreviewingGame(false)} previewConfig={JSON.parse(editJson)} />
+                </React.Suspense>
             )}
 
             {/* --- GRADING MODAL --- */}
@@ -1820,9 +1955,70 @@ Content here..." />
             {/* --- HQ & STORE TAB --- */}
             {activeTab === 'HQ' && <HQPanel />}
 
-            {/* --- FEATURE FLAGS TAB --- */}
+            {/* Feature Flags Panel */}
             {activeTab === 'FLAGS' && <FeatureFlagsPanel />}
 
+            {/* Database Setup Modal */}
+            <AnimatePresence>
+                {showSetupModal && (
+                    <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-md">
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="bg-white rounded-[40px] p-10 max-w-2xl w-full shadow-2xl border-8 border-red-500/10 text-center relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-orange-500 to-red-500" />
+                            
+                            <div className="w-24 h-24 bg-red-100 rounded-[32px] flex items-center justify-center mx-auto mb-8 transform rotate-3">
+                                <Database size={48} className="text-red-600 animate-pulse" />
+                            </div>
+
+                            <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">
+                                {t('admin.dashboard.setup.title')}
+                            </h2>
+                            
+                            <p className="text-xl text-gray-600 font-medium mb-10 leading-relaxed max-w-lg mx-auto">
+                                {t('admin.dashboard.setup.desc')}
+                                {syncError && (
+                                    <span className="block mt-4 p-3 bg-red-50 text-red-600 text-sm font-mono rounded-xl border border-red-100">
+                                        Error: {syncError}
+                                    </span>
+                                )}
+                            </p>
+
+                            <div className="bg-gray-50 rounded-3xl p-6 mb-10 text-left border-2 border-gray-100">
+                                <h4 className="font-black text-gray-400 uppercase text-xs mb-3 tracking-widest flex items-center gap-2">
+                                    <FileText size={14} /> Schema Required
+                                </h4>
+                                <code className="block bg-gray-900 text-green-400 p-4 rounded-xl text-sm font-mono break-all border-2 border-white/10 shadow-inner">
+                                    supabase/MASTER_SCHEMA.sql
+                                </code>
+                                <p className="text-xs text-gray-400 mt-3 font-bold italic">
+                                    * Copy contents and paste into Supabase SQL Editor
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <button
+                                    onClick={() => refreshFromBackend()}
+                                    disabled={isSyncing}
+                                    className="flex-1 bg-gray-900 text-white font-black py-5 rounded-[2rem] text-lg hover:bg-black transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+                                >
+                                    {isSyncing ? <Loader2 className="animate-spin" /> : <RefreshCcw />}
+                                    {t('admin.dashboard.actions.sync_repo')}
+                                </button>
+                                <button
+                                    onClick={() => setShowSetupModal(false)}
+                                    className="px-8 bg-gray-100 text-gray-600 font-black py-5 rounded-[2rem] text-lg hover:bg-gray-200 transition-all active:scale-95"
+                                >
+                                    {t('admin.dashboard.actions.reset')}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
@@ -1830,18 +2026,21 @@ Content here..." />
 const TabButton = ({ active, onClick, icon, label }: any) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${active ? 'bg-white text-gray-900 shadow-sm border-2 border-transparent' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-2 border-transparent'}`}
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black transition-all btn-juicy ${active ? 'bg-kid-primary text-yellow-900 shadow-[0_4px_0_0_rgba(202,138,4,1)] border-2 border-white' : 'bg-white/10 text-white/60 hover:bg-white/20 border-2 border-transparent'}`}
     >
         {icon} {label}
     </button>
 );
 
 const StatCard = ({ label, value, icon, color }: any) => (
-    <div className={`p-4 rounded-2xl flex flex-col items-center justify-center text-center ${color}`}>
-        <div className="mb-2 opacity-80">{icon}</div>
-        <div className="text-2xl font-black">{value}</div>
-        <div className="text-xs font-bold uppercase tracking-widest opacity-60">{label}</div>
-    </div>
+    <motion.div 
+        whileHover={{ scale: 1.05 }}
+        className={`p-6 rounded-[2rem] flex flex-col items-center justify-center text-center shadow-xl border-4 border-white/20 transition-all ${color}`}
+    >
+        <div className="mb-3 p-3 bg-white/20 rounded-2xl scale-110">{icon}</div>
+        <div className="text-3xl font-black tracking-tight">{value}</div>
+        <div className="text-[10px] font-black uppercase tracking-widest opacity-80 mt-1">{label}</div>
+    </motion.div>
 );
 
 const CMSInput = ({ label, value, onChange, type = 'text', icon }: { label: string, value: any, onChange: (val: string) => void, type?: 'text' | 'textarea', icon?: any }) => {
@@ -1929,7 +2128,7 @@ const EconomyPanel: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {([
-                        { label: 'Coin Multiplier', key: 'coinMultiplier', min: 0.5, max: 3, step: 0.1, emoji: '🪙' },
+                        { label: 'Coin Multiplier', key: 'coinMultiplier', min: 0.5, max: 3, step: 0.1, emoji: '💰' },
                         { label: 'XP Multiplier', key: 'xpMultiplier', min: 0.5, max: 3, step: 0.1, emoji: '⭐' },
                         { label: 'Max Idle Hours', key: 'maxIdleHours', min: 1, max: 48, step: 1, emoji: '⏰' },
                         { label: 'Energy Regen (min)', key: 'energyRegenMinutes', min: 5, max: 240, step: 5, emoji: '⚡' },
@@ -1987,8 +2186,8 @@ const EconomyPanel: React.FC = () => {
 // 🏆 LEADERBOARD & BADGES PANEL
 // ────────────────────────────────────────────────────────────────────────────
 const LeaderboardPanel: React.FC = () => {
-    const { users, badgeDefinitions, adminAwardBadge, adminGrantCoins } = useAppStore();
-    const [sort, setSort] = React.useState<'xp' | 'bizCoins' | 'level'>('xp');
+    const { users, badgeDefinitions, adminAwardBadge, adminGrantTokens } = useAppStore();
+    const [sort, setSort] = React.useState<'xp' | 'ppTokens' | 'level'>('xp');
     const [awardUserId, setAwardUserId] = React.useState('');
     const [awardBadgeId, setAwardBadgeId] = React.useState('');
     const [grantUserId, setGrantUserId] = React.useState('');
@@ -2000,9 +2199,9 @@ const LeaderboardPanel: React.FC = () => {
                 <div className="p-4 bg-gray-50 border-b flex items-center justify-between flex-wrap gap-2">
                     <h3 className="font-black text-gray-800 flex items-center gap-2"><Trophy className="text-yellow-500" /> Global Leaderboard (Top 50)</h3>
                     <div className="flex gap-2">
-                        {(['xp', 'bizCoins', 'level'] as const).map(s => (
+                        {(['xp', 'ppTokens', 'level'] as const).map(s => (
                             <button key={s} onClick={() => setSort(s)} className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${sort === s ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-200 text-gray-600'}`}>
-                                {s === 'bizCoins' ? '🪙 Coins' : s === 'xp' ? '⭐ XP' : '📈 Level'}
+                                {s === 'ppTokens' ? <span className="flex items-center gap-1"><CoinIcon size={12} /> Coins</span> : s === 'xp' ? '⭐ XP' : '📈 Level'}
                             </button>
                         ))}
                     </div>
@@ -2019,7 +2218,7 @@ const LeaderboardPanel: React.FC = () => {
                                     <td className="p-3 font-bold text-gray-800">{u.name || u.username}</td>
                                     <td className="p-3"><span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-bold">{u.role}</span></td>
                                     <td className="p-3 text-end text-yellow-600 font-bold">{(u.xp || 0).toLocaleString()}</td>
-                                    <td className="p-3 text-end text-green-600 font-bold">{(u.bizCoins || 0).toLocaleString()}</td>
+                                    <td className="p-3 text-end text-green-600 font-bold">{(u.ppTokens || 0).toLocaleString()}</td>
                                     <td className="p-3 text-end font-bold">{u.level || 1}</td>
                                     <td className="p-3 text-end text-purple-600 font-bold">{(u.badges || []).length}</td>
                                 </tr>
@@ -2051,7 +2250,7 @@ const LeaderboardPanel: React.FC = () => {
                             {users.map(u => <option key={u.id} value={u.id}>{u.name || u.username}</option>)}
                         </select>
                         <input type="number" value={grantAmount} onChange={e => setGrantAmount(parseInt(e.target.value) || 0)} placeholder="Amount (negative = deduct)" className="w-full p-3 border border-gray-200 rounded-xl text-sm font-bold" />
-                        <button onClick={() => { if (grantUserId) { adminGrantCoins(grantUserId, grantAmount); setGrantUserId(''); setGrantAmount(0); } }} disabled={!grantUserId || grantAmount === 0} className="w-full py-3 bg-yellow-400 text-yellow-900 rounded-xl font-bold disabled:opacity-50 hover:bg-yellow-500">
+                        <button onClick={() => { if (grantUserId) { adminGrantTokens(grantUserId, grantAmount); setGrantUserId(''); setGrantAmount(0); } }} disabled={!grantUserId || grantAmount === 0} className="w-full py-3 bg-yellow-400 text-yellow-900 rounded-xl font-bold disabled:opacity-50 hover:bg-yellow-500">
                             {grantAmount >= 0 ? `Grant ${grantAmount} Coins` : `Deduct ${Math.abs(grantAmount)} Coins`}
                         </button>
                     </div>
@@ -2184,7 +2383,7 @@ const HQPanel: React.FC = () => {
                                     <tr key={item.id} className={`hover:bg-gray-50 ${ov ? 'bg-yellow-50' : ''}`}>
                                         <td className="p-3"><span className="me-2">{item.icon}</span><span className="font-bold text-gray-800">{item.name}</span></td>
                                         <td className="p-3 text-gray-400 capitalize">{item.type}</td>
-                                        <td className="p-3 text-end font-mono text-gray-500">{item.cost} 🪙</td>
+                                        <td className="p-3 text-end font-mono text-gray-500">{item.cost} <CoinIcon size={12} className="ms-1" /></td>
                                         <td className="p-3 text-end">
                                             <input type="number" min={0} value={ov?.cost ?? item.cost}
                                                 onChange={e => setFurnitureOverride(item.id, parseInt(e.target.value) || 0)}
@@ -2230,38 +2429,48 @@ const FeatureFlagsPanel: React.FC = () => {
     ];
     const enabledCount = FLAGS.filter(f => featureFlags[f.key]).length;
     return (
-        <div className="space-y-4">
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm">
-                <div className="flex justify-between items-center mb-6">
+        <div className="space-y-6">
+            <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-8 border-4 border-blue-50 dark:border-gray-700 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 pointer-events-none"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-10">
                     <div>
-                        <h3 className="text-lg font-black text-gray-800 flex items-center gap-2"><Flag className="text-blue-500" /> Feature Flags</h3>
-                        <p className="text-sm text-gray-500">{enabledCount}/{FLAGS.length} features enabled</p>
+                        <h3 className="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 rounded-xl"><Flag className="text-blue-600" /></div>
+                            Feature Flags
+                        </h3>
+                        <p className="text-sm font-bold text-gray-400 mt-1">{enabledCount}/{FLAGS.length} modules currently operational</p>
                     </div>
-                    <div className="flex gap-2">
-                        <button onClick={() => FLAGS.forEach(f => setFeatureFlag(f.key, true))} className="px-4 py-2 bg-green-100 text-green-700 rounded-xl font-bold text-sm hover:bg-green-200">Enable All</button>
-                        <button onClick={resetFeatureFlags} className="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 flex items-center gap-1"><RefreshCcw size={14} /> Reset</button>
+                    <div className="flex gap-3">
+                        <button onClick={() => FLAGS.forEach(f => setFeatureFlag(f.key, true))} className="px-6 py-3 bg-green-500 text-white rounded-2xl font-black text-sm hover:bg-green-600 shadow-[0_4px_0_0_rgba(21,128,61,1)] active:scale-95 transition-all">Enable All</button>
+                        <button onClick={resetFeatureFlags} className="px-6 py-3 bg-gray-100 text-gray-600 rounded-2xl font-black text-sm hover:bg-gray-200 flex items-center gap-2 transition-all"><RefreshCcw size={16} /> Reset</button>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
                     {FLAGS.map(({ key, label, emoji, description }) => {
                         const enabled = featureFlags[key];
                         return (
                             <button key={key} onClick={() => setFeatureFlag(key, !enabled)}
-                                className={`p-4 rounded-2xl border-2 text-start transition-all ${enabled ? 'bg-green-50 border-green-200 hover:border-green-400' : 'bg-gray-50 border-gray-200 hover:border-red-300'}`}>
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xl">{emoji}</span>
-                                        <span className="font-bold text-gray-800 text-sm">{label}</span>
+                                className={`p-5 rounded-3xl border-4 text-start transition-all group relative overflow-hidden ${enabled ? 'bg-green-50 border-green-200 hover:border-green-400' : 'bg-gray-50 border-gray-100 hover:border-red-200'}`}>
+                                {enabled && <div className="absolute top-0 right-0 w-12 h-12 bg-green-200 rounded-bl-3xl opacity-20"></div>}
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl group-hover:scale-125 transition-transform">{emoji}</span>
+                                        <span className="font-black text-gray-800 dark:text-gray-200">{label}</span>
                                     </div>
-                                    {enabled ? <ToggleRight size={22} className="text-green-500 flex-shrink-0" /> : <ToggleLeft size={22} className="text-gray-400 flex-shrink-0" />}
+                                    <div className={`transition-transform duration-300 ${enabled ? 'scale-110' : 'scale-90 opacity-40'}`}>
+                                        {enabled ? <ToggleRight size={28} className="text-green-500" /> : <ToggleLeft size={28} className="text-gray-400" />}
+                                    </div>
                                 </div>
-                                <p className="text-xs text-gray-400 ms-7">{description}</p>
+                                <p className="text-xs font-bold text-gray-400 leading-relaxed">{description}</p>
                             </button>
                         );
                     })}
                 </div>
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-sm text-amber-800 font-medium">
-                    ⚠️ Changes take effect immediately for all users. Disabling a feature hides its navigation items and blocks access.
+                <div className="mt-8 p-5 bg-amber-50 border-2 border-amber-100 rounded-2xl text-sm text-amber-800 font-black flex items-center gap-3">
+                    <AlertTriangle className="text-amber-500 flex-shrink-0" />
+                    <span>⚠️ Changes take effect immediately. Disabling core features may disrupt current user sessions.</span>
                 </div>
             </div>
         </div>

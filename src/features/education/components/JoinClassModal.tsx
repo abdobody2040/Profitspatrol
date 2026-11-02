@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useAppStore } from '../../../store';
 import { useEducationStore } from '../../../store/educationStore';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from "framer-motion";
 import { X, School } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,7 +34,7 @@ const JoinClassModal: React.FC<JoinClassModalProps> = ({ onClose }) => {
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-3xl p-8 max-w-sm w-full relative overflow-hidden shadow-2xl"
         >
-             <button onClick={onClose} className="absolute top-4 end-4 text-gray-400 hover:text-gray-600 rtl:end-auto rtl:start-4">
+             <button onClick={onClose} className="absolute top-4 end-4 text-gray-400 hover:text-gray-600">
                 <X size={24} />
              </button>
 

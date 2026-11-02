@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
-import { useAppStore } from '../index';
-import type { EconomyState } from '../economyStore';
+import { useAppStore } from '../useAppStore';
+import type { EconomyState } from '../economyTypes';
 import { SideHustle } from '../../types';
 
 export interface SideHustleSlice {
@@ -381,7 +381,7 @@ export const createSideHustleSlice: StateCreator<EconomyState, [], [], SideHustl
         // ✅ SECURITY FIX: Clamp score to [0.0, 1.0].
         // The score param comes from the minigame result, but callers (browser console,
         // React DevTools, injected components) could pass score=999 to grant
-        // hundreds of thousands of BizCoins, or score=-1 to subtract (corrupt) balance.
+        // hundreds of thousands of P Tokens, or score=-1 to subtract (corrupt) balance.
         const clampedScore = Math.min(1, Math.max(0, score));
         const actualReward = Math.floor(hustle.rewardCoins * clampedScore);
 
@@ -395,13 +395,13 @@ export const createSideHustleSlice: StateCreator<EconomyState, [], [], SideHustl
         useAppStore.setState(state => ({
             user: {
                 ...state.user!,
-                bizCoins: (state.user?.bizCoins || 0) + actualReward,
+                ppTokens: (state.user?.ppTokens || 0) + actualReward,
                 xp: (state.user?.xp || 0) + 10 
             }
         }));
 
         appState.trackMissionProgress('PLAY_GIG', 1);
-        if (actualReward > 0) appState.trackMissionProgress('EARN_COINS', actualReward);
+        if (actualReward > 0) appState.trackMissionProgress('EARN_ppTokens', actualReward);
         appState.trackWeeklyChallengeProgress('GIG_MARATHON', 1);
         if (actualReward > 0) appState.trackWeeklyChallengeProgress('COIN_GRIND', actualReward);
         if (actualReward > 0) appState.trackSeasonalProgress('GIG_RUSH', actualReward);

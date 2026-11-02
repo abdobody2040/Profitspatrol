@@ -1,0 +1,18 @@
+export const corp = {
+  title: 'الشركات الكبرى',
+  subtitle: 'انضم إلى شركة أو أنشئ واحدة مع أصدقائك!',
+  your_corp: 'شركتك',
+  create_cta: 'تأسيس شركة جديدة',
+  create_cta_sub: 'كن الأول — ابدأ شركتك الخاصة!',
+  create_title: 'إنشاء شركة',
+  name_label: 'اسم الشركة',
+  name_placeholder: 'مثلاً: فرقة الأرباح',
+  motto_label: 'الشعار (اختياري)',
+  motto_placeholder: 'مثلاً: اعمل بجد، اربح أكثر!',
+  create_btn: 'إطلاق الشركة',
+  join_btn: 'انضم لهذه الشركة',
+  leave_btn: 'مغادرة الشركة',
+  weekly_mission: 'مهمة الشركة الأسبوعية',
+  search_placeholder: 'البحث عن شركات...',
+  no_corps: 'لا توجد شركات بعد — كن الأول!',
+};

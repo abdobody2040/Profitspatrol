@@ -36,9 +36,6 @@ const result = recoveredBuf.toString('utf8');
 if (result.includes('أ') && result.includes('library_books') && result.includes('debate')) {
   // Check a few key lines
   const lines = result.split('\n');
-  console.log('Success! Lines:', lines.length);
-  console.log('Line 50:', lines[49]);
-  console.log('Line 100:', lines[99]);
   
   // Now we need to also remove the duplicate section
   // The second library_books starts at line 6652 in the ORIGINAL
@@ -51,11 +48,8 @@ if (result.includes('أ') && result.includes('library_books') && result.includes
       if (libCount === 2) { secondLibLine = i; break; }
     }
   }
-  console.log('Second library_books at line:', secondLibLine + 1);
   
   writeFileSync('src/locales/ar.ts', result, 'utf8');
 } else {
-  console.log('Recovery approach failed');
-  console.log('First 200 chars:', result.substring(0, 200));
-  console.log('Has Arabic:', /[\u0600-\u06FF]/.test(result));
+  console.error('Recovery approach failed');
 }

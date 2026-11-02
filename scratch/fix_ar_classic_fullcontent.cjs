@@ -42,18 +42,14 @@ let fixCount = 0;
 for (const { find, replace } of replacements) {
   const match = src.match(find);
   if (!match) {
-    console.log('❌ Pattern not matched:', find.toString().substring(0, 60));
     continue;
   }
   src = src.replace(find, (_, pre, post) => replace(pre, post));
   fixCount++;
-  console.log('✅ Fixed fullContent for book', fixCount);
 }
 
 fs.writeFileSync(AR_PATH, src, 'utf8');
-console.log(`\nTotal fixes: ${fixCount}`);
 
 // Syntax check
 const js = src.replace('export const ar', 'const ar').replace('} as const;', '}');
-try { new Function(js); console.log('✅ ar.ts syntax OK'); }
 catch(e) { console.error('❌ SYNTAX ERROR:', e.message); }

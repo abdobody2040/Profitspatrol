@@ -5,27 +5,27 @@ import { TheTankEngine, JUDGES, Offer, PitchAnalysis } from '@/features/tank/log
 describe('TheTankEngine', () => {
 
     describe('analyzePitch', () => {
-        it('should score finance keywords correctly (English)', () => {
+        it('scores finance keywords in English', () => {
             const transcript = "We make a lot of profit and revenue";
             const analysis = TheTankEngine.analyzePitch(transcript, false);
             expect(analysis.strengths).toContain('mentioned_finance');
             expect(analysis.score).toBeGreaterThanOrEqual(15);
         });
 
-        it('should score finance keywords correctly (Arabic)', () => {
+        it('scores finance keywords in Arabic', () => {
             const transcript = "لدينا ربح عالي ودخل ممتاز";
             const analysis = TheTankEngine.analyzePitch(transcript, true);
             expect(analysis.strengths).toContain('mentioned_finance');
             expect(analysis.score).toBeGreaterThanOrEqual(15);
         });
 
-        it('should identify clear problem/solution', () => {
+        it('identifies clear problem_solution structure', () => {
             const transcript = "The problem is homework is boring. Our solution is this fun app.";
             const analysis = TheTankEngine.analyzePitch(transcript, false);
             expect(analysis.strengths).toContain('clear_problem_solution');
         });
 
-        it('should penalize missing finance', () => {
+        it('penalizes pitch with no financial data', () => {
             const transcript = "I have a cool idea about spaceships.";
             const analysis = TheTankEngine.analyzePitch(transcript, false);
             expect(analysis.weaknesses).toContain('missing_finance');
@@ -33,41 +33,13 @@ describe('TheTankEngine', () => {
     });
 
     describe('generateOffers', () => {
-        it('should reject low scores', () => {
-            const offers = TheTankEngine.generateOffers(10);
-            expect(offers).toHaveLength(0);
-        });
-
-        it('should generate 1 offer for medium scores', () => {
-            const offers = TheTankEngine.generateOffers(30);
-            expect(offers).toHaveLength(1);
-        });
-
-        it('should generate 3 offers for high scores', () => {
-            const offers = TheTankEngine.generateOffers(90);
-            expect(offers).toHaveLength(3);
-        });
-
-        it('should calculate valuation correctly based on judge multiplier', () => {
-            // Mock Math.random to avoid variance
-            const originalRandom = Math.random;
-            Math.random = () => 0.5;
-
-            const offers = TheTankEngine.generateOffers(50);
-            // Base valuation = 50000 + (50 * 1000) = 100,000
-
-            offers.forEach(offer => {
-                const base = 100000;
-                const expectedVal = base * offer.judge.maxValuationMultiplier;
-                // It rounds to nearest 1000
-                const roundedExpected = Math.round(expectedVal / 1000) * 1000;
-
-                // There might be variance if I didn't mock random perfectly for the list shuffle
-                // but for value calc, let's just check it's within range
-                expect(offer.valuation).toBeGreaterThan(10000);
-            });
-
-            Math.random = originalRandom;
+        // cases: score below threshold / medium / high
+        test.each([
+            [10, 0],
+            [30, 1],
+            [90, 3],
+        ])('score %i generates %i offers', (score, expectedCount) => {
+            expect(TheTankEngine.generateOffers(score)).toHaveLength(expectedCount);
         });
     });
 
@@ -80,12 +52,12 @@ describe('TheTankEngine', () => {
             comment: 'Test'
         };
 
-        it('should auto-accept better terms for judge', () => {
-            // User offers same valuation but higher equity (User is generous/stupid)
+        it('auto-accepts when user offers better terms than judge', () => {
+            // User gives higher equity — strictly better for the judge
             const result = TheTankEngine.checkCounterOffer(
                 mockOffer,
-                100000, // Same Val
-                25,     // Higher Equ
+                100000, // same valuation
+                25,     // higher equity (user is generous)
                 100000,
                 20,
                 0
@@ -93,7 +65,7 @@ describe('TheTankEngine', () => {
             expect(result.accepted).toBe(true);
         });
 
-        it('should walk away if patience exceeded', () => {
+        it('walks away when negotiation rounds exceed judge patience', () => {
             const result = TheTankEngine.checkCounterOffer(
                 mockOffer,
                 200000,
@@ -105,11 +77,9 @@ describe('TheTankEngine', () => {
             expect(result.isWalkAway).toBe(true);
         });
 
-        it('should counter back if reasonable but not accepted', () => {
-            // User asks for double valuation (Unreasonable? No, wait)
-            // Logic: isReasonable = (counterVal <= currentVal * 1.2)
-            // Let's try 110k (Reasonable < 120k)
-
+        it('accepts reasonable counter within 20% of current valuation', () => {
+            // isReasonable: counterVal <= currentVal * 1.2 AND counterEquity >= currentEquity * 0.8
+            // 110k <= 120k (true), 20 >= 16 (true) → accepted
             const result = TheTankEngine.checkCounterOffer(
                 mockOffer,
                 110000,
@@ -118,18 +88,11 @@ describe('TheTankEngine', () => {
                 20,
                 0
             );
-            // It's reasonable, so it MIGHT accept?
-            // Wait, logic says: if (isAutoAccept || isReasonable) -> accepted.
-            // My implementation:
-            // const isReasonable = (counterValuation <= currentValuation * 1.2) && (counterEquity >= currentEquity * 0.8);
-            // 110k < 120k (True). 20 >= 16 (True).
-            // So it should accept.
-
             expect(result.accepted).toBe(true);
         });
 
-        it('should provide counter offer if unreasonable', () => {
-            // User asks for 200k (Unreasonable)
+        it('meets in the middle on unreasonable counter', () => {
+            // 200k > 120k → unreasonable → counter = (100k + 200k) / 2 = 150k
             const result = TheTankEngine.checkCounterOffer(
                 mockOffer,
                 200000,
@@ -138,10 +101,7 @@ describe('TheTankEngine', () => {
                 20,
                 0
             );
-
             expect(result.accepted).toBe(false);
-            expect(result.counterOffer).toBeDefined();
-            // Should meet in middle: (100k + 200k) / 2 = 150k
             expect(result.counterOffer?.valuation).toBe(150000);
         });
     });

@@ -1073,6 +1073,142 @@ export const FURNITURE_ITEMS: FurnitureItem[] = [
         icon: '🥏',
         width: 1,
         height: 1
+    },
+    // --- CHARACTER STORY QUEST REWARD TROPHIES & FURNITURE ---
+    {
+        id: 'decor_ollie_clock',
+        name: 'Golden Owl Antique Clock',
+        type: 'decoration',
+        cost: 0,
+        icon: '🕰️',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_ollie_whiteboard',
+        name: 'Grand Strategy Whiteboard',
+        type: 'decoration',
+        cost: 0,
+        icon: '📋',
+        width: 2,
+        height: 1
+    },
+    {
+        id: 'decor_ollie_globe',
+        name: 'Crystal Expansion Globe',
+        type: 'decoration',
+        cost: 0,
+        icon: '🌐',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_reema_neon',
+        name: 'Arctic Neon Brand Sign',
+        type: 'decoration',
+        cost: 0,
+        icon: '⚡',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_reema_mic',
+        name: 'Pro Podcaster Studio Mic',
+        type: 'decoration',
+        cost: 0,
+        icon: '🎙️',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_reema_holo_fox',
+        name: 'Holographic Arctic Fox Mascot',
+        type: 'decoration',
+        cost: 0,
+        icon: '🦊',
+        width: 2,
+        height: 1
+    },
+    {
+        id: 'decor_filo_safe',
+        name: 'Titanium Mini Piggy Safe',
+        type: 'decoration',
+        cost: 0,
+        icon: '🪙',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_filo_drone',
+        name: 'Smart Security Sentry Drone',
+        type: 'decoration',
+        cost: 0,
+        icon: '🛡️',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_filo_scales',
+        name: 'Golden Scales of Business Ethics',
+        type: 'decoration',
+        cost: 0,
+        icon: '⚖️',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_kami_beaker',
+        name: 'Chameleon Alchemy Beaker',
+        type: 'decoration',
+        cost: 0,
+        icon: '🧪',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_kami_3d_printer',
+        name: 'Quantum Mini 3D Fabricator',
+        type: 'decoration',
+        cost: 0,
+        icon: '🖨️',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_kami_rainbow_trophy',
+        name: 'Prismatic Chameleon Innovation Trophy',
+        type: 'decoration',
+        cost: 0,
+        icon: '🏆',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_rex_gloves',
+        name: 'Framed Rivalry Boxing Gloves',
+        type: 'decoration',
+        cost: 0,
+        icon: '🥊',
+        width: 1,
+        height: 1
+    },
+    {
+        id: 'decor_rex_arcade',
+        name: 'Retro Rivalry Arcade Cabinet',
+        type: 'decoration',
+        cost: 0,
+        icon: '🕹️',
+        width: 2,
+        height: 1
+    },
+    {
+        id: 'decor_rex_statue',
+        name: 'Golden Rex Champion Statue',
+        type: 'decoration',
+        cost: 0,
+        icon: '🦖',
+        width: 1,
+        height: 1
     }
 ]
 

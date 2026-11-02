@@ -13,5 +13,4 @@ fs.writeFileSync('src/locales/ar.ts', src, 'utf8');
 
 // Verify syntax
 const js = src.replace('export const ar', 'const ar').replace('} as const;', '}');
-try { new Function(js); console.log('SYNTAX OK'); }
 catch(e) { console.error('SYNTAX ERROR:', e.message); }

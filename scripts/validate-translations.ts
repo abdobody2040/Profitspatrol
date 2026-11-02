@@ -48,34 +48,46 @@ libraryBooks.forEach((book: any) => {
         return;
     }
 
-    // Check fields
-    if (!bookTranslation.title) {
+    // Check fields (supports base, _child, or _teen)
+    const hasTitle = bookTranslation.title || bookTranslation.title_child || bookTranslation.title_teen;
+    if (!hasTitle) {
         console.error(`⚠️  Missing TITLE for: "${book.title}"`);
         errorCount++;
     }
     
     // Check if it's an exclusive book (using fullContent) or a classic book (using summary)
     if (ar.translation.exclusive_books && (ar.translation.exclusive_books as any)[key]) {
-        if (!bookTranslation.fullContent) {
+        const hasFullContent = bookTranslation.fullContent || bookTranslation.fullContent_child || bookTranslation.fullContent_teen;
+        if (!hasFullContent) {
             console.error(`⚠️  Missing FULL_CONTENT for: "${book.title}"`);
             errorCount++;
         }
-        if (!bookTranslation.keyLessons || bookTranslation.keyLessons.length === 0) {
+        const hasKeyLessons = (bookTranslation.keyLessons && bookTranslation.keyLessons.length > 0) ||
+                              (bookTranslation.keyLessons_child && bookTranslation.keyLessons_child.length > 0) ||
+                              (bookTranslation.keyLessons_teen && bookTranslation.keyLessons_teen.length > 0) ||
+                              bookTranslation.lesson_0 || bookTranslation.lesson_0_child || bookTranslation.lesson_0_teen;
+        if (!hasKeyLessons) {
             console.error(`⚠️  Missing KEY_LESSONS for: "${book.title}"`);
             errorCount++;
         }
     } else {
-        if (!bookTranslation.summary) {
+        const hasSummary = bookTranslation.summary || bookTranslation.summary_child || bookTranslation.summary_teen;
+        if (!hasSummary) {
             console.error(`⚠️  Missing SUMMARY for: "${book.title}"`);
             errorCount++;
         }
         // Check lessons for classic books
-        book.keyLessons.forEach((_: any, index: number) => {
-            if (!bookTranslation[`lesson_${index}`]) {
-                console.error(`⚠️  Missing Lesson ${index + 1} for: "${book.title}"`);
-                errorCount++;
-            }
-        });
+        if (book.keyLessons && Array.isArray(book.keyLessons)) {
+            book.keyLessons.forEach((_: any, index: number) => {
+                const hasLesson = bookTranslation[`lesson_${index}`] || 
+                                  bookTranslation[`lesson_${index}_child`] || 
+                                  bookTranslation[`lesson_${index}_teen`];
+                if (!hasLesson) {
+                    console.error(`⚠️  Missing Lesson ${index + 1} for: "${book.title}"`);
+                    errorCount++;
+                }
+            });
+        }
     }
 });
 

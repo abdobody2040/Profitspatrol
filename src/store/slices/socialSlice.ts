@@ -1,7 +1,5 @@
-
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
-import type { SocialState } from '../socialStore';
+import type { SocialState } from '../socialTypes';
 import { SocialService } from '../../services/SocialService';
 import { Friend, Profile } from '../../types';
 import { Logger } from '../../services/logger';
@@ -78,7 +76,7 @@ export const createSocialSlice: StateCreator<SocialState, [], [], SocialSlice> =
         } catch (error) {
             Logger.error('sendFriendRequest error', error);
             set(s => ({ loadingStates: { ...s.loadingStates, sending: false } }));
-            return false;
+            throw error;
         }
     },
 

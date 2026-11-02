@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader2, CheckCircle } from 'lucide-react';
 import { useAppStore } from '../../../store';
@@ -8,24 +8,32 @@ const CheckoutSuccess = () => {
     const navigate = useNavigate();
     const sessionId = searchParams.get('session_id');
     const plan = searchParams.get('plan') || 'tycoon';
-    const { refreshUser } = useAppStore();
+    const { refreshUser, user, updateUser } = useAppStore();
     const [verifying, setVerifying] = useState(true);
 
     useEffect(() => {
         if (sessionId) {
+            // Apply plan upgrade directly for local test or instant UI sync
+            if (user && plan) {
+                updateUser(user.id, {
+                    subscriptionTier: plan as any,
+                    subscriptionStatus: 'PREMIUM'
+                });
+            }
+
             // Give webhook a tiny bit of time to complete
             setTimeout(() => {
-                refreshUser().then(() => {
+                refreshUser().finally(() => {
                     setVerifying(false);
                     setTimeout(() => {
                         navigate(`/dashboard?payment_success=true&plan=${plan}`, { replace: true });
-                    }, 1500);
+                    }, 1200);
                 });
-            }, 2000);
+            }, 1500);
         } else {
             navigate('/dashboard', { replace: true });
         }
-    }, [sessionId, navigate, refreshUser]);
+    }, [sessionId, navigate, refreshUser, user, plan, updateUser]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">

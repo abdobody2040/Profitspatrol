@@ -12,11 +12,18 @@
 
 import { Logger } from '../services/logger';
 import { supabase } from './supabase';
+import { api } from './api';
 import { loadStripe } from '@stripe/stripe-js';
 import type { SubscriptionTier } from '../types';
 
-// Initialize Stripe (client-side publishable key is safe to expose)
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+// Initialize Stripe lazily (client-side publishable key is safe to expose)
+let stripePromise: Promise<any> | null = null;
+export const getStripe = () => {
+    if (!stripePromise && typeof window !== 'undefined' && import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+        stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+    }
+    return stripePromise;
+};
 
 export interface CheckoutResponse {
     success: boolean;
@@ -24,7 +31,7 @@ export interface CheckoutResponse {
 }
 
 /**
- * Create a secure checkout session via server-side Edge Function
+ * Create a secure checkout session via server-side API (Laravel / Supabase)
  * 
  * ✅ SECURE: Pricing is determined server-side, not client-side
  * ✅ SECURE: Client only sends planId, server looks up price
@@ -39,60 +46,58 @@ export const createCheckoutSession = async (
     try {
         Logger.info("Stripe: Creating checkout session", { planId, userId });
 
-        // Get Supabase client
-        if (!supabase) {
-            Logger.error("Stripe: Supabase client not initialized");
-            return {
-                success: false,
-                error: 'Database connection not available',
-            };
+        // 1. Try Laravel Backend (active backend)
+        if (api.getToken()) {
+            try {
+                const res: any = await api.post('/stripe/checkout-session', { planId });
+                if (res?.url) {
+                    Logger.info("Stripe: Redirecting to checkout via Laravel API", { url: res.url });
+                    window.location.href = res.url;
+                    return { success: true };
+                }
+                if (res?.error) {
+                    return { success: false, error: res.error };
+                }
+            } catch (laravelErr) {
+                Logger.warn("Stripe: Laravel checkout session failed, trying Supabase fallback", { error: String(laravelErr) });
+            }
         }
 
-        // Check Auth Session
-        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-        if (authError || !authUser) {
-            Logger.error("Stripe: User not authenticated in Supabase", authError);
-            return {
-                success: false,
-                error: 'User not authenticated. Please log in again.',
-            };
+        // 2. Fallback to Supabase if available
+        if (supabase) {
+            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+            if (!authError && authUser) {
+                const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+                    body: { planId, userId },
+                });
+
+                if (error) {
+                    Logger.error("Stripe: Checkout session creation failed", error);
+                    return {
+                        success: false,
+                        error: error.message || 'Failed to create checkout session',
+                    };
+                }
+
+                if (data?.url) {
+                    Logger.info("Stripe: Redirecting to checkout via Supabase", { url: data.url });
+                    window.location.href = data.url;
+                    return { success: true };
+                }
+            }
         }
 
-        if (authUser.id !== userId) {
-            Logger.error("Stripe: User ID mismatch", { storeUserId: userId, authUserId: authUser.id });
-            return {
-                success: false,
-                error: 'Session mismatch. Please refresh the page.',
-            };
+        // 3. Local Development Mode Fallback: allow instant local testing without live Stripe keys
+        if (import.meta.env.DEV) {
+            Logger.info("Stripe: Dev mode fallback - simulating successful checkout", { planId });
+            window.location.href = `/success?session_id=mock_cs_${Date.now()}&plan=${planId}`;
+            return { success: true };
         }
 
-        // Call Supabase Edge Function (server-side pricing authority)
-        const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-            body: { planId, userId },
-        });
-
-        if (error) {
-            Logger.error("Stripe: Checkout session creation failed", error);
-            return {
-                success: false,
-                error: error.message || 'Failed to create checkout session',
-            };
-        }
-
-        if (!data?.url) {
-            Logger.error("Stripe: No checkout URL returned");
-            return {
-                success: false,
-                error: 'No checkout URL returned from server',
-            };
-        }
-
-        // ✅ CRITICAL FIX: Use modern redirect approach (not deprecated redirectToCheckout)
-        // Stripe now recommends using the session URL directly
-        Logger.info("Stripe: Redirecting to checkout", { url: data.url });
-        window.location.href = data.url;
-
-        return { success: true };
+        return {
+            success: false,
+            error: 'Authentication required. Please log in before subscribing.',
+        };
 
     } catch (error) {
         Logger.error("Stripe: Unexpected error", error);
@@ -105,42 +110,44 @@ export const createCheckoutSession = async (
 
 /**
  * Open Stripe Customer Portal for subscription management.
- *
- * ✅ SECURITY FIX: No longer returns a raw Stripe dashboard URL.
- * Calls a Supabase Edge Function that creates a per-user Billing Portal session
- * and returns a session-scoped URL — not the global Stripe dashboard.
- *
- * TODO: Implement the `create-billing-portal-session` Edge Function:
- *   - Input: { userId }
- *   - Output: { url: string } (Stripe Billing Portal URL for that customer)
- *   - Requires: STRIPE_SECRET_KEY + stripe.billingPortal.sessions.create()
  */
 export const manageSubscription = async (): Promise<{ success: boolean; url?: string; error?: string }> => {
     Logger.info('Stripe: Requesting customer portal session');
 
-    if (!supabase) {
-        return { success: false, error: 'Database connection not available' };
-    }
-
-    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-    if (authError || !authUser) {
-        return { success: false, error: 'Please log in to manage your subscription' };
-    }
-
-    try {
-        const { data, error } = await supabase.functions.invoke('create-billing-portal-session', {
-            body: { userId: authUser.id },
-        });
-
-        if (error || !data?.url) {
-            Logger.error('Stripe: Customer portal session creation failed', error);
-            return { success: false, error: 'Unable to open subscription management. Please try again.' };
+    // 1. Try Laravel Backend
+    if (api.getToken()) {
+        try {
+            const res: any = await api.post('/stripe/portal-session', {});
+            if (res?.url) {
+                window.location.href = res.url;
+                return { success: true, url: res.url };
+            }
+            if (res?.error) {
+                return { success: false, error: res.error };
+            }
+        } catch (laravelErr) {
+            Logger.warn("Stripe: Laravel portal session failed, checking Supabase fallback", { error: String(laravelErr) });
         }
-
-        window.location.href = data.url;
-        return { success: true, url: data.url };
-    } catch (err) {
-        Logger.error('Stripe: Unexpected error opening customer portal', err);
-        return { success: false, error: 'Unexpected error. Please contact support.' };
     }
+
+    // 2. Fallback to Supabase
+    if (supabase) {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        if (authUser && !authError) {
+            try {
+                const { data, error } = await supabase.functions.invoke('create-billing-portal-session', {
+                    body: { userId: authUser.id },
+                });
+
+                if (data?.url && !error) {
+                    window.location.href = data.url;
+                    return { success: true, url: data.url };
+                }
+            } catch (err) {
+                Logger.error('Stripe: Supabase portal session error', err);
+            }
+        }
+    }
+
+    return { success: false, error: 'Please log in to manage your subscription' };
 };

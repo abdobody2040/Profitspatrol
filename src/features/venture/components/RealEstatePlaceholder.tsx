@@ -1,4 +1,3 @@
-import React from 'react';
 import { Building2, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

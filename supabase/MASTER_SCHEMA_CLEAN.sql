@@ -28,7 +28,7 @@ CREATE TABLE public.profiles (
     -- Progression
     xp INTEGER DEFAULT 0,
     level INTEGER DEFAULT 1,
-    biz_coins INTEGER DEFAULT 100,
+    pp_tokens INTEGER DEFAULT 100,
     streak INTEGER DEFAULT 1,
     last_activity_date DATE DEFAULT CURRENT_DATE,
     

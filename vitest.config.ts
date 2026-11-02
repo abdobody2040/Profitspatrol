@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
@@ -8,8 +9,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/tests/setup.ts', './tests/setup.ts'],
+    setupFiles: ['./tests/mock-storage.ts', './src/tests/setup.ts', './tests/setup.ts'],
     css: true,
+    testTimeout: 15000,
+    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**', '**/temp_games_inspect/**'],
     // ✅ Mock optional peer deps that aren't installed in the test environment
     server: {
       deps: {
@@ -35,6 +38,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       // Stub @sentry/react so dynamic import in sentry.ts never throws
       '@sentry/react': path.resolve(__dirname, './tests/__mocks__/@sentry/react.ts'),
+      'virtual:pwa-register/react': path.resolve(__dirname, './tests/__mocks__/virtual-pwa-register-react.ts'),
     },
   },
   resolve: {

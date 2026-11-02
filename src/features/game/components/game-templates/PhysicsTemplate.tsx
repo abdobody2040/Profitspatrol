@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from "framer-motion";
 import { Scale } from 'lucide-react';
 import { BusinessSimulation } from '../../../../types';
 

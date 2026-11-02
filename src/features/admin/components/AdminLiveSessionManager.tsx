@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useAppStore } from '../../../store';
+import { useState } from "react";
+import { useAppStore } from '../../../store/useAppStore';
 import { LiveSession, UserRole } from '../../../types';
 import { Calendar, Clock, Video, Plus, Trash2, Edit, Save, Users, Link } from 'lucide-react';
 import { useEducationStore } from '../../../store/educationStore';
@@ -153,7 +153,7 @@ const AdminLiveSessionManager = () => {
                             <div className="flex gap-2">
                                 <select
                                     className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                    value={formData.targetAudience} // @ts-ignore
+                                    value={formData.targetAudience}
                                     onChange={e => setFormData({ ...formData, targetAudience: e.target.value as any })}
                                 >
                                     <option value="ALL">All Students</option>

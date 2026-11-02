@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../../store';
 import confetti from 'canvas-confetti';
+import CoinIcon from '../../../components/ui/CoinIcon';
 
 // ─── Theme per challenge type ─────────────────────────────────────────────────
 const THEME_MAP = {
@@ -41,7 +42,7 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
     const { challenge, myEntry } = weeklyChallenge;
     const theme = THEME_MAP[challenge.type as keyof typeof THEME_MAP] ?? THEME_MAP.CEO_CHALLENGE;
     const progress = myEntry?.progress ?? 0;
-    const target = challenge.targetCount;
+    const target = Math.max(1, challenge.targetCount || 1);
     const pct = Math.min(100, Math.round((progress / target) * 100));
     const isComplete = myEntry?.completed ?? false;
     const hasClaimed = myEntry?.claimedReward ?? claimed;
@@ -65,9 +66,9 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-black text-gray-800 dark:text-white flex items-center gap-2">
-                        👑 Weekly CEO Challenge
+                        👑 {t('weeklyChallenge.title', { defaultValue: 'Weekly CEO Challenge' })}
                     </h2>
-                    <p className="text-xs text-gray-400 mt-0.5">Resets in {daysLeft} day{daysLeft !== 1 ? 's' : ''}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{t('weeklyChallenge.resets_in_days', { count: daysLeft, defaultValue: 'Resets in {{count}} days' })}</p>
                 </div>
                 {onClose && (
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">✕</button>
@@ -83,7 +84,7 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
                 <div className="relative">
                     {/* Week badge */}
                     <div className="inline-flex items-center gap-1.5 bg-white/20 rounded-full px-3 py-1 text-xs font-black mb-3">
-                        📅 Week of {weeklyChallenge.weekStart}
+                        📅 {t('weeklyChallenge.week_of', { date: weeklyChallenge.weekStart, defaultValue: 'Week of {{date}}' })}
                     </div>
 
                     {/* Icon + title */}
@@ -92,16 +93,16 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
                             {theme.icon}
                         </div>
                         <div>
-                            <p className="font-black text-xl leading-tight">{challenge.title}</p>
-                            <p className="text-sm opacity-80 leading-snug mt-0.5">{challenge.description}</p>
+                            <p className="font-black text-xl leading-tight">{t(`weeklyChallenge.challenges.${challenge.id}.name`, { defaultValue: challenge.title })}</p>
+                            <p className="text-sm opacity-80 leading-snug mt-0.5">{t(`weeklyChallenge.challenges.${challenge.id}.desc`, { defaultValue: challenge.description })}</p>
                         </div>
                     </div>
 
                     {/* Progress bar */}
                     <div className="mb-2">
                         <div className="flex justify-between text-xs font-bold opacity-80 mb-1">
-                            <span>Progress</span>
-                            <span>{progress.toLocaleString()} / {target.toLocaleString()}</span>
+                            <span>{t('weeklyChallenge.progress', { defaultValue: 'Progress' })}</span>
+                            <span dir="ltr">{(progress ?? 0).toLocaleString()} / {(target ?? 0).toLocaleString()}</span>
                         </div>
                         <div className="h-3 bg-white/20 rounded-full overflow-hidden">
                             <motion.div
@@ -111,28 +112,28 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
                                 transition={{ duration: 1, ease: 'easeOut' }}
                             />
                         </div>
-                        <p className="text-end text-xs opacity-70 mt-1">{pct}% complete</p>
+                        <p className="text-end text-xs opacity-70 mt-1">{pct}% {t('weeklyChallenge.completePct', { defaultValue: 'complete' })}</p>
                     </div>
                 </div>
             </div>
 
             {/* Rewards row */}
             <div className={`${theme.lightBg} rounded-2xl p-4`}>
-                <p className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">🎁 Completion Rewards</p>
+                <p className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">🎁 {t('weeklyChallenge.completion_rewards', { defaultValue: 'Completion Rewards' })}</p>
                 <div className="flex items-center gap-4">
                     <div className="text-center flex-1">
-                        <p className="font-black text-lg text-indigo-600 dark:text-indigo-400">⚡{challenge.xpReward.toLocaleString()}</p>
-                        <p className="text-xs text-gray-400">XP</p>
+                        <p className="font-black text-lg text-indigo-600 dark:text-indigo-400">⚡{(challenge.xpReward ?? 0).toLocaleString()}</p>
+                        <p className="text-xs text-gray-400">{t('stats.xp', { defaultValue: 'XP' })}</p>
                     </div>
                     <div className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
-                    <div className="text-center flex-1">
-                        <p className="font-black text-lg text-amber-600 dark:text-amber-400">🪙{challenge.coinReward.toLocaleString()}</p>
-                        <p className="text-xs text-gray-400">BizCoins</p>
+                    <div className="text-center flex-1 flex flex-col items-center">
+                        <p className="font-black text-lg text-amber-600 dark:text-amber-400 flex items-center gap-1 justify-center"><CoinIcon size={16} />{(challenge.coinReward ?? 0).toLocaleString()}</p>
+                        <p className="text-xs text-gray-400">{t('stats.ppTokens', { defaultValue: 'ppTokens' })}</p>
                     </div>
                     <div className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
                     <div className="text-center flex-1">
                         <p className="font-black text-lg">🏅</p>
-                        <p className="text-xs text-gray-400">Badge</p>
+                        <p className="text-xs text-gray-400">{t('weeklyChallenge.badge', { defaultValue: 'Badge' })}</p>
                     </div>
                 </div>
             </div>
@@ -147,8 +148,8 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
                         className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-2xl p-4 text-center"
                     >
                         <p className="text-2xl mb-1">🎉</p>
-                        <p className="font-black text-green-700 dark:text-green-400">Rewards Claimed!</p>
-                        <p className="text-sm text-green-600 dark:text-green-400">+{challenge.xpReward} XP &amp; 🪙{challenge.coinReward} BizCoins added</p>
+                        <p className="font-black text-green-700 dark:text-green-400">{t('weeklyChallenge.rewards_claimed', { defaultValue: 'Rewards Claimed!' })}</p>
+                        <p className="text-sm text-green-600 dark:text-green-400">{t('weeklyChallenge.rewards_added', { xp: challenge.xpReward, coins: challenge.coinReward, defaultValue: '+{{xp}} XP & 💰{{coins}} ppTokens added' })}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -156,7 +157,7 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
             {/* CTA button */}
             {hasClaimed ? (
                 <div className="w-full py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-400 font-black text-sm text-center flex items-center justify-center gap-2">
-                    ✅ Reward Claimed — See you next week!
+                    ✅ {t('weeklyChallenge.reward_claimed_msg', { defaultValue: 'Reward Claimed — See you next week!' })}
                 </div>
             ) : isComplete ? (
                 <motion.button
@@ -164,29 +165,29 @@ export const CEOChallengeWidget: React.FC<CEOChallengeWidgetProps> = ({ onClose 
                     onClick={handleClaim}
                     className={`w-full py-3 rounded-2xl font-black text-white text-sm bg-gradient-to-r ${theme.bg} shadow-lg flex items-center justify-center gap-2 animate-pulse`}
                 >
-                    🎁 Claim Your Rewards!
+                    🎁 {t('weeklyChallenge.claim_your_rewards', { defaultValue: 'Claim Your Rewards!' })}
                 </motion.button>
             ) : (
                 <div className="w-full py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-black text-sm text-center">
-                    Complete the challenge to unlock your reward
+                    {t('weeklyChallenge.complete_to_unlock', { defaultValue: 'Complete the challenge to unlock your reward' })}
                 </div>
             )}
 
             {/* Leaderboard teaser */}
             <div className="border border-gray-100 dark:border-gray-800 rounded-2xl p-4">
-                <p className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">📊 Your Stats This Week</p>
+                <p className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">📊 {t('weeklyChallenge.your_stats', { defaultValue: 'Your Stats This Week' })}</p>
                 <div className="grid grid-cols-3 gap-2 text-center">
                     <div>
                         <p className="font-black text-base text-gray-800 dark:text-white">{user?.level ?? 1}</p>
-                        <p className="text-[10px] text-gray-400">CEO Level</p>
+                        <p className="text-[10px] text-gray-400">{t('stats.level', { defaultValue: 'CEO Level' })}</p>
                     </div>
                     <div>
                         <p className="font-black text-base text-gray-800 dark:text-white">{user?.streak ?? 0}🔥</p>
-                        <p className="text-[10px] text-gray-400">Streak</p>
+                        <p className="text-[10px] text-gray-400">{t('stats.streak', { defaultValue: 'Streak' })}</p>
                     </div>
                     <div>
                         <p className="font-black text-base text-indigo-600 dark:text-indigo-400">{pct}%</p>
-                        <p className="text-[10px] text-gray-400">Done</p>
+                        <p className="text-[10px] text-gray-400">{t('weeklyChallenge.done', { defaultValue: 'Done' })}</p>
                     </div>
                 </div>
             </div>

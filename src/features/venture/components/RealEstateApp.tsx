@@ -4,15 +4,31 @@ import { formatCompactNumber } from '../../../utils/formatters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-    Building2, TrendingUp, TrendingDown, DollarSign, Lock, ArrowUp,
-    Home, Star, Shield, Zap, Trophy, RefreshCw, Paintbrush, BadgeDollarSign,
-    ChevronRight, ChevronLeft, Target, CheckCircle2
-} from 'lucide-react';
+    Building2,
+    TrendingUp,
+    TrendingDown,
+    DollarSign,
+    Lock,
+    ArrowUp,
+    Home,
+    Star,
+    Shield,
+    Zap,
+    Trophy,
+    RefreshCw,
+    Paintbrush,
+    BadgeDollarSign,
+    ChevronRight,
+    Target,
+    CheckCircle2,
+} from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { Property, UserRole } from '../../../types';
 import { calculatePropertyIncome } from '../../../store/slices/realEstateSlice';
 import confetti from 'canvas-confetti';
 import { useEconomyStore } from "../../../store/economyStore";
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import { PROPERTY_IMAGES } from '../data/properties';
 
 // ─── Pure helpers ─────────────────────────────────────────────────────────────
 
@@ -70,12 +86,22 @@ const SellDialog: React.FC<{
             className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl max-w-xs w-full"
             onClick={e => e.stopPropagation()}
         >
-            <div className="text-5xl text-center mb-3" aria-hidden="true">{prop.image}</div>
+            <div className="w-28 h-28 mx-auto rounded-2xl overflow-hidden shadow-md mb-3 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                {(PROPERTY_IMAGES[prop.id] || prop.image?.startsWith('/')) ? (
+                    <img
+                        src={PROPERTY_IMAGES[prop.id] || prop.image}
+                        alt={prop.name}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div className="text-5xl text-center" aria-hidden="true">{prop.image}</div>
+                )}
+            </div>
             <h3 id="sell-dialog-title" className="text-xl font-black text-center text-gray-900 dark:text-white mb-2">
                 Sell Property?
             </h3>
             <p className="text-gray-500 text-sm text-center mb-1">
-                You'll receive <span className="font-bold text-green-600">${refund.toLocaleString()}</span> (60% of cost)
+                You'll receive <span className="font-bold text-green-600">${(refund ?? 0).toLocaleString()}</span> (60% of cost)
             </p>
             <p className="text-gray-400 text-xs text-center mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
@@ -121,6 +147,7 @@ const RealEstateApp: React.FC = () => {
     const [toast, setToast] = useState<string | null>(null);
 
     if (!user) return null;
+    const safeTokens = typeof user.ppTokens === 'number' ? user.ppTokens : (((user as any).coins as number) ?? 0);
 
     const showToast = (msg: string) => {
         setToast(msg);
@@ -252,6 +279,8 @@ const RealEstateApp: React.FC = () => {
         if (!result.success) showToast(result.error);
     };
 
+    const isMobile = useIsMobile();
+
     return (
         <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900 p-4 md:p-6 overflow-hidden">
 
@@ -269,14 +298,6 @@ const RealEstateApp: React.FC = () => {
             </AnimatePresence>
 
             {/* ── Header ── */}
-            <div className="mb-2">
-                <button 
-                    onClick={() => navigate('/dashboard')} 
-                    className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-sm transition-colors w-fit mb-2"
-                >
-                    <ChevronLeft className="w-5 h-5" /> {t('common.back', 'Back to Dashboard')}
-                </button>
-            </div>
             <div className="flex justify-between items-center mb-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -298,10 +319,10 @@ const RealEstateApp: React.FC = () => {
                     )}
                     <div
                         className="bg-yellow-100 dark:bg-yellow-900 px-3 py-2 rounded-xl flex items-center gap-1.5 border border-yellow-200 dark:border-yellow-700"
-                        aria-label={`Balance: ${user.bizCoins.toLocaleString()} BizCoins`}
+                        aria-label={`Balance: ${safeTokens.toLocaleString()} P Tokens`}
                     >
                         <DollarSign className="w-4 h-4 text-yellow-600 dark:text-yellow-400" aria-hidden="true" />
-                        <span className="font-bold text-yellow-800 dark:text-yellow-200">{formatCompactNumber(user.bizCoins)}</span>
+                        <span className="font-bold text-yellow-800 dark:text-yellow-200">{formatCompactNumber(safeTokens)}</span>
                     </div>
                 </div>
             </div>
@@ -357,35 +378,37 @@ const RealEstateApp: React.FC = () => {
                             {ownedProperties.length === 0 ? (
                                 <div className="text-center py-20 text-gray-400">
                                     <Building2 className="w-16 h-16 mx-auto mb-4 opacity-30" aria-hidden="true" />
-                                    <p className="text-xl font-bold">No properties yet</p>
-                                    <p className="text-sm mt-1">Head to the Market to buy your first one!</p>
+                                    <p className="text-xl font-bold">{t('real_estate.no_owned_title', 'No properties yet')}</p>
+                                    <p className="text-sm mt-1">{t('real_estate.no_owned_desc', 'Head to the Market to buy your first one!')}</p>
                                     <button
                                         onClick={() => setActiveTab('MARKET')}
                                         className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-blue-600 flex items-center gap-2 mx-auto"
                                     >
-                                        Browse Market <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                                        {t('real_estate.browse_market', 'Browse Market')} <ChevronRight className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <div className={`${isMobile ? 'snap-carousel no-scrollbar' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'}`}>
                                     {ownedProperties.map(prop => {
                                         // ✅ FIX: O(1) map lookup instead of O(n) find per card
                                         const userProp = userPropMap.get(prop.id);
                                         if (!userProp) return null; // Guard against data inconsistency
 
-                                        const isMaxLevel = userProp.level >= prop.maxLevel;
+                                        const propLevel = userProp.level ?? 1;
+                                        const isMaxLevel = propLevel >= (prop.maxLevel ?? 5);
                                         const renovLevel = userProp.renovationLevel ?? 0;
                                         const maxRenovLevel = Math.max(0, (prop.renovationSkins?.length ?? 1) - 1);
-                                        const income = calculatePropertyIncome(prop, userProp.level, renovLevel);
-                                        const nextIncome = calculatePropertyIncome(prop, userProp.level + 1, renovLevel);
-                                        const upgradeCost = Math.floor(prop.cost * 0.5 * userProp.level);
-                                        const renovCost = Math.floor(prop.cost * 0.2);
-                                        const insuranceCost = Math.floor(prop.cost * 0.15);
-                                        const refundAmount = Math.floor(prop.cost * 0.6);
+                                        const income = calculatePropertyIncome(prop, propLevel, renovLevel);
+                                        const nextIncome = calculatePropertyIncome(prop, propLevel + 1, renovLevel);
+                                        const propCost = prop.cost ?? 0;
+                                        const upgradeCost = Math.floor(propCost * 0.5 * propLevel);
+                                        const renovCost = Math.floor(propCost * 0.2);
+                                        const insuranceCost = Math.floor(propCost * 0.15);
+                                        const refundAmount = Math.floor(propCost * 0.6);
                                         const propImage = getPropImage(prop, renovLevel);
-                                        const canAffordUpgrade = user.bizCoins >= upgradeCost;
-                                        const canAffordRenov = user.bizCoins >= renovCost;
-                                        const canAffordInsurance = user.bizCoins >= insuranceCost;
+                                        const canAffordUpgrade = safeTokens >= upgradeCost;
+                                        const canAffordRenov = safeTokens >= renovCost;
+                                        const canAffordInsurance = safeTokens >= insuranceCost;
 
                                         // ✅ FIX: use memoized todayStr, not new Date() per card
                                         const diffMinutes = (Date.now() - new Date(userProp.lastCollected).getTime()) / 60_000;
@@ -396,16 +419,20 @@ const RealEstateApp: React.FC = () => {
                                             <article
                                                 key={prop.id}
                                                 aria-label={`Property: ${prop.name}`}
-                                                className={`bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border relative flex flex-col gap-3 ${isMaxLevel ? 'border-yellow-300 dark:border-yellow-600' : 'border-gray-100 dark:border-gray-700'}`}
+                                                className={`
+                                                    bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border relative flex flex-col gap-3
+                                                    ${isMobile ? 'min-w-[280px] max-w-[300px]' : ''}
+                                                    ${isMaxLevel ? 'border-yellow-300 dark:border-yellow-600' : 'border-gray-100 dark:border-gray-700'}
+                                                `}
                                             >
                                                 {isMaxLevel && (
                                                     <div className="absolute top-4 end-4 flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow" aria-label="Maximum level reached">
-                                                        <Star className="w-3 h-3 fill-white" aria-hidden="true" /> MAX
+                                                        <Star className="w-3 h-3 fill-white" aria-hidden="true" /> {t('real_estate.max', 'MAX')}
                                                     </div>
                                                 )}
                                                 {userProp.hasInsurance && (
                                                     <div className="absolute top-4 start-4 flex items-center gap-1 bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow" aria-label="Property insured">
-                                                        <Shield className="w-3 h-3 fill-white" aria-hidden="true" /> Insured
+                                                        <Shield className="w-3 h-3 fill-white" aria-hidden="true" /> {t('real_estate.insured', 'Insured')}
                                                     </div>
                                                 )}
 
@@ -420,7 +447,7 @@ const RealEstateApp: React.FC = () => {
                                                             }`}
                                                     >
                                                         <span aria-hidden="true">{userProp.tenantEvent.type === 'BONUS' ? '🎉' : '⚠️'}</span>
-                                                        <span>{userProp.tenantEvent.type === 'BONUS' ? 'Bonus: ' : 'Issue: '}{userProp.tenantEvent.description}</span>
+                                                        <span>{userProp.tenantEvent.type === 'BONUS' ? t('real_estate.event_bonus', 'Bonus: ') : t('real_estate.event_issue', 'Issue: ')}{userProp.tenantEvent.description}</span>
                                                         <span className="ms-auto font-black tabular-nums">
                                                             {userProp.tenantEvent.type === 'BONUS' ? '+' : '-'}${userProp.tenantEvent.amount}
                                                         </span>
@@ -429,8 +456,17 @@ const RealEstateApp: React.FC = () => {
 
                                                 {/* Header */}
                                                 <div className="flex items-center gap-3">
-                                                    <div className="text-4xl bg-gray-50 dark:bg-gray-700 rounded-2xl w-[60px] h-[60px] flex items-center justify-center shrink-0" aria-hidden="true">
-                                                        {propImage}
+                                                    <div className="rounded-2xl w-[64px] h-[64px] overflow-hidden bg-gray-100 dark:bg-gray-700 shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0" aria-hidden="true">
+                                                        {(PROPERTY_IMAGES[prop.id] || propImage?.startsWith('/')) ? (
+                                                            <img
+                                                                src={PROPERTY_IMAGES[prop.id] || propImage}
+                                                                alt={t(`real_estate.properties.${prop.id}.name` as any)}
+                                                                className="w-full h-full object-cover"
+                                                                loading="lazy"
+                                                            />
+                                                        ) : (
+                                                            <span className="text-3xl">{propImage}</span>
+                                                        )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <h3 className="font-bold text-gray-900 dark:text-white truncate">
@@ -460,15 +496,15 @@ const RealEstateApp: React.FC = () => {
                                                 <div className="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
                                                     <div>
                                                         <p className="text-xs text-gray-400 uppercase font-bold">{t('real_estate.daily_income')}</p>
-                                                        <p className="font-bold text-green-600 dark:text-green-400 tabular-nums">${income.toLocaleString()}</p>
+                                                        <p className="font-bold text-green-600 dark:text-green-400 tabular-nums">${(income ?? 0).toLocaleString()}</p>
                                                         {!isMaxLevel && (
-                                                            <p className="text-xs text-blue-500">→ ${nextIncome.toLocaleString()} after upgrade</p>
+                                                            <p className="text-xs text-blue-500">→ ${(nextIncome ?? 0).toLocaleString()} after upgrade</p>
                                                         )}
                                                     </div>
                                                     <div>
                                                         <p className="text-xs text-gray-400 uppercase font-bold">{t('real_estate.pending')}</p>
                                                         <p className={`font-bold tabular-nums ${isReady ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400'}`}>
-                                                            ${pendingEarnings.toLocaleString()}
+                                                            ${(pendingEarnings ?? 0).toLocaleString()}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -492,10 +528,10 @@ const RealEstateApp: React.FC = () => {
                                                         <button
                                                             onClick={() => handleUpgrade(prop.id)}
                                                             disabled={!canAffordUpgrade}
-                                                            aria-label={canAffordUpgrade ? `Upgrade ${prop.name} for $${upgradeCost}` : `Need $${(upgradeCost - user.bizCoins).toLocaleString()} more to upgrade`}
+                                                            aria-label={canAffordUpgrade ? `Upgrade ${prop.name} for $${upgradeCost}` : `Need $${Math.max(0, upgradeCost - safeTokens).toLocaleString()} more to upgrade`}
                                                             className={`py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all ${canAffordUpgrade ? 'bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800 motion-safe:active:scale-95' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-200 dark:border-gray-600'}`}
                                                         >
-                                                            <ArrowUp className="w-4 h-4" aria-hidden="true" /> ${upgradeCost.toLocaleString()}
+                                                            <ArrowUp className="w-4 h-4" aria-hidden="true" /> ${(upgradeCost ?? 0).toLocaleString()}
                                                         </button>
                                                     )}
 
@@ -506,26 +542,26 @@ const RealEstateApp: React.FC = () => {
                                                         className={`py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all ${renovLevel >= maxRenovLevel ? 'bg-pink-50 dark:bg-pink-900/20 border border-pink-200 text-pink-500 cursor-default' : canAffordRenov ? 'bg-pink-500 hover:bg-pink-600 text-white shadow-md motion-safe:active:scale-95' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}`}
                                                     >
                                                         <Paintbrush className="w-4 h-4" aria-hidden="true" />
-                                                        {renovLevel >= maxRenovLevel ? 'Renovated' : `Renovate $${renovCost.toLocaleString()}`}
+                                                        {renovLevel >= maxRenovLevel ? 'Renovated' : `Renovate $${(renovCost ?? 0).toLocaleString()}`}
                                                     </button>
 
                                                     <button
                                                         onClick={() => handleInsurance(prop.id)}
                                                         disabled={!userProp.hasInsurance && !canAffordInsurance}
-                                                        aria-label={userProp.hasInsurance ? 'Cancel insurance' : canAffordInsurance ? `Buy insurance for $${insuranceCost}` : `Need $${(insuranceCost - user.bizCoins).toLocaleString()} more for insurance`}
+                                                        aria-label={userProp.hasInsurance ? 'Cancel insurance' : canAffordInsurance ? `Buy insurance for $${insuranceCost}` : `Need $${Math.max(0, insuranceCost - safeTokens).toLocaleString()} more for insurance`}
                                                         className={`py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all ${userProp.hasInsurance ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md motion-safe:active:scale-95' : canAffordInsurance ? 'bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700 motion-safe:active:scale-95' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}`}
                                                     >
                                                         <Shield className="w-4 h-4" aria-hidden="true" />
-                                                        {userProp.hasInsurance ? 'Insured ✓' : `Insure $${insuranceCost.toLocaleString()}`}
+                                                        {userProp.hasInsurance ? 'Insured ✓' : `Insure $${(insuranceCost ?? 0).toLocaleString()}`}
                                                     </button>
                                                 </div>
 
                                                 <button
                                                     onClick={() => setSellTarget(prop.id)}
-                                                    aria-label={`Sell ${prop.name} for $${refundAmount.toLocaleString()}`}
+                                                    aria-label={`Sell ${prop.name} for $${(refundAmount ?? 0).toLocaleString()}`}
                                                     className="w-full py-2 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-100 dark:border-red-900 transition-all flex items-center justify-center gap-1.5"
                                                 >
-                                                    <BadgeDollarSign className="w-4 h-4" aria-hidden="true" /> {t('real_estate.sell')} (${refundAmount.toLocaleString()})
+                                                    <BadgeDollarSign className="w-4 h-4" aria-hidden="true" /> {t('real_estate.sell')} (${(refundAmount ?? 0).toLocaleString()})
                                                 </button>
                                             </article>
                                         );
@@ -538,24 +574,30 @@ const RealEstateApp: React.FC = () => {
                     {/* ══════════ MARKET TAB ══════════ */}
                     {activeTab === 'MARKET' && (
                         <motion.div key="market" role="tabpanel" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            className={`${isMobile ? 'snap-carousel no-scrollbar' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'}`}>
                             {marketProperties.length === 0 && (
                                 <div className="col-span-full text-center py-20 text-gray-400">
                                     <Home className="w-16 h-16 mx-auto mb-4 opacity-30" aria-hidden="true" />
-                                    <p className="text-xl font-bold">You own everything!</p>
-                                    <p className="text-sm mt-1">Check your Portfolio to manage your empire.</p>
+                                    <p className="text-xl font-bold">{t('real_estate.owned_all_title', 'You own everything!')}</p>
+                                    <p className="text-sm mt-1">{t('real_estate.owned_all_desc', 'Check your Portfolio to manage your empire.')}</p>
                                 </div>
                             )}
                             {marketProperties.map(prop => {
-                                const isLocked = user.level < prop.reqLevel && user.role !== UserRole.ADMIN;
+                                const isAdmin = user.role === UserRole.ADMIN || user.role?.toUpperCase?.() === 'ADMIN' || (user as any)?.isAdmin === true;
+                                const isLocked = user.level < prop.reqLevel && !isAdmin;
                                 const mult = getMarketMultiplier(prop.id);
                                 const isHot = mult >= 1.05;
                                 const isCold = mult <= 0.95;
-                                const canAfford = user.bizCoins >= prop.cost;
+                                const canAfford = safeTokens >= (prop.cost ?? 0);
 
                                 return (
                                     <article key={prop.id} aria-label={`${prop.name} listing`}
-                                        className={`bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden flex flex-col gap-4 ${isLocked ? 'opacity-70 grayscale' : ''}`}>
+                                        className={`
+                                            bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden flex flex-col gap-4 
+                                            ${isMobile ? 'min-w-[280px] max-w-[300px]' : ''}
+                                            ${isLocked ? 'opacity-70 grayscale' : ''}
+                                        `}
+                                    >
                                         {prop.tier && (
                                             <div className={`absolute top-4 end-4 flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full ${TIER_COLORS[prop.tier]}`}>
                                                 {TIER_ICONS[prop.tier]} {t(`real_estate.tier_${prop.tier.toLowerCase()}` as any)}
@@ -565,11 +607,22 @@ const RealEstateApp: React.FC = () => {
                                         {(isHot || isCold) && (
                                             <div className={`absolute top-10 end-4 flex items-center gap-0.5 text-[10px] font-bold ${isHot ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                                                 {isHot ? <TrendingUp className="w-3 h-3" aria-hidden="true" /> : <TrendingDown className="w-3 h-3" aria-hidden="true" />}
-                                                <span>{isHot ? 'Hot Market' : 'Slow Market'}</span>
+                                                <span>{isHot ? t('real_estate.hot_market', 'Hot Market') : t('real_estate.slow_market', 'Slow Market')}</span>
                                             </div>
                                         )}
 
-                                        <div className="text-6xl text-center bg-gray-50 dark:bg-gray-700 rounded-2xl py-7" aria-hidden="true">{prop.image}</div>
+                                        <div className="w-full h-44 rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-700 relative shadow-inner flex items-center justify-center" aria-hidden="true">
+                                            {(PROPERTY_IMAGES[prop.id] || prop.image?.startsWith('/')) ? (
+                                                <img
+                                                    src={PROPERTY_IMAGES[prop.id] || prop.image}
+                                                    alt={t(`real_estate.properties.${prop.id}.name` as any)}
+                                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <span className="text-6xl text-center py-7">{prop.image}</span>
+                                            )}
+                                        </div>
 
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -577,7 +630,7 @@ const RealEstateApp: React.FC = () => {
                                                 <span className="text-xs uppercase font-bold text-gray-400">{t(`real_estate.types.${prop.type}` as any)}</span>
                                             </div>
                                             <div className={`flex items-center px-2 py-1 rounded-full text-xs font-bold ${isHot ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'}`}>
-                                                <TrendingUp className="w-3 h-3 me-1" aria-hidden="true" /> +{Math.floor(prop.initialIncome * mult)}/d
+                                                <TrendingUp className="w-3 h-3 me-1" aria-hidden="true" /> +{Math.floor(prop.initialIncome * mult)}{t('common.per_day')}
                                             </div>
                                         </div>
 
@@ -590,15 +643,15 @@ const RealEstateApp: React.FC = () => {
                                         ) : (
                                             <div className="flex items-center justify-between mt-auto">
                                                 <div className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
-                                                    <span className="text-yellow-500 me-1" aria-hidden="true">$</span>{prop.cost.toLocaleString()}
+                                                    <span className="text-yellow-500 me-1" aria-hidden="true">$</span>{(prop.cost ?? 0).toLocaleString()}
                                                 </div>
                                                 <button
                                                     onClick={() => handleBuy(prop.id)}
                                                     disabled={!canAfford}
-                                                    aria-label={canAfford ? `Buy ${prop.name} for $${prop.cost.toLocaleString()}` : `Need $${(prop.cost - user.bizCoins).toLocaleString()} more to buy ${prop.name}`}
+                                                    aria-label={canAfford ? `Buy ${prop.name} for $${(prop.cost ?? 0).toLocaleString()}` : `Need $${Math.max(0, (prop.cost ?? 0) - safeTokens).toLocaleString()} more to buy ${prop.name}`}
                                                     className={`px-5 py-2.5 rounded-xl font-bold shadow-lg motion-safe:active:scale-95 transition-all ${canAfford ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30' : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}`}
                                                 >
-                                                    {canAfford ? t('real_estate.buy_now') : 'Need more $'}
+                                                    {canAfford ? t('real_estate.buy_now') : t('real_estate.need_more', 'Need more $')}
                                                 </button>
                                             </div>
                                         )}
@@ -653,8 +706,8 @@ const RealEstateApp: React.FC = () => {
                                                     {l.name}{'isYou' in l && l.isYou ? ' (You)' : ''}
                                                 </p>
                                             </div>
-                                            <div className="text-green-600 dark:text-green-400 font-bold text-sm tabular-nums" aria-label={`${l.income.toLocaleString()} per day`}>
-                                                ${formatCompactNumber(l.income)}/d
+                                            <div className="text-green-600 dark:text-green-400 font-bold text-sm tabular-nums" aria-label={`${(l.income ?? 0).toLocaleString()} ${t('real_estate.per_day_full', 'per day')}`}>
+                                                ${formatCompactNumber(l.income ?? 0)}{t('common.per_day')}
                                             </div>
                                         </li>
                                     ))}

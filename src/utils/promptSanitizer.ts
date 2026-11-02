@@ -61,6 +61,7 @@ const DANGEROUS_PATTERNS = [
 /**
  * Control characters that could be used for injection
  */
+// eslint-disable-next-line no-control-regex
 const CONTROL_CHARACTERS = /[\u0000-\u001F\u007F-\u009F]/g;
 
 /**
@@ -83,7 +84,6 @@ export class PromptSanitizer {
         // Trim whitespace
         const trimmed = prompt.trim();
 
-        // Check length
         if (trimmed.length === 0) {
             throw new ValidationError('Prompt cannot be empty');
         }
@@ -94,7 +94,6 @@ export class PromptSanitizer {
             );
         }
 
-        // Check for dangerous patterns
         for (const pattern of DANGEROUS_PATTERNS) {
             if (pattern.test(trimmed)) {
                 // ✅ SECURITY FIX: Route to structured Logger instead of bare console.warn
@@ -118,10 +117,8 @@ export class PromptSanitizer {
             }
         }
 
-        // Remove control characters
         const cleaned = trimmed.replace(CONTROL_CHARACTERS, '');
 
-        // Remove excessive whitespace
         const normalized = cleaned.replace(/\s+/g, ' ');
 
         return normalized;

@@ -1,16 +1,27 @@
-
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from "react";
 import { useAppStore } from '../../../store';
-import { Logger } from '../../../services/logger';
 import { useGameSimulation } from '../hooks/useGameSimulation';
 
 import { useEnergy } from '../../../hooks/useEnergy';
 import {
-  ArrowLeft, Play, TrendingUp, AlertTriangle, Zap, ShoppingCart,
-  CheckCircle, Users, BarChart3, Star, RotateCcw, Trash2, Save,
-  HelpCircle, ChevronRight, Lock, BatteryWarning
-} from 'lucide-react';
+  ArrowLeft,
+  Play,
+  TrendingUp,
+  AlertTriangle,
+  Zap,
+  ShoppingCart,
+  CheckCircle,
+  Users,
+  BarChart3,
+  Star,
+  RotateCcw,
+  Trash2,
+  Save,
+  HelpCircle,
+  ChevronRight,
+} from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import EnergyBar from './EnergyBar';
 import InvestorPitchModal from './InvestorPitchModal';
 import PricingTemplate from './game-templates/PricingTemplate';
@@ -45,6 +56,7 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
   // Access store for live game data
   const { user, games, completeGame, getSkillModifiers } = useAppStore();
   const { consumeEnergy } = useEnergy(); // Hook usage
+  const { t } = useTranslation();
 
   // ---------------------------------------------------------
   // SPECIAL GAME TEMPLATES INTERCEPTION
@@ -160,9 +172,9 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
             <ArrowLeft />
           </button>
           <div>
-            <h2 className="text-lg md:text-xl font-black truncate max-w-[150px] md:max-w-none">{gameData.name}</h2>
-            <div className="text-xs md:text-sm text-gray-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              Day {day}
+            <h2 className="text-lg md:text-xl font-black truncate max-w-[150px] md:max-w-none">{t(gameData.nameKey as any, gameData.name)}</h2>
+            <div className="text-xs md:text-sm text-gray-300 font-bold uppercase tracking-wider flex items-center gap-2">
+              {t('sim.day')} {day}
               <AnimatePresence>
                 {isSaving && (
                   <motion.span
@@ -246,10 +258,10 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                     >
-                      <h3 className="text-2xl font-black text-gray-800 dark:text-white mb-2">Welcome, CEO!</h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium mb-4">{gameData.description}</p>
-                      <p className="text-sm text-gray-400 font-bold">
-                        Your goal is to maximize profit over time.
+                      <h3 className="text-2xl font-black text-gray-950 dark:text-white mb-2">{t('sim.welcome_ceo')}</h3>
+                      <p className="text-gray-800 dark:text-gray-200 font-medium mb-4">{t(gameData.descriptionKey as any, gameData.description)}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                        {t('sim.goal_desc')}
                       </p>
                     </motion.div>
                   )}
@@ -260,12 +272,12 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                     >
-                      <h3 className="text-2xl font-black text-gray-800 dark:text-white mb-2">Daily Strategy</h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium mb-4">
-                        Before each day starts, adjust your strategy sliders.
+                      <h3 className="text-2xl font-black text-gray-950 dark:text-white mb-2">{t('sim.strategy')}</h3>
+                      <p className="text-gray-800 dark:text-gray-200 font-medium mb-4">
+                        {t('sim.strategy_desc')}
                       </p>
-                      <p className="text-sm text-gray-400 font-bold">
-                        Find the perfect balance to keep customers happy!
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                        {t('sim.balance_desc')}
                       </p>
                     </motion.div>
                   )}
@@ -276,12 +288,12 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                     >
-                      <h3 className="text-2xl font-black text-gray-800 dark:text-white mb-2">Grow Your Biz</h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium mb-4">
-                        Use your profits to buy Upgrades in the Shop.
+                      <h3 className="text-2xl font-black text-gray-950 dark:text-white mb-2">{t('sim.grow_biz')}</h3>
+                      <p className="text-gray-800 dark:text-gray-200 font-medium mb-4">
+                        {t('sim.upgrade_desc')}
                       </p>
-                      <p className="text-sm text-gray-400 font-bold">
-                        Upgrades attract more customers and increase revenue.
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                        {t('sim.attract_desc')}
                       </p>
                     </motion.div>
                   )}
@@ -308,7 +320,7 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
                   }}
                   className="bg-kid-primary text-yellow-900 px-6 py-2 rounded-xl font-black shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy flex items-center gap-2 hover:bg-yellow-400 transition-colors"
                 >
-                  {tutorialStep === 2 ? "Let's Play!" : "Next"} <ChevronRight size={18} />
+                  {tutorialStep === 2 ? t('sim.lets_play' as any) : t('sim.next' as any)} <ChevronRight size={18} />
                 </button>
               </div>
             </motion.div>
@@ -320,21 +332,21 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
         {phase === 'STRATEGY' && (
           <div className="space-y-6 md:space-y-8 max-w-4xl mx-auto">
             <div className="bg-blue-100 dark:bg-blue-900/30 p-4 md:p-6 rounded-2xl border-s-8 border-blue-500 shadow-sm">
-              <h3 className="text-blue-800 dark:text-blue-300 font-bold uppercase text-sm mb-2">Objective</h3>
-              <p className="text-blue-900 dark:text-blue-100 font-medium text-lg">{gameData.description}</p>
+              <h3 className="text-blue-800 dark:text-blue-300 font-bold uppercase text-sm mb-2">{t('sim.objective')}</h3>
+              <p className="text-blue-900 dark:text-blue-100 font-medium text-lg">{t(gameData.descriptionKey as any, gameData.description)}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {/* Inputs */}
               <div className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 className="font-black text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                  <TrendingUp size={20} /> Daily Strategy
+                <h3 className="font-black text-gray-950 dark:text-white mb-6 flex items-center gap-2">
+                  <TrendingUp size={20} /> {t('sim.strategy')}
                 </h3>
                 <div className="space-y-6">
                   {gameData.variables?.player_inputs?.map(input => (
                     <div key={String(input)}>
-                      <div className="flex justify-between mb-2 font-bold text-gray-600 dark:text-gray-300 text-sm uppercase">
-                        {String(input).replace(/_/g, ' ')}
+                      <div className="flex justify-between mb-2 font-bold text-gray-950 dark:text-gray-200 text-sm uppercase">
+                        {t(['sim.' + input, String(input).replace(/_/g, ' ')] as any)}
                         {/* Safe render for slider value */}
                         <span>{typeof sliderValues[String(input)] === 'number' ? sliderValues[String(input)] : 50}%</span>
                       </div>
@@ -356,8 +368,8 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
 
               {/* Upgrades */}
               <div className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 className="font-black text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                  <ShoppingCart size={20} /> Shop
+                <h3 className="font-black text-gray-950 dark:text-white mb-6 flex items-center gap-2">
+                  <ShoppingCart size={20} /> {t('sim.shop')}
                 </h3>
                 <div className="space-y-4 max-h-64 md:max-h-96 overflow-y-auto">
                   {gameData.upgrade_tree.map(u => {
@@ -376,8 +388,8 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
                           <div className="text-xs text-gray-500 dark:text-gray-400">{safeRender(u.effect)}</div>
                         </div>
                         {isOwned ? (
-                          <div className="text-green-600 font-bold flex items-center gap-1 text-sm">
-                            <CheckCircle size={16} /> <span className="hidden sm:inline">Owned</span>
+                          <div className="text-green-700 font-bold flex items-center gap-1 text-sm">
+                            <CheckCircle size={16} /> <span className="hidden sm:inline">{t('sim.owned')}</span>
                           </div>
                         ) : (
                           <button
@@ -400,16 +412,16 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
 
             <button
               onClick={handleStartDay}
-              className="w-full bg-kid-primary text-yellow-900 font-black py-4 rounded-2xl shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy text-xl flex items-center justify-center gap-3 hover:bg-yellow-400 transition-colors"
+              className="w-full bg-kid-primary text-yellow-950 font-black py-4 rounded-2xl shadow-[0_4px_0_0_rgba(202,138,4,1)] btn-juicy text-xl flex items-center justify-center gap-3 hover:bg-yellow-400 transition-colors"
             >
-              <Play fill="currentColor" /> Start Day {day} <span className="text-xs font-bold text-yellow-800 opacity-60">(-1 Energy)</span>
+              <Play fill="currentColor" /> {t('sim.start_day')} {t('sim.day')} {day} <span className="text-xs font-bold text-yellow-900 opacity-60">(-1 Energy)</span>
             </button>
           </div>
         )}
 
         {phase === 'SIMULATION' && (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
-            <h3 className="text-2xl font-bold text-gray-500 dark:text-gray-400 animate-pulse">Simulating Market...</h3>
+            <h3 className="text-2xl font-bold text-gray-600 dark:text-gray-300 animate-pulse">{t('sim.simulating')}</h3>
 
             <div className="w-full max-w-md bg-gray-200 dark:bg-gray-700 h-6 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600">
               <motion.div
@@ -435,14 +447,14 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
         {phase === 'RESULT' && (
           <div className="max-w-2xl mx-auto space-y-8 py-4">
             <div className="text-center">
-              <div className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">
-                Day {day} Report
+              <div className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">
+                {t('sim.day')} {day} {t('sim.report')}
               </div>
-              <h2 className={`text-6xl font-black mb-2 ${dayStats.profit >= 0 ? 'text-green-500' : 'text-red-500'
+              <h2 className={`text-6xl font-black mb-2 ${dayStats.profit >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
                 {dayStats.profit >= 0 ? '+' : '-'}${Math.abs(dayStats.profit)}
               </h2>
-              <p className="text-gray-500 font-bold">Net Profit</p>
+              <p className="text-gray-800 dark:text-gray-200 font-bold">{t('sim.net_profit')}</p>
               {activeModifiers && (
                 <div className="flex justify-center gap-3 mt-4 flex-wrap">
                   {activeModifiers.priceMultiplier > 1 && (
@@ -459,81 +471,89 @@ const UniversalBusinessGame: React.FC<Props> = ({ gameId, onExit }) => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
-                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 dark:text-green-400 mb-2">
-                  <TrendingUp size={20} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-4 border-gray-50 dark:border-gray-700 shadow-xl flex flex-col items-center group transition-transform hover:scale-105">
+                <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-2xl text-green-700 dark:text-green-400 mb-3 group-hover:rotate-12 transition-transform">
+                  <TrendingUp size={28} />
                 </div>
-                <div className="text-sm text-gray-400 font-bold uppercase">Revenue</div>
-                <div className="text-2xl font-black text-gray-800 dark:text-white">${dayStats.revenue}</div>
+                <div className="text-xs text-gray-500 font-black uppercase tracking-widest mb-1">{t('sim.revenue')}</div>
+                <div className="text-3xl font-black text-gray-950 dark:text-white">${dayStats.revenue}</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
-                <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-full text-red-600 dark:text-red-400 mb-2">
-                  <BarChart3 size={20} />
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-4 border-gray-50 dark:border-gray-700 shadow-xl flex flex-col items-center group transition-transform hover:scale-105">
+                <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-2xl text-red-700 dark:text-red-400 mb-3 group-hover:-rotate-12 transition-transform">
+                  <BarChart3 size={28} />
                 </div>
-                <div className="text-sm text-gray-400 font-bold uppercase">Expenses</div>
-                <div className="text-2xl font-black text-gray-800 dark:text-white">${dayStats.expenses}</div>
+                <div className="text-xs text-gray-500 font-black uppercase tracking-widest mb-1">{t('sim.expenses')}</div>
+                <div className="text-3xl font-black text-gray-950 dark:text-white">${dayStats.expenses}</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full text-blue-600 dark:text-blue-400 mb-2">
-                  <Users size={20} />
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-4 border-gray-50 dark:border-gray-700 shadow-xl flex flex-col items-center group transition-transform hover:scale-105">
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-2xl text-blue-700 dark:text-blue-400 mb-3 group-hover:scale-110 transition-transform">
+                  <Users size={28} />
                 </div>
-                <div className="text-sm text-gray-400 font-bold uppercase">Customers</div>
-                <div className="text-2xl font-black text-gray-800 dark:text-white">{dayStats.customers}</div>
+                <div className="text-xs text-gray-500 font-black uppercase tracking-widest mb-1">{t('sim.customers')}</div>
+                <div className="text-3xl font-black text-gray-950 dark:text-white">{dayStats.customers}</div>
               </div>
             </div>
 
             {/* Customer Satisfaction */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                  Customer Satisfaction
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] border-4 border-gray-50 dark:border-gray-700 shadow-xl">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-black text-xl text-gray-950 dark:text-gray-200 flex items-center gap-2 uppercase tracking-tight">
+                  {t('sim.customer_sat')}
                 </h3>
-                <span className="font-black text-xl text-yellow-500">
+                <span className="font-black text-3xl text-yellow-500 drop-shadow-sm">
                   {dayStats.satisfaction}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 h-4 rounded-full overflow-hidden mb-4">
-                <div
+              <div className="w-full bg-gray-100 dark:bg-gray-700 h-6 rounded-full overflow-hidden mb-6 border-2 border-gray-50 dark:border-gray-600 shadow-inner">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${dayStats.satisfaction}%` }}
                   className={`h-full transition-all ${dayStats.satisfaction > 70
-                    ? 'bg-green-500'
+                    ? 'bg-gradient-to-r from-green-400 to-green-600'
                     : dayStats.satisfaction > 40
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
+                      ? 'bg-gradient-to-r from-yellow-400 to-yellow-600'
+                      : 'bg-gradient-to-r from-red-400 to-red-600'
                     }`}
-                  style={{ width: `${dayStats.satisfaction}%` }}
                 />
               </div>
-              <div className="flex justify-center gap-1 text-yellow-400">
+              <div className="flex justify-center gap-2 text-yellow-400 mb-4">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <Star
+                  <motion.div
                     key={star}
-                    fill={dayStats.satisfaction >= star * 20 ? "currentColor" : "none"}
-                    className={dayStats.satisfaction >= star * 20 ? "" : "text-gray-300 dark:text-gray-600"}
-                  />
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: star * 0.1 }}
+                  >
+                    <Star
+                      size={32}
+                      fill={dayStats.satisfaction >= star * 20 ? "currentColor" : "none"}
+                      className={dayStats.satisfaction >= star * 20 ? "drop-shadow-md" : "text-gray-200 dark:text-gray-600"}
+                    />
+                  </motion.div>
                 ))}
               </div>
-              <p className="text-center text-sm font-bold text-gray-400 mt-2">
-                {dayStats.satisfaction > 80
-                  ? "Customers loved it!"
+              <p className="text-center text-lg font-black text-gray-600 dark:text-gray-400 italic">
+                "{dayStats.satisfaction > 80
+                  ? t('sim.sat_high')
                   : dayStats.satisfaction > 50
-                    ? "Customers thought it was okay."
-                    : "Customers were unhappy."}
+                    ? t('sim.sat_med')
+                    : t('sim.sat_low')}"
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               <button
                 onClick={quitGame}
-                className="py-4 rounded-xl font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 transition-all"
+                className="py-5 rounded-[2rem] font-black text-gray-500 hover:text-red-500 transition-all uppercase tracking-widest text-xs"
               >
-                Save & Exit
+                {t('sim.save_exit')}
               </button>
               <button
                 onClick={handleStartDay}
-                className="py-4 bg-kid-secondary text-white rounded-xl font-black shadow-[0_4px_0_0_rgba(21,128,61,1)] btn-juicy flex items-center justify-center gap-2 hover:bg-green-600 transition-colors"
+                className="py-5 bg-green-500 text-white rounded-[2rem] font-black shadow-[0_8px_0_0_rgba(21,128,61,1)] btn-juicy flex items-center justify-center gap-3 hover:bg-green-600 transition-all active:translate-y-2 active:shadow-none text-xl"
               >
-                <RotateCcw size={20} /> Next Day
+                <RotateCcw size={24} /> {t('sim.next_day')}
               </button>
             </div>
           </div>

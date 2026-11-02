@@ -4,6 +4,10 @@
 .env.*.local
 .env.production
 .env.staging
+**/.env
+**/.env.*
+keys/
+deploy_hostinger/
 
 # Logs
 logs
@@ -15,6 +19,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+**/node_modules
+**/vendor
 dist
 dist-ssr
 *.local
@@ -29,3 +35,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test outputs & temporary files
+test-output*.txt
+tests_output.txt
+tsc_output.txt
+vitest_output.txt
+test-results*.json
+tests_results.json
+compile_errors.txt
+final-test-output.txt
+*.bak
+*.zip
+supabase/.temp/
+test-rpc.sql
+testTooltip.cjs
+
+

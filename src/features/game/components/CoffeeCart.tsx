@@ -1,8 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../../store';
-import { motion } from 'framer-motion';
-import { Coffee, ArrowLeft, RotateCcw, DollarSign, Cloud, Sun, CloudRain } from 'lucide-react';
+import { Coffee, ArrowLeft, Cloud, Sun, CloudRain } from "lucide-react";
 import GameTutorialModal from './common/GameTutorialModal';
 import { useTranslation } from 'react-i18next';
 import { useEnergy } from '../../../hooks/useEnergy';
@@ -63,19 +61,30 @@ const CoffeeCart: React.FC<Props> = ({ onBack }) => {
         const revenue = sold * recipe.price;
         const tips = Math.floor(sold * quality); // Better quality = tips
 
-        const interval = setInterval(() => {
-            setProgress(p => {
-                if (p >= 100) {
-                    clearInterval(interval);
-                    setStats({ sold, revenue, tips });
-                    completeGame(revenue + tips, (revenue + tips) * 2);
-                    setPhase('RESULT');
-                    return 100;
-                }
-                return p + 2;
-            });
-        }, 50);
+        setStats({ sold, revenue, tips });
+        setProgress(0);
+        setPhase('BREW');
     };
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (phase === 'BREW') {
+            interval = setInterval(() => {
+                setProgress(p => {
+                    if (p >= 100) return 100;
+                    return p + 2;
+                });
+            }, 50);
+        }
+        return () => clearInterval(interval);
+    }, [phase]);
+
+    useEffect(() => {
+        if (phase === 'BREW' && progress >= 100) {
+            completeGame(stats.revenue + stats.tips, (stats.revenue + stats.tips) * 2);
+            setPhase('RESULT');
+        }
+    }, [phase, progress, stats, completeGame]);
 
     return (
         <div className="bg-[#3e2723] rounded-none md:rounded-3xl overflow-hidden shadow-2xl text-[#d7ccc8] flex flex-col relative h-full pb-8 md:pb-0">
@@ -88,8 +97,7 @@ const CoffeeCart: React.FC<Props> = ({ onBack }) => {
                     description={t('games.coffee.desc')}
                     icon="☕"
                     color="bg-[#5d4037]"
-                    // @ts-ignore
-                    instructions={(t('games.coffee.instructions', { returnObjects: true }) as any) as string[]}
+                    instructions={t('games.coffee.instructions', { returnObjects: true }) as unknown as string[]}
                 />
             )}
 

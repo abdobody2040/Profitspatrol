@@ -1,0 +1,23 @@
+export const dashboard = {
+  admin_inspector: 'مفتش الفصل الإداري',
+  students_count: 'Students',
+  sub_active: 'الاشتراك المميز نشط',
+  sub_pro: 'بروفيتس باترول برو',
+  sub_billing: 'تاريخ الفوترة القادم: 15 يوليو 2025',
+  manage_sub: 'إدارة الاشتراك',
+  upsell_title: 'فتح كامل الإمكانيات',
+  upsell_desc:
+    'احصل على وصول غير محدود لجميع محاكيات الأعمال الـ 30+، والدروس الخصوصية بالذكاء الاصطناعي، والتحليلات المتقدمة.',
+  feature_ads: 'بدون إعلانات',
+  feature_games: 'جميع الألعاب',
+  feature_ai: 'معلم ذكاء اصطناعي',
+  upgrade_btn: 'الترقية الآن',
+  settings_title: 'إعدادات وتحكم الطفل',
+  label_goal: 'الهدف اليومي',
+  label_sound: 'تأثيرات صوتية',
+  label_music: 'موسيقى الخلفية',
+  danger_zone: 'منطقة خطر',
+  danger_desc: 'إعادة تعيين كلمة المرور لا يمكن التراجع عنها.',
+  reset_pwd: 'إعادة تعيين كلمة المرور',
+  breaking_news: 'خبر عاجل',
+};

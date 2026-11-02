@@ -1,7 +1,6 @@
-
-import React, { useMemo } from 'react';
+import React from "react";
 import { useAppStore, MOCK_LEADERBOARD } from '../../../store';
-import { Trophy, Medal, Crown, Shield } from 'lucide-react';
+import { Trophy, Crown } from "lucide-react";
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Logger } from '../../../services/logger';
@@ -12,74 +11,58 @@ const Leaderboard: React.FC = () => {
 
   const [leaderboardData, setLeaderboardData] = React.useState<typeof MOCK_LEADERBOARD>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [viewMode, setViewMode] = React.useState<'SEASON' | 'ALL_TIME'>('SEASON');
 
   React.useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         setIsLoading(true);
-        const { supabase } = await import('../../../lib/supabase');
+        const { api } = await import('../../../lib/api');
+        const res: any = await api.get('/leaderboard', {
+          type: viewMode === 'SEASON' ? 'season_xp' : 'xp'
+        });
 
-        if (!supabase) {
-          Logger.info('Leaderboard: Supabase not configured, using mock data');
-          // Fall back to mock data but put current user in there if not present
-          const mockSorted = [...MOCK_LEADERBOARD].sort((a, b) => b.xp - a.xp);
-          if (user && !mockSorted.find(m => m.id === user.id)) {
-            mockSorted.push({
-              id: user.id,
-              name: user.name || 'Anonymous',
-              avatar: user.avatar || '👤',
-              xp: user.xp || 0,
-              isCurrentUser: true
-            });
-            mockSorted.sort((a, b) => b.xp - a.xp);
-          }
-          setLeaderboardData(mockSorted);
-          return;
-        }
-
-        // Prevent infinite loading by racing the network request against a 3-second timeout
-        const fetchPromise = supabase
-          .from('profiles')
-          .select('id, name, avatar, xp')
-          .order('xp', { ascending: false })
-          .limit(100);
-
-        const timeoutPromise = new Promise<{data: any, error: Error}>((_, reject) => 
-          setTimeout(() => reject(new Error("Supabase timeout")), 3000)
-        );
-
-        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-
-        if (error) throw error;
-
+        const data = res?.leaderboard;
         if (data && data.length > 0) {
-          const formattedData = data.map(profile => ({
+          const formattedData = (data as any[]).map((profile: { id: string, name?: string, username: string, xp: number, season_xp?: number, avatar?: string }) => ({
             id: profile.id,
-            name: profile.name || 'Anonymous CEO',
+            name: profile.name || profile.username || 'Anonymous CEO',
             avatar: profile.avatar || '👤',
-            xp: profile.xp || 0,
+            xp: viewMode === 'SEASON' ? (profile.season_xp || 0) : (profile.xp || 0),
             isCurrentUser: user?.id === profile.id
           }));
 
-          // Ensure current user is in the list even if not in top 100
-          if (user && !formattedData.find(p => p.id === user.id)) {
+          // Ensure current user is in the list even if not in top 50
+          if (user && !formattedData.find((p) => p.id === user.id)) {
             formattedData.push({
               id: user.id,
               name: user.name,
               avatar: user.avatar || '👤',
-              xp: user.xp || 0,
+              xp: viewMode === 'SEASON' ? (user.seasonXp || 0) : (user.xp || 0),
               isCurrentUser: true
             });
             formattedData.sort((a, b) => b.xp - a.xp);
           }
 
           setLeaderboardData(formattedData);
-        } else {
-          setLeaderboardData([]);
+          return;
         }
+
+        // Fallback to mock data with current user
+        const mockSorted = [...MOCK_LEADERBOARD].sort((a, b) => b.xp - a.xp);
+        if (user && !mockSorted.find(m => m.id === user.id)) {
+          mockSorted.push({
+            id: user.id,
+            name: user.name || 'Anonymous',
+            avatar: user.avatar || '👤',
+            xp: user.xp || 0,
+            isCurrentUser: true
+          });
+          mockSorted.sort((a, b) => b.xp - a.xp);
+        }
+        setLeaderboardData(mockSorted);
       } catch (error) {
-        Logger.error('Leaderboard: Failed to fetch leaderboard data', error);
-        // Fallback
+        Logger.error('Leaderboard: Failed to fetch leaderboard data from Laravel, using mock fallback', error);
         setLeaderboardData([...MOCK_LEADERBOARD].sort((a, b) => b.xp - a.xp));
       } finally {
         setIsLoading(false);
@@ -87,7 +70,7 @@ const Leaderboard: React.FC = () => {
     };
 
     fetchLeaderboard();
-  }, [user]);
+  }, [user, viewMode]);
 
   const sorted = leaderboardData;
 
@@ -98,7 +81,32 @@ const Leaderboard: React.FC = () => {
           <Trophy className="text-yellow-500 fill-current" size={40} />
           {t('leaderboard.title')}
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 font-bold mt-2 bg-gray-100 dark:bg-gray-800 inline-block px-4 py-1 rounded-full text-sm">{t('leaderboard.weekly_reset')}</p>
+        <p className="text-gray-500 dark:text-gray-400 font-bold mt-2 bg-gray-100 dark:bg-gray-800 inline-block px-4 py-1 rounded-full text-sm">{t('leaderboard.weekly_reset', 'Top players of the current season')}</p>
+        
+        <div className="flex justify-center mt-6">
+          <div className="bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl inline-flex">
+            <button
+              onClick={() => setViewMode('SEASON')}
+              className={`px-6 py-2 rounded-xl font-bold transition-all ${
+                viewMode === 'SEASON' 
+                  ? 'bg-white dark:bg-gray-700 text-yellow-600 dark:text-yellow-400 shadow-sm' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              Current Season
+            </button>
+            <button
+              onClick={() => setViewMode('ALL_TIME')}
+              className={`px-6 py-2 rounded-xl font-bold transition-all ${
+                viewMode === 'ALL_TIME' 
+                  ? 'bg-white dark:bg-gray-700 text-yellow-600 dark:text-yellow-400 shadow-sm' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              All-Time
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">

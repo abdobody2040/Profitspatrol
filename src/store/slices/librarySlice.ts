@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState } from '../types';
+import type { AppState } from '../types';
 import { Book } from '../../types';
 import { INITIAL_LIBRARY } from '../../features/library/data/libraryBooks';
 import { MORE_BOOKS } from '../../features/library/data/moreBooks';
@@ -46,6 +46,8 @@ export const createLibrarySlice: StateCreator<AppState, [], [], LibrarySlice> = 
                     ...book,
                     ...staticBook, 
                 });
+            } else {
+                updatedLibrary.push(book);
             }
         });
         INITIAL_LIBRARY.forEach(staticBook => {
@@ -57,13 +59,15 @@ export const createLibrarySlice: StateCreator<AppState, [], [], LibrarySlice> = 
         // Sync Exclusive Books
         const moreBooksMap = new Map(MORE_BOOKS.map(b => [b.id, b]));
         const updatedExclusiveBooks: Book[] = [];
-        state.exclusiveBooks.forEach(book => {
+        (state.exclusiveBooks || []).forEach(book => {
             const staticBook = moreBooksMap.get(book.id);
             if (staticBook) {
                 updatedExclusiveBooks.push({
                     ...book,
                     ...staticBook,
                 });
+            } else {
+                updatedExclusiveBooks.push(book);
             }
         });
         MORE_BOOKS.forEach(staticBook => {

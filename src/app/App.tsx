@@ -1,26 +1,25 @@
-
 import React, { useState, useEffect, Suspense } from 'react';
 import { useAppStore } from '../store';
+import { useSocialStore } from '../store/socialStore';
 import { useGameStore } from '../store/gameStore';
-import { useEducationStore } from '../store/educationStore';
-import { SHOP_ITEMS } from '../data/constants';
-import { COURSE_MAP, getLessonBatch } from '../features/education/data/curriculum';
 import { UserRole } from '../types';
-import Layout from '../components/layout/Layout';
 import { Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
-import { Check, Rocket, Pizza, Star, Smile, Lightbulb, Coffee, Music, Camera, Globe, Anchor, Cpu, Car, Zap, ArrowLeft, Loader2, Lock } from 'lucide-react';
+import { Check, Star, Loader2 } from "lucide-react";
 import '../lib/i18n';
 import { useTranslation } from 'react-i18next';
 import { useAppSound } from '../contexts/SoundContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Logger } from '../services/logger';
 import { ProtectedRoute, RoleProtectedRoute, DynamicPageWrapper } from '../routes/ProtectedRoute';
+import { useEducationStore } from '../store/educationStore';
 
-// Lazy Load ALL Components (including Auth and LandingPage)
+// Lazy Load ALL Components (including Auth, LandingPage, and Game modules)
 const Auth = React.lazy(() => import('../features/auth/components/Auth'));
 const LandingPage = React.lazy(() => import('../features/marketing/components/LandingPage'));
 const KidMap = React.lazy(() => import('../features/hq/components/KidMap'));
-const UniversalLessonEngine = React.lazy(() => import('../features/education/components/UniversalLessonEngine'));
+const LessonSession = React.lazy(() => import('./LessonSession'));
+const ArcadeGameShellWrapper = React.lazy(() => import('./ArcadeGameShellWrapper'));
+const CertificateModal = React.lazy(() => import('./CertificateModal'));
 const LemonadeStand = React.lazy(() => import('../features/game/components/LemonadeStand'));
 const BrandBuilder = React.lazy(() => import('../features/game/components/BrandBuilder'));
 const PizzaDelivery = React.lazy(() => import('../features/game/components/PizzaDelivery'));
@@ -45,6 +44,7 @@ const PricingPage = React.lazy(() => import('../features/marketing/components/Pr
 const FeaturesPage = React.lazy(() => import('../features/marketing/components/FeaturesPage'));
 const DynamicPage = React.lazy(() => import('../features/marketing/components/DynamicPage'));
 const OllieChat = React.lazy(() => import('../features/game/components/OllieChat'));
+const PlayHubFAB = React.lazy(() => import('../components/ui/PlayHubFAB'));
 const StudentAssignmentDashboard = React.lazy(() => import('../features/education/components/StudentAssignmentDashboard'));
 const BookLibrary = React.lazy(() => import('../features/library/components/BookLibrary'));
 const VideoLibrary = React.lazy(() => import('../features/education/components/VideoLibrary'));
@@ -57,7 +57,6 @@ const TheTankPage = React.lazy(() => import('../features/tank/components/TheTank
 const TournamentPage = React.lazy(() => import('../features/education/components/TournamentPage'));
 const UserProfile = React.lazy(() => import('../features/dashboard/components/UserProfile'));
 const ScenarioEngine = React.lazy(() => import('../features/scenarios/components/ScenarioEngine'));
-const ModuleRecap = React.lazy(() => import('../features/education/components/ModuleRecap'));
 const PrivacyPolicyPage = React.lazy(() => import('../features/marketing/components/PrivacyPolicyPage'));
 const TermsOfServicePage = React.lazy(() => import('../features/marketing/components/TermsOfServicePage'));
 const RefundPolicyPage = React.lazy(() => import('../features/marketing/components/RefundPolicyPage'));
@@ -72,42 +71,29 @@ const AvatarCustomizer = React.lazy(() => import('../features/game/components/Av
 const SeasonalEvent = React.lazy(() => import('../features/game/components/SeasonalEvent'));
 const ParentReport = React.lazy(() => import('../features/game/components/ParentReport'));
 const RealEstateTycoon = React.lazy(() => import('../features/game/components/RealEstateTycoon'));
-import { PlayHubFAB } from '../components/ui/PlayHubFAB';
+const CardGamePage = React.lazy(() => import('../pages/CardGamePage'));
 import { GlobalModalManager } from '../components/modals/GlobalModalManager';
 import { SkeletonPageLoader } from '../components/ui/SkeletonPageLoader';
-import { BottomNavigation } from '../components/layout/BottomNavigation';
+
+import { PWAInstallBanner } from '../components/ui/PWAInstallBanner';
+import { usePassiveIncome } from '../hooks/usePassiveIncome';
+import { PassiveIncomeModal } from '../components/modals/PassiveIncomeModal';
 
 // Simple Loading Spinner for Suspense fallback
 const PageLoader = SkeletonPageLoader;
 
-const ICON_MAP: Record<string, any> = {
-    rocket: Rocket,
-    pizza: Pizza,
-    star: Star,
-    smile: Smile,
-    bulb: Lightbulb,
-    coffee: Coffee,
-    music: Music,
-    camera: Camera,
-    globe: Globe,
-    anchor: Anchor,
-    cpu: Cpu,
-    car: Car,
-    zap: Zap
-};
-
-
 const App = () => {
-    const { user, toggleEquipItem, syncGames, cmsContent, activeScenario, showCertificateId, setShowCertificateId, openModal } = useAppStore();
-    const { classrooms, lessons } = useEducationStore();
+    const { user, toggleEquipItem, syncGames, cmsContent, activeScenario, showCertificateId, setShowCertificateId, openModal, isAuthLoading, loadCorporations } = useAppStore();
     const { activeGameId, setActiveGameId } = useGameStore();
     const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
     const [showJoinClass, setShowJoinClass] = useState(false);
+    const lessons = useEducationStore(state => state.lessons);
 
     const { playClick } = useAppSound();
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    const { accruedAmount, isModalOpen, closeModal, propertyCount } = usePassiveIncome();
 
     // Global Sound Listener
     useEffect(() => {
@@ -130,26 +116,40 @@ const App = () => {
         document.documentElement.lang = isArabic ? 'ar' : 'en';
     }, [i18n.language]);
 
-    // Initialize Data on Mount
+    // Initialize Data on Mount for authenticated users only
     useEffect(() => {
+        if (!user) return;
         syncGames();
+        loadCorporations().catch(err => Logger.error("Failed to load corporations", err));
+        // refreshRecurringBounties lives in the separate useSocialStore (BountySlice)
+        useSocialStore.getState().refreshRecurringBounties();
         // Initialize content moderation patterns (non-blocking)
-        import('../services/ContentModerationService').then(({ ContentModerationService }) => {
-            ContentModerationService.loadPatterns();
-        });
-    }, [syncGames]);
+        if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(() => {
+                import('../services/ContentModerationService').then(({ ContentModerationService }) => {
+                    ContentModerationService.loadPatterns();
+                });
+            });
+        }
+    }, [user, syncGames, loadCorporations]);
 
     // Theme Switching Effect
     useEffect(() => {
         if (user?.settings.themeMode === 'dark') {
             document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
         } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
         }
     }, [user?.settings.themeMode]);
 
-    // Redirect logic based on role if logged in and at public routes
+    // Redirect logic based on role if logged in and at public routes.
+    // ✅ BUG FIX — Auto-Login to Admin:
+    // Guard on isAuthLoading so we never redirect based on stale localStorage data.
+    // The redirect only fires once the Supabase session check has resolved.
     useEffect(() => {
+        if (isAuthLoading) return; // Wait for session check to complete
         if (user && ['/', '/login', '/register'].includes(location.pathname)) {
             if (user.role === UserRole.PARENT) navigate('/dashboard', { replace: true });
             else if (user.role === UserRole.TEACHER) {
@@ -162,16 +162,24 @@ const App = () => {
             else if (user.role === UserRole.ADMIN) navigate('/admin', { replace: true });
             else navigate('/map', { replace: true });
         }
-    }, [user, location.pathname, navigate]);
+    }, [user, isAuthLoading, location.pathname, navigate]);
 
     // Navigation Handlers (Shim for old props if needed)
     const handleNavigate = (path: string) => {
+        const raw = path.trim();
+        const clean = raw.startsWith('/') ? raw.slice(1) : raw;
         // Map legacy "tabs" to routes
         const routeMap: Record<string, string> = {
             'the_tank': '/the-tank',
+            'the-tank': '/the-tank',
             'map': '/map',
             'assignments': '/assignments',
+            'missions': '/assignments',
+            'quests': '/assignments',
+            'tasks': '/assignments',
             'games': '/games',
+            'play': '/games',
+            'arcade': '/games',
             'library': '/library',
             'store': '/store',
             'leaderboard': '/leaderboard',
@@ -179,16 +187,19 @@ const App = () => {
             'skills': '/skills',
             'portfolio': '/portfolio',
             'profile': '/profile',
+            'me': '/profile',
             'parent_dashboard': '/dashboard',
             'teacher_dashboard': user?.subscriptionTier?.startsWith('school_') ? '/principal' : '/classroom',
             'admin_dashboard': '/admin',
             'debate': '/debate',
             'videos': '/videos',
+            'card-academy': '/card-academy',
             'side-hustle': '/side-hustle',
             'real-estate': '/real-estate',
             'social': '/social'
         };
-        navigate(routeMap[path] || '/');
+        const destination = routeMap[clean] || (raw.startsWith('/') ? raw : `/${clean}`);
+        navigate(destination);
         setActiveLessonId(null);
         setActiveGameId(null);
     };
@@ -208,13 +219,18 @@ const App = () => {
         if (activeGameId === 'lemonade') return <LemonadeStand onBack={() => setActiveGameId(null)} />;
         if (activeGameId === 'brand') return <BrandBuilder onBack={() => setActiveGameId(null)} />;
         if (activeGameId === 'pizza') return <PizzaDelivery onBack={() => setActiveGameId(null)} />;
-        if (activeGameId === 'coffee') return <CoffeeCart onBack={() => setActiveGameId(null)} />;
-        if (activeGameId === 'coffee') return <CoffeeCart onBack={() => setActiveGameId(null)} />;
-        // 'the_tank' is now a standard route, no longer an overlay game here.
-
         // Dynamic Game Engine
         if (activeGameId && activeGameId.startsWith('BIZ_')) {
             return <GameEngine gameId={activeGameId} onExit={() => setActiveGameId(null)} />;
+        }
+
+        // Integrated Canonical 50 Arcade Stations
+        if (activeGameId) {
+            return (
+                <Suspense fallback={<PageLoader />}>
+                    <ArcadeGameShellWrapper gameId={activeGameId} onExit={() => setActiveGameId(null)} />
+                </Suspense>
+            );
         }
 
         if (activeScenario) {
@@ -224,60 +240,21 @@ const App = () => {
         return <GameMenu onSelectGame={setActiveGameId} />;
     };
 
-    const getActiveBatch = () => {
-        if (!activeLessonId) return [];
-        const targetLesson = lessons.find(l => l.id === activeLessonId);
-        if (!targetLesson) return [];
-        return lessons.filter(l => l.topic_tag === targetLesson.topic_tag);
-    };
-
-    const activeUnits = getActiveBatch();
-    const LogoIcon = user?.businessLogo ? ICON_MAP[user.businessLogo.icon] || Rocket : Rocket;
-
-
-    const handleNextModule = (fromModuleId?: string) => {
-        let currentModuleIndex = -1;
-
-        if (fromModuleId) {
-            currentModuleIndex = COURSE_MAP.findIndex(m => m.id === fromModuleId);
-        } else if (activeLessonId) {
-            currentModuleIndex = COURSE_MAP.findIndex(m => m.lessonIds.includes(activeLessonId));
-        }
-
-        // 🎓 Fire certificate for the COMPLETED module (full-app certificate enable)
-        if (currentModuleIndex !== -1) {
-            const completedModule = COURSE_MAP[currentModuleIndex];
-            if (completedModule) {
-                setShowCertificateId(completedModule.id);
-                setActiveLessonId(null);
-                return; // ModuleRecap/certificate modal will call onNextModule again to advance
-            }
-        }
-
-        setActiveLessonId(null); // Fallback to map
-        setShowCertificateId(null);
-    };
-
-
-    const activeLessonView = activeLessonId && activeUnits.length > 0 ? (
-        <UniversalLessonEngine
-            key={activeUnits[0]?.id}
-            units={activeUnits}
-            onExit={() => setActiveLessonId(null)}
-            onNextModule={handleNextModule}
-            hasProject={COURSE_MAP.find(m => m.lessonIds.includes(activeLessonId))?.hasProject}
-            initialLessonId={activeLessonId}
-            bossGameId={COURSE_MAP.findIndex(m => m.lessonIds.includes(activeLessonId)) !== -1
-                ? `SEC_${COURSE_MAP.findIndex(m => m.lessonIds.includes(activeLessonId))}_BOSS`
-                : undefined}
-        />
-    ) : null;
-
-    if (activeLessonView) {
+    if (activeLessonId) {
         return (
-            <Layout activeTab={getActiveTab()} onNavigate={handleNavigate}>
-                {activeLessonView}
-            </Layout>
+            <Suspense fallback={<PageLoader />}>
+                <LessonSession
+                    activeLessonId={activeLessonId}
+                    lessons={lessons}
+                    activeTab={getActiveTab()}
+                    onNavigate={handleNavigate}
+                    onExit={() => setActiveLessonId(null)}
+                    onCompleteModule={(moduleId) => {
+                        setShowCertificateId(moduleId);
+                        setActiveLessonId(null);
+                    }}
+                />
+            </Suspense>
         );
     }
 
@@ -298,8 +275,8 @@ const App = () => {
                         onViewTerms={() => navigate('/terms')}
                         onViewRefund={() => navigate('/refund')}
                     />} />
-                    <Route path="/login" element={<Auth onBack={() => navigate('/')} initialMode="LOGIN" />} />
-                    <Route path="/register" element={<Auth onBack={() => navigate('/')} initialMode="REGISTER" />} />
+                    <Route path="/login" element={<Auth initialMode="LOGIN" />} />
+                    <Route path="/register" element={<Auth initialMode="REGISTER" />} />
 
                     {/* Invite Link Redirect */}
                     <Route path="/invite/:code" element={
@@ -358,11 +335,12 @@ const App = () => {
                     <Route path="/refund" element={<RefundPolicyPage onBack={() => navigate('/')} />} />
 
                     {/* PROTECTED ROUTES */}
-                    <Route path="/map" element={<ProtectedRoute onNavigate={handleNavigate}><KidMap onStartLesson={(id) => setActiveLessonId(id)} /></ProtectedRoute>} />
+                    <Route path="/map" element={user?.role === UserRole.PARENT ? <Navigate to="/dashboard" replace /> : <ProtectedRoute onNavigate={handleNavigate}><KidMap onStartLesson={(id) => setActiveLessonId(id)} onNavigate={handleNavigate} /></ProtectedRoute>} />
                     <Route path="/assignments" element={<ProtectedRoute onNavigate={handleNavigate}><StudentAssignmentDashboard /></ProtectedRoute>} />
-                    <Route path="/games" element={<ProtectedRoute onNavigate={handleNavigate} lockoutEnabled>{renderGame()}</ProtectedRoute>} />
+                    <Route path="/games" element={user?.role === UserRole.PARENT ? <Navigate to="/dashboard" replace /> : <ProtectedRoute onNavigate={handleNavigate} lockoutEnabled>{renderGame()}</ProtectedRoute>} />
                     <Route path="/library" element={<ProtectedRoute onNavigate={handleNavigate}><BookLibrary /></ProtectedRoute>} />
                     <Route path="/videos" element={<ProtectedRoute onNavigate={handleNavigate}><VideoLibrary /></ProtectedRoute>} />
+                    <Route path="/card-academy" element={<ProtectedRoute onNavigate={handleNavigate} lockoutEnabled><CardGamePage /></ProtectedRoute>} />
                     <Route path="/real-estate" element={<ProtectedRoute onNavigate={handleNavigate} lockoutEnabled><RealEstateApp /></ProtectedRoute>} />
                     <Route path="/the-tank" element={<ProtectedRoute onNavigate={handleNavigate}><TheTankPage /></ProtectedRoute>} />
                     <Route path="/tournaments" element={<ProtectedRoute onNavigate={handleNavigate}><TournamentPage /></ProtectedRoute>} />
@@ -412,43 +390,37 @@ const App = () => {
 
                 </Routes>
 
-                <AdminBookManager />
+                {user?.role === UserRole.ADMIN && <AdminBookManager />}
             </Suspense>
 
-            <LevelUpModal />
             <Suspense fallback={null}>
-                <OllieChat />
+                {user && (
+                    <>
+                        <LevelUpModal />
+                        <PlayHubFAB />
+                        <OllieChat />
+                    </>
+                )}
                 <ReloadPrompt />
                 {showJoinClass && <JoinClassModal onClose={() => setShowJoinClass(false)} />}
 
-                <BottomNavigation />
                 <GlobalModalManager />
-
+                <PWAInstallBanner />
+                {user && user.role !== UserRole.KID && (
+                    <PassiveIncomeModal 
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        amount={accruedAmount}
+                        propertyCount={propertyCount}
+                    />
+                )}
 
                 {showCertificateId && (
-                    <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
-                        <Suspense fallback={<div className="text-white"><Loader2 className="animate-spin" /></div>}>
-                            <ModuleRecap
-                                moduleTitle={COURSE_MAP.find(m => m.id === showCertificateId)?.title || "Module Complete"}
-                                lessons={getLessonBatch(showCertificateId)}
-                                totalXp={500}
-                                onClose={() => setShowCertificateId(null)}
-                                onNextModule={() => {
-                                    // Advance to the NEXT module after the certificate is dismissed
-                                    const completedIndex = COURSE_MAP.findIndex(m => m.id === showCertificateId);
-                                    setShowCertificateId(null);
-                                    if (completedIndex !== -1 && completedIndex < COURSE_MAP.length - 1) {
-                                        const nextModule = COURSE_MAP[completedIndex + 1];
-                                        if (nextModule?.lessonIds?.length > 0) {
-                                            setActiveLessonId(nextModule.lessonIds[0]);
-                                            return;
-                                        }
-                                    }
-                                    setActiveLessonId(null); // Last module — back to map
-                                }}
-                            />
-                        </Suspense>
-                    </div>
+                    <CertificateModal
+                        showCertificateId={showCertificateId}
+                        onClose={() => setShowCertificateId(null)}
+                        onAdvanceLesson={(nextLessonId) => setActiveLessonId(nextLessonId)}
+                    />
                 )}
             </Suspense>
         </>

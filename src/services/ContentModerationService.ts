@@ -35,11 +35,6 @@ interface Pattern {
     severity?: SeverityLevel; // Only for blacklist
 }
 
-/**
- * Content Moderation Service for AI Safety
- * Detects and filters profanity and PII from AI-generated content
- * Integrated with Admin Whitelist/Blacklist
- */
 export class ContentModerationService {
     // Cache for patterns
     private static patterns: {
@@ -97,7 +92,6 @@ export class ContentModerationService {
     static async loadPatterns() {
         if (!supabase) return;
 
-        // check cache first
         const now = Date.now();
         if (now - this.patterns.lastUpdated < this.CACHE_TTL && this.patterns.whitelist.length > 0) {
             return;
@@ -108,12 +102,10 @@ export class ContentModerationService {
 
         this._loadingPromise = (async () => {
             try {
-                // Load whitelist
                 const { data: whitelist } = await supabase!
                     .from('moderation_whitelist')
                     .select('*');
 
-                // Load blacklist
                 const { data: blacklist } = await supabase!
                     .from('moderation_blacklist')
                     .select('*');
@@ -259,11 +251,9 @@ export class ContentModerationService {
         const profanityViolations = this.detectProfanity(text);
         violations.push(...profanityViolations);
 
-        // Check for PII
         const piiViolations = this.detectPII(text);
         violations.push(...piiViolations);
 
-        // Check for harmful topics
         const topicViolations = this.detectHarmfulTopics(text);
         violations.push(...topicViolations);
 
@@ -283,7 +273,6 @@ export class ContentModerationService {
                 confidence,
             });
 
-            // Log to security monitoring system
             void Logger.logSecurityEvent('content_violation', severity, {
                 violation_types: violations.map(v => v.type),
                 violation_count: violations.length,
@@ -307,7 +296,6 @@ export class ContentModerationService {
         const violations: Violation[] = [];
         const lowerText = text.toLowerCase();
 
-        // Check severe profanity
         for (const word of this.PROFANITY_SEVERE) {
             const regex = new RegExp(`\\b${word}\\b`, 'gi');
             if (regex.test(lowerText)) {
@@ -320,7 +308,6 @@ export class ContentModerationService {
             }
         }
 
-        // Check moderate profanity
         for (const word of this.PROFANITY_MODERATE) {
             const regex = new RegExp(`\\b${word}\\b`, 'gi');
             if (regex.test(lowerText)) {
@@ -336,7 +323,6 @@ export class ContentModerationService {
         return violations;
     }
 
-
     /**
      * Detect harmful topics in content
      */
@@ -344,7 +330,6 @@ export class ContentModerationService {
         const violations: Violation[] = [];
         const lowerText = text.toLowerCase();
 
-        // Check for violence
         for (const keyword of this.HARMFUL_TOPICS.violence) {
             if (lowerText.includes(keyword)) {
                 violations.push({
@@ -357,7 +342,6 @@ export class ContentModerationService {
             }
         }
 
-        // Check for adult content
         for (const keyword of this.HARMFUL_TOPICS.adult_content) {
             if (lowerText.includes(keyword)) {
                 violations.push({
@@ -370,7 +354,6 @@ export class ContentModerationService {
             }
         }
 
-        // Check for hate speech
         for (const keyword of this.HARMFUL_TOPICS.hate_speech) {
             if (lowerText.includes(keyword)) {
                 violations.push({
@@ -383,7 +366,6 @@ export class ContentModerationService {
             }
         }
 
-        // Check for self-harm content
         for (const keyword of this.HARMFUL_TOPICS.self_harm) {
             if (lowerText.includes(keyword)) {
                 violations.push({
@@ -449,7 +431,6 @@ export class ContentModerationService {
 
         return 'low';
     }
-
 
     /**
      * Detect PII in text

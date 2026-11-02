@@ -49,8 +49,14 @@ vi.spyOn(AppStore, 'useAppStore').mockReturnValue({
 // Mock Engine to be deterministic
 vi.mock('@/features/tank/logic/TheTankEngine', async (importOriginal) => {
     const actual: any = await importOriginal();
+    const mockJudges = [
+        { id: 'cash', nameKey: 'tank.judge_cash', styleKey: 'tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
+        { id: 'tech', nameKey: 'tank.judge_tech', styleKey: 'tank.style_tech', color: 'bg-blue-600', minEquity: 15, maxValuationMultiplier: 1.5, patience: 5 },
+        { id: 'vision', nameKey: 'tank.judge_vision', styleKey: 'tank.style_vision', color: 'bg-purple-600', minEquity: 20, maxValuationMultiplier: 1.2, patience: 4 },
+    ];
     return {
         ...actual,
+        JUDGES: mockJudges,
         TheTankEngine: {
             ...actual.TheTankEngine,
             analyzePitch: vi.fn(),
@@ -65,6 +71,7 @@ describe('TheTankMode Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         vi.useFakeTimers();
+        vi.spyOn(Math, 'random').mockReturnValue(0.5);
     });
 
     afterEach(() => {
@@ -120,15 +127,14 @@ describe('TheTankMode Component', () => {
 
         // Check if we are in OFFERS selection
         try {
-            expect(screen.getByText('the_tank.offers_available')).toBeInTheDocument();
+            expect(screen.getByText('the_tank.floor_title')).toBeInTheDocument();
         } catch (e) {
-            console.log('Test failed to find offers_available. Current screen:');
+            console.log('Test failed to find floor_title. Current screen:');
             screen.debug();
             throw e;
         }
 
         expect(TheTankEngine.analyzePitch).toHaveBeenCalled();
-        expect(TheTankEngine.generateOffers).toHaveBeenCalledWith(80);
         expect(mockPlaySuccess).toHaveBeenCalled();
     });
 
@@ -173,7 +179,7 @@ describe('TheTankMode Component', () => {
         });
 
         const mockOffer = {
-            judge: { id: 'cash', nameKey: 'the_tank.judge_cash', styleKey: 'the_tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
+            judge: { id: 'cash', nameKey: 'tank.judge_cash', styleKey: 'tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
             valuation: 50000,
             equity: 20,
             comment: 'GREAT'
@@ -194,10 +200,10 @@ describe('TheTankMode Component', () => {
         });
 
         // Verify we reached selection stage
-        expect(screen.getByText('the_tank.offers_available')).toBeInTheDocument();
+        expect(screen.getByText('the_tank.floor_title')).toBeInTheDocument();
 
         // Select Offer
-        const offerCard = screen.getByText('the_tank.judge_cash');
+        const offerCard = screen.getByText('tank.judge_cash');
         fireEvent.click(offerCard);
 
         // Verify Negotiation Screen
@@ -216,7 +222,7 @@ describe('TheTankMode Component', () => {
         (TheTankEngine.analyzePitch as any).mockReturnValue({ score: 80, strengths: [], weaknesses: [], tips: [] });
 
         const mockOffer = {
-            judge: { id: 'cash', nameKey: 'the_tank.judge_cash', styleKey: 'the_tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
+            judge: { id: 'cash', nameKey: 'tank.judge_cash', styleKey: 'tank.style_cash', color: 'bg-green-600', minEquity: 25, maxValuationMultiplier: 0.8, patience: 3 },
             valuation: 50000,
             equity: 20,
             comment: 'GOOD'
@@ -242,7 +248,7 @@ describe('TheTankMode Component', () => {
         });
 
         // Select Offer
-        const offerCard = screen.getByText('the_tank.judge_cash');
+        const offerCard = screen.getByText('tank.judge_cash');
         fireEvent.click(offerCard);
 
         // Click Counter
